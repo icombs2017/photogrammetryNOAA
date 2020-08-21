@@ -11,20 +11,9 @@ This repository contains protocols, scripts, and data associated with the NOAA P
 
 ------------------------------------------------------------------------
 ### Analysis and walkthroughs accompanying this repository:
-[3D Model Analysis](https://icombs2017.github.io/photogrammetryNOAA)
-
+[3D Photogrammetry](https://icombs2017.github.io/photogrammetryNOAA/photogrammetry)
+[Fish Surveys](https://icombs2017.github.io/photogrammetryNOAA/fishSurveys)
+[Settlement Experiment](https://icombs2017.github.io/photogrammetryNOAA/settlementTiles)
+[Herbivory Experiment](https://icombs2017.github.io/photogrammetryNOAA/herbivory)
 ------------------------------------------------------------------------
-
-### Repository contents: 
-
-- figures/
-
-- stats/ 
-  - *model.analysis.Rmd* -- Analysis of 3D models
-
-analysis Rmarkdown document
-  - *index.html* -- Roving Diver Disease statistical analysis webpage
-  - *fateTracking.Rproj* -- R project file
-  - *gitignore* -- .gitignore
-  - *README.md* -- Repository readme document
 
