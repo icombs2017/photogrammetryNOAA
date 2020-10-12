@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<metadata>
+	<idinfo>
+		<citation>
+			<citeinfo>
+				<origin>U.S. Geological Survey</origin>
+				<pubdate>March, 2006</pubdate>
+				<title>Benthic Habitats Florida Keys </title>
+				<geoform>vector digital data</geoform>
+				<serinfo>
+					<sername>Journal of Coastal Research</sername>
+					<issue>Vol. 22,  No. 2    pp. 260-282</issue>
+				</serinfo>
+				<ftname Sync="TRUE">GIS.FWC.benthic_fl_keys_usgs_poly</ftname><onlink Sync="TRUE"></onlink></citeinfo>
+		</citation>
+		<descript>
+			<abstract>
+A highly detailed digitized map depicts 22 benthic habitats in 3,140.5 km2 of the Florida Keys National Marine Sanctuary. Dominant are a seagrass/lime-mud zone (map area: 27.5%) throughout Hawk Channel, and seagrass/carbonate-sand (18.7%) and bare carbonate-sand (17.3%) zones on the outer shelf and in The Quicksands. A lime-mud/seagrass-covered muddy carbonate-sand zone (9.6%) abuts the keys. Hardbottom communities (13.2%) consist of bare Pleistocene coralline and oolitic limestone, coral rubble, and senile coral reefs. Smaller terrestrial (4.0%) and marine habitats, including those of live coral (patch reefs, 0.7%), account for the rest (13.7%) of the area.
+Derived from aerial photomosaics, the seabed dataset fits precisely when transposed onto a newly developed National Geophysical Data Center hydrographic-bathymetry map. Combined, the maps point to new information on unstudied seabed morphologies, among them an erosional nearshore rock ledge bordering the seaward side of the Florida Keys and thousands of patch-reef clusters aligned in mid-Hawk Channel. Preliminary indications are the ledge may represent the seaward extent of the 125-ka Key Largo and Miami Limestone that form the keys, and the patch reefs colonized landward edges of two non-coralline, non-dune-ridge topographic troughs. The troughs, their substrate, and inner-shelf location along the seaward side of the Hawk Channel bedrock depression are the first such type of nuclei to be recognized in the Florida reef record. Together, the map datasets establish the efficacy and accuracy of using aerial photographs to define in extraordinary detail the seabed features and habitats in a shallow-reef setting
+</abstract>
+			<purpose>Coral reef ecosystems worldwide are in a state of decline.  Reefs in the Florida Keys National Marine Sanctuary have been in an accelerated rate of decline over the last 30 years.  Causes largely remain a matter of debate. The most cited anthropogenic impacts to nearshore reefs are fishery exploitation, recreational over-usage, and physical damage from derelict fishing gear, boat anchors, and ship groundings. Less clear are effects of manmade chemicals that become aerosolized or that reach coral reefs through runoff and groundwater flow. Against a backdrop of pollution, deteriorating coastal environments, and rising sea level, the problem lies in the inability to pinpoint precise causes of reef decline. Scientific evidence is needed to distinguish natural from human factors.</purpose>
+			<supplinf>Note: Although the work is published in 2006, the sources used include 1975 (DOT) and 1991 (NOAA) photography, supplemented by 1983 (EPA) photography and a 1974 coastal-zone atlas compiled by the Florida Coastal Coordinating Council. See the publication of this work for more information on the methodology and data processing procedures used. As USGS metadata indicates that this information is ?subject to change? please ask outside requestors to acquire this information directly from USGS.
+LIDZ, B.H.; REICH, C.D.; PETERSON, R.L., and SHINN, E.A., 2006. New Maps, New Information: Coral Reefs of the Florida Keys. Journal of Coastal Research, 22(2), 260?282. West Palm Beach (Florida), ISSN 0749-0208</supplinf>
+			<langdata Sync="TRUE">en</langdata></descript>
+		<timeperd>
+			<timeinfo>
+				<sngdate>
+					<time>unknown</time>
+				</sngdate>
+			</timeinfo>
+			<current>publication date</current>
+		</timeperd>
+		<status>
+			<progress>Complete</progress>
+			<update>Unknown</update>
+		</status>
+		<spdom>
+			<bounding>
+				<westbc>-82.704801</westbc>
+				<eastbc>-80.245342</eastbc>
+				<northbc>25.212996</northbc>
+				<southbc>24.414612</southbc>
+			</bounding>
+			<lboundng><leftbc Sync="TRUE">532081.371995</leftbc><rightbc Sync="TRUE">778073.733777</rightbc><bottombc Sync="TRUE">48020.249570</bottombc><topbc Sync="TRUE">139722.662343</topbc></lboundng></spdom>
+		<keywords>
+			<theme>
+				<themekt>None</themekt>
+				<themekey>benthic habitats, coral reef decline, coral reef nuclei, Holocene transgression, Key Largo Limestone, Miami Limestone, patch reefs, Pleistocene topography, sea-level fluctuations, tidal channels, topographic troughs, windward carbonate margin</themekey>
+			</theme>
+			<theme>
+				<themekt>ISO 19115 Topic Category</themekt>
+				<themekey>imageryBaseMapsEarthCover</themekey>
+				<themekey>boundaries</themekey>
+			</theme>
+			<place>
+				<placekt>None</placekt>
+				<placekey>Florida Keys</placekey>
+			</place>
+			<place>
+				<placekt>Florida Counties</placekt>
+				<placekey>Monroe</placekey>
+			</place>
+			<place>
+				<placekt>FWC Region</placekt>
+				<placekey>FWC Region-South</placekey>
+			</place>
+			<place>
+				<placekt>FWRIplace</placekt>
+				<placekey>Florida Keys</placekey>
+				<placekey>Florida Keys National Marine Sanctuary</placekey>
+			</place>
+			<place>
+				<placekt>Florida Waterbodies</placekt>
+			</place>
+		</keywords>
+		<accconst>No constraints.</accconst>
+		<useconst>This data set is subject to change.  Acknowledgement of the U.S. Geological Survey would be appreciated for products derived from data.</useconst>
+		<ptcontac>
+			<cntinfo>
+				<cntperp>
+					<cntper>Barbara Lidz</cntper>
+					<cntorg>U.S. Geological Survey</cntorg>
+				</cntperp>
+				<cntaddr>
+					<addrtype>mailing address</addrtype>
+					<address>600 4th Street South</address>
+					<city>St. Petersburg</city>
+					<state>Florida</state>
+					<postal>33701-4846</postal>
+					<country>USA</country>
+				</cntaddr>
+				<cntvoice>(727) 803-8747 x3031</cntvoice>
+				<cntfax>(727) 803-2032</cntfax>
+				<cntemail>blidz@usgs.gov</cntemail>
+				<hours>8 am to 5 pm</hours>
+			</cntinfo>
+		</ptcontac>
+		<datacred>Barbara Lidz</datacred>
+		<secinfo>
+			<secsys>FWRI-DC</secsys>
+		</secinfo>
+		<native>Microsoft Windows XP Version 5.1 (Build 2600) Service Pack 2; ESRI ArcCatalog 9.1.0.722</native>
+		<natvform Sync="TRUE">SDE Feature Class</natvform></idinfo>
+	<dataqual>
+		<lineage>
+			<procstep>
+				<procdesc>Data obtained from USGS, reprojected from UTM into Albers, and loaded to SDE, October 2006.</procdesc>
+				<procdate>2006/10/17</procdate>
+				<proccont>
+					<cntinfo>
+						<cntperp>
+							<cntper>GISLibrarian</cntper>
+							<cntorg>FWC-FWRI (Florida Fish and Wildlife Conservation Commission-Fish and Wildlife Research Institute)</cntorg>
+						</cntperp>
+						<cntpos>GIS Data Librarian</cntpos>
+						<cntaddr>
+							<addrtype>mailing and physical address</addrtype>
+							<address>
+Fish and Wildlife Research Institute
+100 Eighth Avenue Southeast
+</address>
+							<city>St. Petersburg</city>
+							<state>Florida</state>
+							<postal>33701</postal>
+							<country>USA</country>
+						</cntaddr>
+						<cntvoice>727-896-8626</cntvoice>
+						<cntfax>727-893-1679</cntfax>
+						<cntemail>GISLibrarian@MyFWC.com</cntemail>
+						<hours>8:00 a.m.-5:00 p.m. Eastern time</hours>
+					</cntinfo>
+				</proccont>
+			</procstep>
+			<procstep><procdesc Sync="TRUE">Dataset copied.</procdesc><srcused Sync="TRUE">Service=sde:sqlserver:gleason; Database=gis; User=FWC_GIS_User; Version=sde.DEFAULT</srcused><procdate Sync="TRUE">20110331</procdate><proctime Sync="TRUE">14511800</proctime></procstep></lineage>
+	</dataqual>
+	<spdoinfo>
+		<direct>Vector</direct>
+		<ptvctinf>
+			<sdtsterm Name="GIS.FWC.benthic_fl_keys_usgs_poly">
+				<sdtstype>G-polygon</sdtstype>
+				<ptvctcnt>20783</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>Label point</sdtstype>
+				<ptvctcnt>919</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>GT-polygon composed of chains</sdtstype>
+				<ptvctcnt>746</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>Node, planar graph</sdtstype>
+				<ptvctcnt>1629</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>Point</sdtstype>
+				<ptvctcnt>4</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>Label point</sdtstype>
+				<ptvctcnt>0</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>Label point</sdtstype>
+				<ptvctcnt>0</ptvctcnt>
+			</sdtsterm>
+			<esriterm Name="GIS.FWC.benthic_fl_keys_usgs_poly"><efeatyp Sync="TRUE">Simple</efeatyp><efeageom Sync="TRUE">Polygon</efeageom><esritopo Sync="TRUE">FALSE</esritopo><efeacnt Sync="TRUE">20783</efeacnt><spindex Sync="TRUE">TRUE</spindex><linrefer Sync="TRUE">FALSE</linrefer></esriterm></ptvctinf>
+	</spdoinfo>
+	<spref>
+		<horizsys>
+			<planar>
+				<planci>
+					<plance>Coordinate Pair</plance>
+					<coordrep>
+						<absres>0.000512</absres>
+						<ordres>0.000512</ordres>
+					</coordrep>
+					<plandu>meters</plandu>
+				</planci>
+				<mapproj><mapprojn Sync="TRUE">Albers Conical Equal Area</mapprojn><albers><stdparll Sync="TRUE">24.000000</stdparll><stdparll Sync="TRUE">31.500000</stdparll><longcm Sync="TRUE">-84.000000</longcm><latprjo Sync="TRUE">24.000000</latprjo><feast Sync="TRUE">400000.000000</feast><fnorth Sync="TRUE">0.000000</fnorth></albers></mapproj></planar>
+			<geodetic>
+				<horizdn>North American Datum of 1983</horizdn>
+				<ellips>Geodetic Reference System 80</ellips>
+				<semiaxis>6378137</semiaxis>
+				<denflat>298.257</denflat>
+			</geodetic>
+			<cordsysn><geogcsn Sync="TRUE">GCS_North_American_1983</geogcsn><projcsn Sync="TRUE">NAD_1983_Albers</projcsn></cordsysn></horizsys>
+		<vertdef><altsys><altenc Sync="TRUE">Explicit elevation coordinate included with horizontal coordinates</altenc><altres Sync="TRUE">1.000000</altres></altsys></vertdef></spref>
+	<eainfo>
+		<detailed Name="GIS.FWC.benthic_fl_keys_usgs_poly">
+			<enttyp>
+				<enttypl>fl_keys_benthic_data_z17u83</enttypl>
+				<enttypt Sync="TRUE">Feature Class</enttypt><enttypc Sync="TRUE">20783</enttypc></enttyp>
+			<attr><attrlabl Sync="TRUE">OBJECTID</attrlabl><attalias Sync="TRUE">OBJECTID</attalias><attrtype Sync="TRUE">OID</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">10</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Internal feature number.</attrdef><attrdefs Sync="TRUE">ESRI</attrdefs><attrdomv><udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom></attrdomv></attr><attr>
+				<attrlabl>ACRES</attrlabl>
+				<attrdef>area in acres</attrdef>
+				<attalias Sync="TRUE">ACRES</attalias><attrtype Sync="TRUE">Double</attrtype><attwidth Sync="TRUE">8</attwidth><atprecis Sync="TRUE">19</atprecis><attscale Sync="TRUE">3</attscale></attr>
+			<attr>
+				<attrlabl>BENTHIC_HA</attrlabl>
+				<attrdef>description of benthic habitat classification</attrdef>
+				<attalias Sync="TRUE">BENTHIC_HA</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">50</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>BJ6EDITS_</attrlabl>
+				<attrdef>sequential number</attrdef>
+				<attalias Sync="TRUE">BJ6EDITS_</attalias><attrtype Sync="TRUE">Integer</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">10</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>CODE</attrlabl>
+				<attrdef>Number associated with classification of benthic habitat.</attrdef>
+				<attalias Sync="TRUE">CODE</attalias><attrtype Sync="TRUE">SmallInteger</attrtype><attwidth Sync="TRUE">2</attwidth><atprecis Sync="TRUE">5</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>Shape</attrlabl>
+				<attrdef>Feature geometry.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Coordinates defining the features.</udom>
+				</attrdomv>
+				<attalias Sync="TRUE">Shape</attalias><attrtype Sync="TRUE">Geometry</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr><attrlabl Sync="TRUE">SHAPE.area</attrlabl><attalias Sync="TRUE">SHAPE.area</attalias><attrtype Sync="TRUE">Double</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">SHAPE.len</attrlabl><attalias Sync="TRUE">SHAPE.len</attalias><attrtype Sync="TRUE">Double</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr></detailed>
+		<detailed>
+			<enttyp>
+				<enttypl>bed_rvisd.pat</enttypl>
+			</enttyp>
+			<attr>
+				<attrlabl>AREA</attrlabl>
+				<attrdef>Area of feature in internal units squared.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Positive real numbers that are automatically generated.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>BED_RVISD#</attrlabl>
+				<attrdef>Internal feature number.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Sequential unique whole numbers that are automatically generated.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>BED_RVISD-ID</attrlabl>
+				<attrdef>User-defined feature number.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+			</attr>
+			<attr>
+				<attrlabl>CODE</attrlabl>
+				<attrdef>defines outlier reefs, paleoshorelines, and buried reef flats</attrdef>
+			</attr>
+			<attr>
+				<attrlabl>DEPTH</attrlabl>
+				<attrdef>measured in meters</attrdef>
+			</attr>
+			<attr>
+				<attrlabl>FID</attrlabl>
+				<attrdef>Internal feature number.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Sequential unique whole numbers that are automatically generated.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>PERIMETER</attrlabl>
+				<attrdef>Perimeter of feature in internal units.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Positive real numbers that are automatically generated.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>Shape</attrlabl>
+				<attrdef>Feature geometry.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Coordinates defining the features.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>THICKNESS</attrlabl>
+				<attrdef>measured in meters</attrdef>
+			</attr>
+		</detailed>
+		<detailed>
+			<enttyp>
+				<enttypl>bed_rvisd.nat</enttypl>
+			</enttyp>
+			<attr>
+				<attrlabl>ARC#</attrlabl>
+			</attr>
+			<attr>
+				<attrlabl>BED_RVISD#</attrlabl>
+				<attrdef>Internal feature number.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Sequential unique whole numbers that are automatically generated.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>BED_RVISD-ID</attrlabl>
+				<attrdef>User-defined feature number.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+			</attr>
+			<attr>
+				<attrlabl>FID</attrlabl>
+				<attrdef>Internal feature number.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Sequential unique whole numbers that are automatically generated.</udom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>Shape</attrlabl>
+				<attrdef>Feature geometry.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Coordinates defining the features.</udom>
+				</attrdomv>
+			</attr>
+		</detailed>
+	</eainfo>
+	<distinfo>
+		<resdesc>Downloadable Data</resdesc>
+		<stdorder>
+			<digform>
+				<digtinfo>
+					<transize>30.329</transize>
+				</digtinfo>
+			</digform>
+		</stdorder>
+	</distinfo>
+	<metainfo>
+		<metd>8/18/2006</metd>
+		<metc>
+			<cntinfo>
+				<cntperp>
+					<cntper>Barbara Lidz</cntper>
+					<cntorg>U.S. Geological Survey</cntorg>
+				</cntperp>
+				<cntaddr>
+					<addrtype>mailing address</addrtype>
+					<address>600 4th Street South</address>
+					<city>St. Petersburg</city>
+					<state>Florida</state>
+					<postal>33701-4846</postal>
+					<country>USA</country>
+				</cntaddr>
+				<cntvoice>(727) 803-8747 x3031</cntvoice>
+				<cntfax>(727) 803-2032</cntfax>
+				<cntemail>blidz@usgs.gov</cntemail>
+				<hours>8 am to 5 pm</hours>
+			</cntinfo>
+		</metc>
+		<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+		<metstdv>FGDC-STD-001-1998</metstdv>
+		<mettc>local time</mettc>
+		<metsi>
+			<metscs>FWRI-MC</metscs>
+			<metsc>Unclassified</metsc>
+		</metsi>
+		<metextns>
+			<onlink>http://www.esri.com/metadata/esriprof80.html</onlink>
+			<metprof>ESRI Metadata Profile</metprof>
+		</metextns>
+		<langmeta Sync="TRUE">en</langmeta><metextns><onlink Sync="TRUE">http://www.esri.com/metadata/esriprof80.html</onlink><metprof Sync="TRUE">ESRI Metadata Profile</metprof></metextns></metainfo>
+	<Esri><CreaDate>20110331</CreaDate><CreaTime>14511800</CreaTime><SyncOnce>FALSE</SyncOnce><ModDate>20100921</ModDate><ModTime>09164500</ModTime><SyncDate>20100921</SyncDate><SyncTime>09160800</SyncTime><MetaID>{3FF0E732-03A3-4F9F-81BB-540648EF2539}</MetaID></Esri><mdDateSt Sync="TRUE">20100125</mdDateSt><distInfo><distributor><distorTran><onLineSrc><orDesc Sync="TRUE">002</orDesc><linkage Sync="TRUE">file://</linkage><protocol Sync="TRUE">Local Area Network</protocol></onLineSrc></distorTran></distributor></distInfo></metadata>

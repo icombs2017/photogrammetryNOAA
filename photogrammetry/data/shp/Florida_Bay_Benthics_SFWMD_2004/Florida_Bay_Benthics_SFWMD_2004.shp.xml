@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<metadata>
+	<idinfo>
+		<citation>
+			<citeinfo>
+				<origin>Florida Fish and Wildlife Conservation Commission-Fish and Wildlife Research Institute</origin>
+				<pubdate>9-14-2005</pubdate>
+				<title>Benthic Habitats Florida Bay 2004</title>
+				<geoform>vector digital data</geoform>
+				<smcilnkh>false</smcilnkh>
+				<ftname Sync="TRUE">GIS.FWC.benthic_flbay_2004_poly</ftname><onlink Sync="TRUE"></onlink></citeinfo>
+		</citation>
+		<descript>
+			<abstract>This GIS data set serves as a documentation of the benthic habitat found in Florida Bay as it existed in the Spring of 2004.  Digital data was collected using photogrammetric techniques.  Groundtruthing was performed to verify photointerpretation classification.</abstract>
+			<purpose>This dataset was created to provide an accurate depiction of the benthic habitat of Florida Bay, as defined using "Habitat Classification Categories for Florida Bay Benthic Habitat Mapping - 2004/2005, Version 3-23-05"  This classification is an adaptation from Florida SCHEME (System for Classification of Habitats in Estuarine and Marine Environments), FWC.</purpose>
+			<supplinf>Prior to July 1, 2004, the Fish and Wildlife Research Institute (FWRI) was known as the Florida Marine Research Institute (FMRI). The institute name has not been changed in historical data sets or references to work completed by the Florida Marine Research Institute. The institute name has been changed in references to ongoing research, new research, and contact information.</supplinf>
+			<langdata Sync="TRUE">en</langdata></descript>
+		<timeperd>
+			<timeinfo>
+				<mdattim>
+					<sngdate>
+						<caldate>20040331</caldate>
+					</sngdate>
+					<sngdate>
+						<caldate>20040421</caldate>
+					</sngdate>
+				</mdattim>
+			</timeinfo>
+			<current>Date of Photography</current>
+		</timeperd>
+		<status>
+			<progress>Complete</progress>
+			<update>Unknown</update>
+		</status>
+		<spdom>
+			<bounding>
+				<westbc>-81.128694</westbc>
+				<eastbc>-80.235684</eastbc>
+				<northbc>25.386079</northbc>
+				<southbc>24.785398</southbc>
+			</bounding>
+			<lboundng><leftbc Sync="TRUE">689182.335710</leftbc><rightbc Sync="TRUE">778330.857838</rightbc><bottombc Sync="TRUE">91202.918742</bottombc><topbc Sync="TRUE">159121.747993</topbc></lboundng></spdom>
+		<keywords>
+			<theme>
+				<themekt>FWRItheme</themekt>
+				<themekey>benthic</themekey>
+				<themekey>habitat (rivers, estuaries, ecology, hard bottom)</themekey>
+				<themekey>marine vegetation (mangroves, seagrasses, seaweeds, sea oats)</themekey>
+			</theme>
+			<theme>
+				<themekt>ISO 19115 Topic Category</themekt>
+				<themekey>environment</themekey>
+			</theme>
+			<place>
+				<placekt>FWRIplace</placekt>
+				<placekey>Florida Bay</placekey>
+			</place>
+			<place>
+				<placekt>Florida Counties</placekt>
+				<placekey>Monroe</placekey>
+			</place>
+			<place>
+				<placekt>Florida Waterbodies</placekt>
+				<placekey>Florida Bay</placekey>
+			</place>
+			<place>
+				<placekt>Water Management Districts</placekt>
+				<placekey>South Florida Water Management District</placekey>
+			</place>
+			<place>
+				<placekt>FWC Region</placekt>
+				<placekey>FWC Region-South</placekey>
+			</place>
+		</keywords>
+		<accconst>Available without restriction. All data must be verified by Principal Investigator or Group Database Analyst prior to release.  It is strongly recommended that this data is directly acquired from FWC and not indirectly through other sources which may have changed the data in some way. FWC makes no claims as to the data's suitability for other purposes.</accconst>
+		<useconst>Acknowledgement of the FWC-FWRI (Florida Fish and Wildlife Conservation Commission-Fish and Wildlife Research Institute) as the data source would be appreciated in any products developed from these data, and such acknowledgment as is standard for citation and legal practices for data source is expected by users of this data.  Please cite the original metadata when using portions of the record to create a similar record of slightly altered data, such as reprojection. If any data are modified or adjusted, please share the edited information with FWC. Users should be aware that comparison with other data sets for the same area from other time periods may be inaccurate due to inconsistencies resulting from changes in mapping conventions, data collection, and computer processes over time. FWC shall not be liable for improper or incorrect use of this data. These data are not legal documents and are not to be used as such.  This is not a survey data set and should not be utilized as such. These data are not to be used for navigation.</useconst>
+		<ptcontac>
+			<cntinfo>
+				<cntperp>
+					<cntper>GISLibrarian</cntper>
+					<cntorg>FWC-FWRI (Florida Fish and Wildlife Conservation Commission-Fish and Wildlife Research Institute)</cntorg>
+				</cntperp>
+				<cntpos>GIS Data Librarian</cntpos>
+				<cntaddr>
+					<addrtype>mailing and physical address</addrtype>
+					<address>
+Fish and Wildlife Research Institute
+100 Eighth Avenue Southeast
+</address>
+					<city>St. Petersburg</city>
+					<state>Florida</state>
+					<postal>33701</postal>
+					<country>USA</country>
+				</cntaddr>
+				<cntvoice>727-896-8626</cntvoice>
+				<cntfax>727-893-1679</cntfax>
+				<cntemail>GISLibrarian@MyFWC.com</cntemail>
+				<hours>8:00 a.m.-5:00 p.m. Eastern time</hours>
+				<smcoemhy>false</smcoemhy>
+			</cntinfo>
+		</ptcontac>
+		<datacred>Avineon provided the data and metadata. Kevin Madley was the FWRI PI. FWRI edited the metadata to include required standard information, and changed contact information to GIS Librarian.</datacred>
+		<secinfo>
+			<secsys>FWRI-DC</secsys>
+			<secclass>Available without restriction</secclass>
+			<sechandl>Available without restriction</sechandl>
+		</secinfo>
+		<native>Microsoft Windows 2000 Version 5.1 (Build 2600) Service Pack 2; ESRI ArcCatalog 8.1.2.671</native>
+		<crossref>
+			<citeinfo>
+				<origin>Avineon, Inc.</origin>
+				<pubdate>Unpublished Material</pubdate>
+				<title>Florida Bay 2004 Imagery</title>
+				<othercit>Complementary digital orthophotographic mosaics depicting florida bay.</othercit>
+				<smcilnkh>false</smcilnkh>
+			</citeinfo>
+		</crossref>
+		<smbrowse>false</smbrowse>
+		<smtype>1</smtype>
+		<natvform Sync="TRUE">SDE Feature Class</natvform></idinfo>
+	<dataqual>
+		<attracc>
+			<attraccr>Habitat delineation meets or exceeds the National Map Accuracy Standards for 1:24,000 scale maps.</attraccr>
+		</attracc>
+		<lineage>
+			<srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>Photo Science, Inc.</origin>
+						<title>Cartographic Aerial Photography</title>
+						<smcilnkh>false</smcilnkh>
+						<smcisrcc>Date of Photography</smcisrcc>
+						<smcisrcm>Scanned Cartographic Aerial Photography</smcisrcm>
+						<smcisrcs>24000</smcisrcs>
+						<smcisrct>
+							<timeinfo>
+								<sngdate>
+									<caldate>20040331</caldate>
+									<time>Unknown</time>
+								</sngdate>
+							</timeinfo>
+						</smcisrct>
+					</citeinfo>
+				</srccite>
+				<srcscale>24000</srcscale>
+				<typesrc>Scanned Cartographic Aerial Photography</typesrc>
+				<srctime>
+					<timeinfo>
+						<sngdate>
+							<caldate>20040331</caldate>
+							<time>unknown</time>
+						</sngdate>
+					</timeinfo>
+					<srccurr>Date of Photography</srccurr>
+				</srctime>
+				<srccontr>Photo Science, inc.</srccontr>
+			</srcinfo>
+			<procstep>
+				<procdesc>An aerotriangulation solution was computed across the project area, using ImageStation Automatic Triangulation (ISAT) software issued by Z/I Imaging, Inc.  Utilizing ABGPS/IMU data, camera calibration reports and the raw scanned photography supplied by FWRI, ISAT created a solution that meets the National Map Accuracy Standards for 1:24,000 scale maps.  The GPS/IMU data was used as the control for creating the aerotriangulation solution.  Upon completion of the aerotrianulation solution check points derived from USGS DOQQ's were used to check the spatial accuracy of the aerotriangulation solution.</procdesc>
+				<procdate>200505</procdate>
+				<proccont>
+					<cntinfo>
+						<cntorgp>
+							<cntorg>Avineon Incorporated, Baymont Division</cntorg>
+							<cntper>Patterson, Keith</cntper>
+						</cntorgp>
+						<cntpos>Director Photogrammetry, Mapping, and GIS</cntpos>
+						<cntaddr>
+							<addrtype>Mailing and physical</addrtype>
+							<address>14100 58th Street North</address>
+							<city>Clearwater</city>
+							<state>FL</state>
+							<postal>33760</postal>
+							<country>USA</country>
+						</cntaddr>
+						<cntvoice>727-539-1661</cntvoice>
+						<cntfax>727-539-1749</cntfax>
+						<cntemail>pattersonk@avineon.com</cntemail>
+						<hours>8:00 a.m.-5:00 p.m. Eastern time M-F</hours>
+						<cntinst>Avineon was formerly called Agra Baymont, which was previously GEONEX.</cntinst>
+						<smcoemhy>false</smcoemhy>
+					</cntinfo>
+				</proccont>
+			</procstep>
+			<procstep>
+				<procdesc>Orthopro used the computed solution from ISAT to produce the geo-referenced imagery.</procdesc>
+				<procdate>200505</procdate>
+			</procstep>
+			<procstep>
+				<procdesc>Benthic habitat was delineated in using stereo softcopy kits by ImageStation Stereo Display by Z/I Imaging, Inc.</procdesc>
+				<proccont>
+					<cntinfo>
+						<cntorgp>
+							<cntorg>Avineon Incorporated, Baymont Division</cntorg>
+							<cntper>Patterson, Keith</cntper>
+						</cntorgp>
+						<cntpos>Director Photogrammetry, Mapping, and GIS</cntpos>
+						<cntaddr>
+							<addrtype>Mailing and physical</addrtype>
+							<address>14100 58th Street North</address>
+							<city>Clearwater</city>
+							<state>FL</state>
+							<postal>33760</postal>
+							<country>USA</country>
+						</cntaddr>
+						<cntvoice>727-539-1661</cntvoice>
+						<cntfax>727-539-1749</cntfax>
+						<cntemail>pattersonk@avineon.com</cntemail>
+						<hours>8:00 a.m.-5:00 p.m. Eastern time M-F</hours>
+						<cntinst>Avineon was formerly called Agra Baymont, which was previously GEONEX.</cntinst>
+						<smcoemhy>false</smcoemhy>
+					</cntinfo>
+				</proccont>
+			</procstep>
+			<procstep>
+				<procdesc>FWRI received this data as a shapefile in UTM. The data set was reprojected to Albers and loaded to ArcSDE</procdesc>
+				<procdate>20061103</procdate>
+				<proccont>
+					<cntinfo>
+						<cntperp>
+							<cntper>GISLibrarian</cntper>
+							<cntorg>FWC-FWRI (Florida Fish and Wildlife Conservation Commission-Fish and Wildlife Research Institute)</cntorg>
+						</cntperp>
+						<cntpos>GIS Data Librarian</cntpos>
+						<cntaddr>
+							<addrtype>mailing and physical address</addrtype>
+							<address>
+Fish and Wildlife Research Institute
+100 Eighth Avenue Southeast
+</address>
+							<city>St. Petersburg</city>
+							<state>Florida</state>
+							<postal>33701</postal>
+							<country>USA</country>
+						</cntaddr>
+						<cntvoice>727-896-8626</cntvoice>
+						<cntfax>727-893-1679</cntfax>
+						<cntemail>GISLibrarian@MyFWC.com</cntemail>
+						<hours>8:00 a.m.-5:00 p.m. Eastern time</hours>
+						<smcoemhy>false</smcoemhy>
+					</cntinfo>
+				</proccont>
+			</procstep>
+			<procstep><procdesc Sync="TRUE">Dataset copied.</procdesc><srcused Sync="TRUE">Service=sde:sqlserver:gleason; Database=gis; User=FWC_GIS_User; Version=sde.DEFAULT</srcused><procdate Sync="TRUE">20110331</procdate><proctime Sync="TRUE">14543900</proctime></procstep></lineage>
+	</dataqual>
+	<spdoinfo>
+		<direct>Vector</direct>
+		<ptvctinf>
+			<sdtsterm Name="GIS.FWC.benthic_flbay_2004_poly">
+				<sdtstype>G-polygon</sdtstype>
+				<ptvctcnt>3632</ptvctcnt>
+				<smcaptur>false</smcaptur>
+			</sdtsterm>
+			<esriterm Name="GIS.FWC.benthic_flbay_2004_poly"><efeatyp Sync="TRUE">Simple</efeatyp><efeageom Sync="TRUE">Polygon</efeageom><esritopo Sync="TRUE">FALSE</esritopo><efeacnt Sync="TRUE">3632</efeacnt><spindex Sync="TRUE">TRUE</spindex><linrefer Sync="TRUE">FALSE</linrefer></esriterm></ptvctinf>
+		<smcaptur>false</smcaptur>
+	</spdoinfo>
+	<spref>
+		<horizsys>
+			<planar>
+				<planci>
+					<plance>Coordinate Pair</plance>
+					<coordrep>
+						<absres>0.000523</absres>
+						<ordres>0.000523</ordres>
+					</coordrep>
+					<plandu>meters</plandu>
+				</planci>
+				<mapproj><mapprojn Sync="TRUE">Albers Conical Equal Area</mapprojn><albers><stdparll Sync="TRUE">24.000000</stdparll><stdparll Sync="TRUE">31.500000</stdparll><longcm Sync="TRUE">-84.000000</longcm><latprjo Sync="TRUE">24.000000</latprjo><feast Sync="TRUE">400000.000000</feast><fnorth Sync="TRUE">0.000000</fnorth></albers></mapproj></planar>
+			<geodetic>
+				<horizdn>North American Datum of 1983</horizdn>
+				<ellips>Geodetic Reference System 80</ellips>
+				<semiaxis>6378137</semiaxis>
+				<denflat>298.257</denflat>
+			</geodetic>
+			<cordsysn><geogcsn Sync="TRUE">GCS_North_American_1983</geogcsn><projcsn Sync="TRUE">NAD_1983_Albers</projcsn></cordsysn></horizsys>
+		<vertdef><altsys><altenc Sync="TRUE">Explicit elevation coordinate included with horizontal coordinates</altenc><altres Sync="TRUE">1.000000</altres></altsys></vertdef></spref>
+	<eainfo>
+		<detailed Name="GIS.FWC.benthic_flbay_2004_poly">
+			<enttyp>
+				<enttypl>FMRI.benthic_flbay_2004_poly</enttypl>
+				<enttypd>This data set contains polygons representing seagrass and other bottom type data for Florida Bay.</enttypd>
+				<enttypds>Producer defined.</enttypds>
+				<enttypt Sync="TRUE">Feature Class</enttypt><enttypc Sync="TRUE">3632</enttypc></enttyp>
+			<attr><attrlabl Sync="TRUE">OBJECTID</attrlabl><attalias Sync="TRUE">OBJECTID</attalias><attrtype Sync="TRUE">OID</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">10</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Internal feature number.</attrdef><attrdefs Sync="TRUE">ESRI</attrdefs><attrdomv><udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom></attrdomv></attr><attr><attrlabl Sync="TRUE">FLA_BAY_</attrlabl><attalias Sync="TRUE">FLA_BAY_</attalias><attrtype Sync="TRUE">Integer</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">10</atprecis><attscale Sync="TRUE">0</attscale></attr><attr><attrlabl Sync="TRUE">FLA_BAY_ID</attrlabl><attalias Sync="TRUE">FLA_BAY_ID</attalias><attrtype Sync="TRUE">Integer</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">10</atprecis><attscale Sync="TRUE">0</attscale></attr><attr>
+				<attrlabl>DESCRIPT</attrlabl>
+				<attrdef>Description of HABITAT code value.</attrdef>
+				<attrdefs>Producer defined.</attrdefs>
+				<attrdomv>
+					<udom>Text field. See HABITAT attribute description.</udom>
+				</attrdomv>
+				<smcaptur>false</smcaptur>
+				<attalias Sync="TRUE">DESCRIPT</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">50</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>HABITAT</attrlabl>
+				<attrdef>Habitat Classification defined using "Habitat Classification Categrories for Florida Bay Benthic Habitat Mapping - 2004/2005, version 3-23-05"</attrdef>
+				<attrdefs>Florida SCHEME</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>1</edomv>
+						<edomvd>Unconsolidated Sediments</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>1cc</edomv>
+						<edomvd>Unconsolidated Sediments, Bank</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>211</edomv>
+						<edomvd>Continuous Submerged Rooted Vascular (SRV)</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>211cc</edomv>
+						<edomvd>Continuous Submerged Rooted Vascular (SRV), Bank</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>212</edomv>
+						<edomvd>Discontinuous Submerged Rooted Vascular (SRV)</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>212cc</edomv>
+						<edomvd>Discontinuous Submerged Rooted Vascular (SRV), Bank</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>221</edomv>
+						<edomvd>Attached Macroalgae</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>34</edomv>
+						<edomvd>Hard Bottom</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>6</edomv>
+						<edomvd>Land</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>7</edomv>
+						<edomvd>Unknown Benthic Habitat</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+					<edom>
+						<edomv>71</edomv>
+						<edomvd>Turbid Plume</edomvd>
+						<edomvds>Producer defined.</edomvds>
+					</edom>
+				</attrdomv>
+				<smcaptur>false</smcaptur>
+				<attalias Sync="TRUE">HABITAT</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">16</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>Shape</attrlabl>
+				<attrdef>Feature geometry.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Coordinates defining the features.</udom>
+				</attrdomv>
+				<smcaptur>false</smcaptur>
+				<attalias Sync="TRUE">Shape</attalias><attrtype Sync="TRUE">Geometry</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>SHAPE.AREA</attrlabl>
+				<attrdef>Area of feature in internal units squared.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Positive real numbers that are automatically generated.</udom>
+				</attrdomv>
+				<smcaptur>false</smcaptur>
+				<attalias Sync="TRUE">SHAPE.area</attalias><attrtype Sync="TRUE">Double</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+			<attr>
+				<attrlabl>SHAPE.LEN</attrlabl>
+				<attrdef>Perimeter of feature in internal units.</attrdef>
+				<attrdefs>ESRI</attrdefs>
+				<attrdomv>
+					<udom>Positive real numbers that are automatically generated.</udom>
+				</attrdomv>
+				<smcaptur>false</smcaptur>
+				<attalias Sync="TRUE">SHAPE.len</attalias><attrtype Sync="TRUE">Double</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale></attr>
+		</detailed>
+	</eainfo>
+	<distinfo>
+		<distrib>
+			<cntinfo>
+				<cntperp>
+					<cntper>GISLibrarian</cntper>
+					<cntorg>FWC-FWRI (Florida Fish and Wildlife Conservation Commission-Fish and Wildlife Research Institute)</cntorg>
+				</cntperp>
+				<cntpos>GIS Data Librarian</cntpos>
+				<cntaddr>
+					<addrtype>mailing and physical address</addrtype>
+					<address>
+Fish and Wildlife Research Institute
+100 Eighth Avenue Southeast
+</address>
+					<city>St. Petersburg</city>
+					<state>Florida</state>
+					<postal>33701</postal>
+					<country>USA</country>
+				</cntaddr>
+				<cntvoice>727-896-8626</cntvoice>
+				<cntfax>727-893-1679</cntfax>
+				<cntemail>GISLibrarian@MyFWC.com</cntemail>
+				<hours>8:00 a.m.-5:00 p.m. Eastern time</hours>
+				<smcoemhy>false</smcoemhy>
+			</cntinfo>
+		</distrib>
+		<distliab>This data set is in the public domain, and the recipient may not assert any proprietary rights thereto nor represent it to anyone as other than a FWC-FWRI produced data set; it is provided "as-is" without warranty of any kind, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose. The user assumes all responsibility for the accuracy and suitability of this data set for a specific application. In no event will the staff of the Fish and Wildlife Research Institute be liable for any damages, including lost profits, lost savings, or other incidental or consequential damages arising from the use of or the inability to use this data set.</distliab>
+		<stdorder>
+			<digform>
+				<digtinfo>
+					<formname>SHP</formname>
+					<asciistr>
+						<casesens>true</casesens>
+					</asciistr>
+				</digtinfo>
+				<digtopt>
+					<smdistty>1</smdistty>
+				</digtopt>
+			</digform>
+			<fees>None. However, persons or organizations requesting information must provide transfer media if FTP is not available and must pay express shipping costs if express shipping is required.</fees>
+			<ordering>Contact GIS Librarian by e-mail, telephone, or letter explaining which products are needed and providing a brief description of how the products will be used. Also, provide name and address of the person or organization requesting the products.</ordering>
+			<turnarnd>Usually within 10 business days, although, complex requests may take longer</turnarnd>
+			<smdistty>1</smdistty>
+		</stdorder>
+		<custom>Contact GIS Librarian</custom>
+		<smdistnm>Available without restriction</smdistnm>
+		<resdesc Sync="TRUE">Downloadable Data</resdesc></distinfo>
+	<metainfo>
+		<metd>20060117</metd>
+		<metrd>20061103</metrd>
+		<metc>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>Avineon Incorporated, Baymont Division</cntorg>
+					<cntper>Patterson, Keith</cntper>
+				</cntorgp>
+				<cntpos>Director Photogrammetry, Mapping, and GIS</cntpos>
+				<cntaddr>
+					<addrtype>Mailing and physical</addrtype>
+					<address>14100 58th Street North</address>
+					<city>Clearwater</city>
+					<state>FL</state>
+					<postal>33760</postal>
+					<country>USA</country>
+				</cntaddr>
+				<cntvoice>727-539-1661</cntvoice>
+				<cntfax>727-539-1749</cntfax>
+				<cntemail>pattersonk@avineon.com</cntemail>
+				<hours>8:00 a.m.-5:00 p.m. Eastern time M-F</hours>
+				<cntinst>Avineon was formerly called Agra Baymont, which was previously GEONEX.</cntinst>
+				<smcoemhy>false</smcoemhy>
+			</cntinfo>
+		</metc>
+		<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+		<metstdv>FGDC-STD-001-1998</metstdv>
+		<mettc>local time</mettc>
+		<metextns>
+			<onlink>http://www.esri.com/metadata/esriprof80.html</onlink>
+			<metprof>ESRI Metadata Profile</metprof>
+			<smmrexth>0</smmrexth>
+		</metextns>
+		<langmeta Sync="TRUE">en</langmeta><metextns><onlink Sync="TRUE">http://www.esri.com/metadata/esriprof80.html</onlink><metprof Sync="TRUE">ESRI Metadata Profile</metprof></metextns></metainfo>
+	<Esri><CreaDate>20110331</CreaDate><CreaTime>14543900</CreaTime><SyncOnce>FALSE</SyncOnce><ModDate>20100921</ModDate><ModTime>09171500</ModTime><SyncDate>20100921</SyncDate><SyncTime>09165600</SyncTime><MetaID>{AE09A990-CF6C-4427-A6E0-FF9E541836C1}</MetaID></Esri><mdDateSt Sync="TRUE">20100125</mdDateSt><distInfo><distributor><distorTran><onLineSrc><orDesc Sync="TRUE">002</orDesc><linkage Sync="TRUE">file://</linkage><protocol Sync="TRUE">Local Area Network</protocol></onLineSrc></distorTran></distributor></distInfo></metadata>
