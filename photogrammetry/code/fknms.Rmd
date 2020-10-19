@@ -42,6 +42,7 @@ setwd("../data")
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load("cowplot", "flextable", "ggrepel", "ggspatial", "lubridate", "officer", "paletteer", "patchwork", "rgdal", "rnaturalearth", "sf", "tidyverse")
+
 ```
 <br>
 
