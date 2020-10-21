@@ -5,3 +5,5 @@
 settlementTiles/data/photos
 herbivory/data/photos
 herbivory/data/videos
+*.tiff
+*.RDataTmp
