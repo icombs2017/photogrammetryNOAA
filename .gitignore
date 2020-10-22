@@ -7,3 +7,4 @@ herbivory/data/photos
 herbivory/data/videos
 *.tiff
 *.RDataTmp
+*.DS_Store
