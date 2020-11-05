@@ -42,7 +42,7 @@ This is the analysis pipeline to analyze the data generated from rugosity measur
 
 For the following analyses we will require the use of a number of different R packages. Most of which can be sourced from CRAN, but some must be downloaded from GitHub. We can use the following code to load in the packages and install any packages not previously installed in the R console. 
 
-```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load("ggplot2", "dplyr", "tibble")
 #pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
@@ -55,7 +55,7 @@ pacman::p_load("ggplot2", "dplyr", "tibble")
 
 Viscore produces rugosity measurement outputs as *.csv* files. We will be loading each model's file separately. We are using `header = F` here because Viscore produces *.csv* files without headers. We will change those later. We are naming each file according to the model it originated from. 
 
-```{r, load, include = TRUE, results = "hide}
+```{r, load, include = TRUE, results = "hide"}
 
 c1 <- read.csv("../data/c1r0-lines.csv", header = F)
 c2 <- read.csv("../data/c2r0-lines.csv", header = F)
@@ -72,26 +72,26 @@ head(c1)
 
 # Data manipulation
 ***
-The data comes Viscore without headers and with some extraneous columns. We will be using package `dplyr` to manipulate the data into a more user-friendly format. Currently, the data is given to us with a first column of some binary, we are going to remove that. The next column is the transect number, in this instance, we ran 9 transects (1m apart) so the transects should be labeled 0-8. The next column is the individual point that was placed. Here we place 1000 points (1cm apart) on each transect. The fourth column is the x coordinate, the fifth column is the y coordinate, and the sixth column is the z coordinate. The z coordinate is depth and the coordinate we want to pay particular attention to in downstream rugosity analysis. We will rename all the columns appropriately as well as give each dataframe a new column labeled "site".
+The data comes Viscore without headers and with some extraneous columns. We will be using the package `dplyr` to manipulate the data into a more user-friendly format. Currently, the data is given to us with a first column of some binary, we are going to remove that. The next column is the transect number, in this instance, we ran 9 transects (1m apart) so the transects should be labeled 0-8. The next column is the individual point that was placed. Here we place 1000 points (1cm apart) on each transect. The fourth column is the x coordinate, the fifth column is the y coordinate, and the sixth column is the z coordinate. The z coordinate is depth and the coordinate we want to pay particular attention to in downstream rugosity analysis. We will rename all the columns appropriately as well as give each dataframe a new column labeled "site".
 ```{r, manipulation, include = TRUE, results = 'hide'}
-sitec1 <- "c1"
-c1<- c1 %>% add_column(sitec1) %>% select(c("sitec1", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitec1) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(x = V4) %>% rename(y = V5) %>% rename(z = V6)
+sitec1 <- as.factor("c1")
+c1<- c1 %>% add_column(sitec1) %>% select(c("sitec1", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitec1) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(y = V4) %>% rename(x = V5) %>% rename(z = V6)
 
 
-sitec2 <- "c2"
-c2<- c2 %>% add_column(sitec2) %>% select(c("sitec2", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitec2) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(x = V4) %>% rename(y = V5) %>% rename(z = V6)
+sitec2 <- as.factor("c2")
+c2<- c2 %>% add_column(sitec2) %>% select(c("sitec2", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitec2) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(y = V4) %>% rename(x = V5) %>% rename(z = V6)
 
-siteu1 <- "u1"
-u1<- u1 %>% add_column(siteu1) %>% select(c("siteu1", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = siteu1) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(x = V4) %>% rename(y = V5) %>% rename(z = V6)
+siteu1 <- as.factor("u1")
+u1<- u1 %>% add_column(siteu1) %>% select(c("siteu1", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = siteu1) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(y = V4) %>% rename(x = V5) %>% rename(z = V6)
 
-siteu2 <- "u2"
-u2<- u2 %>% add_column(siteu2) %>% select(c("siteu2", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = siteu2) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(x = V4) %>% rename(y = V5) %>% rename(z = V6)
+siteu2 <- as.factor("u2")
+u2<- u2 %>% add_column(siteu2) %>% select(c("siteu2", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = siteu2) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(y = V4) %>% rename(x = V5) %>% rename(z = V6)
 
-sitez1 <- "z1"
-z1<- z1 %>% add_column(sitez1) %>% select(c("sitez1", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitez1) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(x = V4) %>% rename(y = V5) %>% rename(z = V6)
+sitez1 <- as.factor("z1")
+z1<- z1 %>% add_column(sitez1) %>% select(c("sitez1", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitez1) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(y = V4) %>% rename(x = V5) %>% rename(z = V6)
 
-sitez2 <- "z2"
-z2<- z2 %>% add_column(sitez2) %>% select(c("sitez2", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitez2) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(x = V4) %>% rename(y = V5) %>% rename(z = V6)
+sitez2 <- as.factor("z2")
+z2<- z2 %>% add_column(sitez2) %>% select(c("sitez2", "V2", "V3", "V4", "V5", "V6")) %>% rename(site = sitez2) %>% rename(transect = V2) %>% rename(point = V3) %>% rename(y = V4) %>% rename(x = V5) %>% rename(z = V6)
 
 
 head(c1)
@@ -121,18 +121,115 @@ summary(rugo)
 <br><br>
 # Calculating variance
 ***
-We have a very large dataset, however, what we are really concerned with is the **variance** of our z coordinate for each transect (and maybe eventually for each site). Using `dplyr` we are going to calculate our variance as well as collpase our data set so it is easier to work with. We will end up with 1 variance value for each transect within each site.
+We have a very large dataset, however, what we are really concerned with is the **variance** of our z coordinate for each transect (and maybe, eventually, for each site). Using `dplyr` we are going to calculate our variance as well as collapse our data set so it is easier to work with. We will end up with 1 variance value for each transect within each site. We are also calculating standard deviation and mean. 
 
 
 ```{r, variance, include = TRUE}
-rugoVar <- rugo %>% dplyr::select(site, transect, z) %>% group_by(site, transect) %>%  summarise(var(z), mean(z))
+rugoVar <- rugo %>% dplyr::select(site, transect, x, y, z) %>% group_by(site, transect) %>%  summarise(var(z), mean(z), sd(z))
 
 siteVar <- rugo %>% dplyr::select(site, z) %>% group_by(site) %>%  summarise(var(z), mean(z))
+
+rugoMean <- rugo %>% dplyr::select(site, point, x, y, z) %>% group_by(site, point) %>% summarise(mean(z))
+
+
+```
+<br><br>
+# Visualizing the data
+We are going to plot each x, y and z coordinate for the above sites using the package `plotly` and the function `plot_ly` just to make sure our data looks normal (ie: there should be 9 lines, fairly evenly spaced)
+
+```{r, plotting, include = TRUE}
+
+c1plot <- plot_ly(data = c1, x = c1$x, y = c1$y, z = c1$z, type = 'scatter3d', mode = "markers", color = c1$transect)
+c1plot
+c2plot <- plot_ly(data = c2, x = c2$x, y = c2$y, z = c2$z, type = 'scatter3d', mode = "markers", color = c2$transect)
+c2plot
+u1plot <- plot_ly(data = u1, x = u1$x, y = u1$y, z = u1$z, type = 'scatter3d', mode = "markers", color = u1$transect)
+u1plot
+u2plot <- plot_ly(data = u2, x = u2$x, y = u2$y, z = u2$z, type = 'scatter3d', mode = "markers", color = u2$transect)
+u2plot
+z1plot <- plot_ly(data = z1, x = z1$x, y = z1$y, z = z1$z, type = 'scatter3d', mode = "markers", color = z1$transect)
+z1plot
+z2plot <- plot_ly(data = z2, x = z2$x, y = z2$y, z = z2$z, type = 'scatter3d', mode = "markers", color = z2$transect)
+z2plot
+
+c1ggplot <- ggplot(data = c1, aes(x = point, y = z, color = transect))+
+  geom_line()+
+  facet_wrap(vars(transect))
+c1ggplot
+
+c2ggplot <- ggplot(data = c2, aes(x = point, y = z, color = transect))+
+  geom_line()+
+  facet_wrap(vars(transect))
+c2ggplot
+
+u1ggplot <- ggplot(data = u1, aes(x = point, y = z, color = transect))+
+  geom_line()+
+  facet_wrap(vars(transect))
+u1ggplot
+
+
+u2ggplot <- ggplot(data = u2, aes(x = point, y = z, color = transect))+
+  geom_line()+
+  facet_wrap(vars(transect))
+u2ggplot
+
+
+z1ggplot <- ggplot(data = z1, aes(x = point, y = z, color = transect))+
+  geom_line()+
+  facet_wrap(vars(transect))
+z1ggplot
+
+z2ggplot <- ggplot(data = z2, aes(x = point, y = z, color = transect))+
+  geom_line()+
+  facet_wrap(vars(transect))
+z2ggplot
+
+siteProfile <- ggplot(data = rugoMean, aes(x = point, y = `mean(z)`, color = site))+
+  geom_line()+
+  facet_wrap(vars(site))
+siteProfile
+```
+
+
+
+<br><br>
+# Calculating Root Mean Square Height
+***
+Now we are going to calculate the Root Mean Square Height as described in [Davidson et al. 2003](https://ieeexplore-ieee-org.ezproxy.fau.edu/stamp/stamp.jsp?tp=&arnumber=1221829)
+
+
+```{r, Root Mean Square Height, include = FALSE}
+
+
+# find and remove outliers
+data_cleaned <- find_Outliers(data = rugo)
+                              
+                              ,
+                              prefilter = TRUE,
+                              method = c("iqr", "sd", "mad"),
+                              remove = "mad",
+                              window = FALSE,
+                              width = 20,
+                              step = 10,
+                              hist = TRUE,
+                              plot = TRUE)
+
+# de-trend the data set
+data_detrend <- detrend_Data(data_cleaned, plot = TRUE)
+
+# calculate RMS
+RMS <- calc_RMS(rugoVar)
+print(RMS)
+
+# note that the function returns a data frame
+
+
+
+sd(rugo$z)
 
 
 
 ```
-
 
 
 
