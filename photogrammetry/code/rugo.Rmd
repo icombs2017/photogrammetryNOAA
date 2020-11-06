@@ -127,7 +127,7 @@ We have a very large dataset, however, what we are really concerned with is the 
 ```{r, variance, include = TRUE}
 rugoVar <- rugo %>% dplyr::select(site, transect, x, y, z) %>% group_by(site, transect) %>%  summarise(var(z), mean(z), sd(z))
 
-siteVar <- rugo %>% dplyr::select(site, z) %>% group_by(site) %>%  summarise(var(z), mean(z))
+siteVar <- rugo %>% dplyr::select(site, z) %>% group_by(site) %>%  summarise(var(z), mean(z), sd(z), sqrt(mean((z)^2))) %>% rename(variance = `var(z)`, mean = `mean(z)`, sd = `sd(z)`, rms = `sqrt(mean((z)^2))`)
 
 rugoMean <- rugo %>% dplyr::select(site, point, x, y, z) %>% group_by(site, point) %>% summarise(mean(z))
 
@@ -229,7 +229,67 @@ sd(rugo$z)
 
 
 ```
+<br><br>
+# Root Mean Square
+***
+We are calculating the root mean square
+```{r, rmsh, include = TRUE}
 
+
+RMSHc1 <- sqrt(mean((c1$z)^2))
+RMSHc1 <- as.data.frame(RMSHc1)
+RMSHc1$site <- "c1" 
+RMSHc1 <- RMSHc1 %>% rename(RMS = RMSHc1) %>% dplyr::select(site, RMS)
+RMSHc1
+
+RMSHc2 <- sqrt(mean((c2$z)^2))
+RMSHc2 <- as.data.frame(RMSHc2)
+RMSHc2$site <- "c2" 
+RMSHc2 <- RMSHc2 %>% rename(RMS = RMSHc2) %>% dplyr::select(site, RMS)
+RMSHc2
+
+
+RMSHu1 <- sqrt(mean((u1$z)^2))
+RMSHu1 <- as.data.frame(RMSHu1)
+RMSHu1$site <- "u1" 
+RMSHu1 <- RMSHu1 %>% rename(RMS = RMSHu1) %>% dplyr::select(site, RMS)
+RMSHu1
+
+RMSHu2 <- sqrt(mean((u2$z)^2))
+RMSHu2 <- as.data.frame(RMSHu2)
+RMSHu2$site <- "u2" 
+RMSHu2 <-RMSHu2 %>% rename(RMS = RMSHu2) %>% dplyr::select(site, RMS)
+RMSHu2 
+
+
+
+
+
+RMSHz1 <- sqrt(mean((z1$z)^2))
+RMSHz1 <- as.data.frame(RMSHz1)
+RMSHz1$site <- "z1" 
+RMSHz1 <-RMSHz1 %>% rename(RMS = RMSHz1) %>% dplyr::select(site, RMS)
+RMSHz1 
+
+
+
+
+RMSHz2 <- sqrt(mean((z2$z)^2))
+RMSHz2 <- as.data.frame(RMSHz2)
+RMSHz2$site <- "z2" 
+RMSHz2 <-RMSHz2 %>% rename(RMS = RMSHz2) %>% dplyr::select(site, RMS)
+RMSHz2 
+
+
+rootMean <- bind_rows(RMSHc1,RMSHc2,RMSHu1,RMSHu2,RMSHz1,RMSHz2) 
+
+rootMean
+
+
+
+
+
+```
 
 
 
