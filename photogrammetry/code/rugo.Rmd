@@ -1,5 +1,5 @@
 ---
-title: "rugosity"
+title: "Rugosity"
 author: "Ian Combs -- icombs@mote.org"
 output:
   html_document:
@@ -119,6 +119,7 @@ summary(rugo)
 ```
 
 <br><br>
+
 # Calculating variance
 ***
 We have a very large dataset, however, what we are really concerned with is the **variance** of our z coordinate for each transect (and maybe, eventually, for each site). Using `dplyr` we are going to calculate our variance as well as collapse our data set so it is easier to work with. We will end up with 1 variance value for each transect within each site. We are also calculating standard deviation and mean. 
@@ -132,7 +133,9 @@ siteVar <- rugo %>% dplyr::select(site, z) %>% group_by(site) %>%  summarise(var
 rugoMean <- rugo %>% dplyr::select(site, point, x, y, z) %>% group_by(site, point) %>% summarise(mean(z))
 
 ```
+
 <br><br>
+
 # Visualizing the data
 We are going to plot each x, y and z coordinate for the above sites using the package `plotly` and the function `plot_ly` just to make sure our data looks normal (ie: there should be 9 lines, fairly evenly spaced)
 
@@ -192,40 +195,41 @@ siteProfile
 
 
 <br><br>
+
 # Calculating Root Mean Square Height
 ***
-Now we are going to calculate the Root Mean Square Height as described in [Davidson et al. 2003](https://ieeexplore-ieee-org.ezproxy.fau.edu/stamp/stamp.jsp?tp=&arnumber=1221829)
+Now we are going to calculate the Root Mean Square Height as described in [Davidson et al. 2003](https://ieeexplore.ieee.org/document/1221829)
 
 
 ```{r, Root Mean Square Height, include = FALSE}
-
-# NOT SURE IF THIS IS THE CORRECT THING, KEEPING FOR RECORDS
-# find and remove outliers
-data_cleaned <- find_Outliers(data = rugo)
-                              
-                              ,
-                              prefilter = TRUE,
-                              method = c("iqr", "sd", "mad"),
-                              remove = "mad",
-                              window = FALSE,
-                              width = 20,
-                              step = 10,
-                              hist = TRUE,
-                              plot = TRUE)
-
-# de-trend the data set
-data_detrend <- detrend_Data(data_cleaned, plot = TRUE)
-
-# calculate RMS
-RMS <- calc_RMS(rugoVar)
-print(RMS)
-
-# note that the function returns a data frame
-
-
-
-sd(rugo$z)
-
+# 
+# # NOT SURE IF THIS IS THE CORRECT THING, KEEPING FOR RECORDS
+# # find and remove outliers
+# data_cleaned <- find_Outliers(data = rugo)
+#                               
+#                               ,
+#                               prefilter = TRUE,
+#                               method = c("iqr", "sd", "mad"),
+#                               remove = "mad",
+#                               window = FALSE,
+#                               width = 20,
+#                               step = 10,
+#                               hist = TRUE,
+#                               plot = TRUE)
+# 
+# # de-trend the data set
+# data_detrend <- detrend_Data(data_cleaned, plot = TRUE)
+# 
+# # calculate RMS
+# RMS <- calc_RMS(rugoVar)
+# print(RMS)
+# 
+# # note that the function returns a data frame
+# 
+# 
+# 
+# sd(rugo$z)
+# 
 
 
 ```
