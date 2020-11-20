@@ -1,0 +1,182 @@
+---
+title: "Analysis of Herbivory Assays"
+author: "Ian Combs -- combsi9892@gmail.com"
+output:
+  html_document:
+    theme: flatly
+    code_folding: show
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_doctument:
+      toc: yes
+      toc_depth: 3
+---
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, fig.align = 'left')
+library(magrittr)
+```
+
+### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
+
+<!-- this is where the DOI would go  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3675991.svg)](https://doi.org/10.5281/zenodo.3675991)
+-->
+
+
+<!--#### THIS IS WHERE GITHUB REPO URL GOES [GitHub repository](https://github.com/icombs2017/herbivory.git){target="_blank"}-->
+
+###
+***
+This is the analysis pipeline to analyze seagrass surface area from herbivory assays. Six experimental 10m x 10m plots were established. Two herbivory assays were deployed at each site. Each assay consisted for 5 blades of **Thalassia testudinum** set in clothespins threaded onto galvanized wire at 6in. intervals. The assays were deployed for 2 hours and filmed using a GoPro camera. The blades for each assay were photographed before and after deployment. Surface area measurements were generated using the TagLab segmentation software. Below is the analysis of those surface area measurements. 
+
+
+***
+
+### All analyses performed with R version `r getRversion()`
+
+
+# Basic setup of R environment
+***
+## Loading required packages
+For the following analyses we will require the use of a number of different R packages. Most of which can be sourced from CRAN, but some must be downloaded from GitHub. We can use the following code to load in the packages and install any packages not previously installed in the R console. 
+
+```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble")
+
+```
+# Loading data
+***
+Data generated in TagLab is exported as a .csv for each project. So there are 24 .csv files, a "before" and "after" for each assay. We want to compile all of the .csv files into one larger dataframe. To do this we will use the function `list.files()` and `ldply` from the package `plyr`. 
+
+```{r, load and subset, include = TRUE, results = "hide"}
+mydir <- "../data"
+beforeFiles <- list.files(path = mydir, pattern = "*Before.csv", full.names = TRUE)
+beforeFiles
+
+afterFiles <- list.files(path = mydir, pattern = "*After.csv", full.names = TRUE)
+afterFiles
+
+# This loads the list of .csv's that we made above and adds a column of file names to the data frame
+beforeFiles_list <- lapply(beforeFiles, function(x){
+  out <- tryCatch(read.csv(x, header = TRUE, sep = "\t"), error = function(e) NULL)
+  if (!is.null(out)){
+    out$source_file <- x
+  }
+  return(out)
+})
+beforeData <- data.table::rbindlist(beforeFiles_list)
+
+# This takes the data, removes everything from the file name column except the important data to us, and sorts the data frame 
+# so it contains only the information we care about 
+beforeData <- beforeData %>% 
+              separate(source_file, into = c("dir","source","file"), sep = "[/]", remove = FALSE) %>% 
+              separate(file, c("assay", "file"), sep = "[.]") %>% 
+              separate(assay, c("assay", "status"), sep = "Before") %>% 
+              dplyr::select(assay, Blob.id, Class.name, Coral.area) %>% 
+              filter(Class.name == "Halimeda")
+
+beforeData$assay <- as.factor(beforeData$assay)
+
+# This adds all of the area data for each assay since we are treating each assay as one event
+totalBeforeData <- beforeData %>% 
+                  group_by(assay) %>% 
+                  summarise(beforeArea = sum(Coral.area)) %>% 
+                  add_column(status = "before")
+
+# This adds a column of "before" this is important when we combine the two dataframes
+totalBeforeData <- totalBeforeData 
+
+summary(totalBeforeData)
+
+# Below we are repeating everything for the "after" data
+afterFiles_list <- lapply(afterFiles, function(x){
+  out <- tryCatch(read.csv(x, header = TRUE, sep = "\t"), error = function(e) NULL)
+  if (!is.null(out)){
+    out$source_file <- x
+  }
+  return(out)
+})
+afterData <- data.table::rbindlist(afterFiles_list)
+  
+afterData <- afterData %>% 
+              separate(source_file, into = c("dir","source","file"), sep = "[/]", remove = FALSE) %>% 
+              separate(file, c("assay", "file"), sep = "[.]") %>% 
+              separate(assay, c("assay", "status"), sep = "After") %>% 
+              dplyr::select(c(assay, Blob.id, Class.name, Coral.area)) %>% 
+              filter(Class.name == "Halimeda") 
+
+afterData$assay <- as.factor(afterData$assay)
+
+totalAfterData <- afterData %>% 
+                  group_by(assay) %>% 
+                  summarise(afterArea = sum(Coral.area)) %>% 
+                  add_column(status = "after")
+
+
+# Combining the "before" and "after" dataframes
+totalData <- merge(totalBeforeData, totalAfterData, by = "assay")
+
+totalData
+
+
+
+```
+
+<br><br>
+
+# Calculating percent change
+***
+Now we have the data set up so we can calculate the percent change in **T. testudinum** blades after a 2 hour deployment.
+
+```{r, percent change, include = TRUE, }
+
+totalData$percentChange <- ((totalData$afterArea - totalData$beforeArea)/totalData$beforeArea)*100
+
+lossPlot <- ggplot(totalData, aes(x = assay, y = abs(percentChange)))+
+                     geom_bar(stat = 'identity')
+lossPlot
+
+groupedPlot <- ggplot(totalData, aes(x =))
+
+
+
+```
+```{r, groupBar, include = TRUE}
+plotBefore <- totalBeforeData %>% rename(area = beforeArea)
+plotAfter <- totalAfterData %>% rename(area = afterArea)
+
+plotData <- bind_rows(plotBefore, plotAfter)
+plotData$status = factor(plotData$status, levels(plotData$status)[c(2,1)])
+levels(plotData$status)
+
+head(plotData)
+
+groupPlot <- ggplot(plotData, aes(x = assay, y = area, fill = status))+
+              geom_bar(position = 'dodge', stat = 'identity')
+groupPlot
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

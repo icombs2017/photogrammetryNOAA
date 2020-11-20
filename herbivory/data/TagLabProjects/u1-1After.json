@@ -1,0 +1,2833 @@
+{
+ "filename": "../photogrammetryNOAA/herbivory/data/TagLabProjects/u1-1After.json",
+ "labels": {
+  "Empty": {
+   "id": "Empty",
+   "name": "Empty",
+   "description": null,
+   "fill": [
+    127,
+    127,
+    127
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Corallimorph/Urchin": {
+   "id": "Corallimorph/Urchin",
+   "name": "Corallimorph/Urchin",
+   "description": null,
+   "fill": [
+    255,
+    0,
+    10
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Sea Star": {
+   "id": "Sea Star",
+   "name": "Sea Star",
+   "description": null,
+   "fill": [
+    113,
+    39,
+    43
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Sea Cucumber": {
+   "id": "Sea Cucumber",
+   "name": "Sea Cucumber",
+   "description": null,
+   "fill": [
+    55,
+    5,
+    8
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Cavularia": {
+   "id": "Cavularia",
+   "name": "Cavularia",
+   "description": null,
+   "fill": [
+    158,
+    11,
+    15
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Zooanthid": {
+   "id": "Zooanthid",
+   "name": "Zooanthid",
+   "description": null,
+   "fill": [
+    121,
+    0,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Sinularia": {
+   "id": "Sinularia",
+   "name": "Sinularia",
+   "description": null,
+   "fill": [
+    117,
+    76,
+    36
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Sarcophyton": {
+   "id": "Sarcophyton",
+   "name": "Sarcophyton",
+   "description": null,
+   "fill": [
+    96,
+    57,
+    19
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Cryptodendrum": {
+   "id": "Cryptodendrum",
+   "name": "Cryptodendrum",
+   "description": null,
+   "fill": [
+    140,
+    98,
+    57
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pocillopora": {
+   "id": "Pocillopora",
+   "name": "Pocillopora",
+   "description": null,
+   "fill": [
+    240,
+    110,
+    170
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Porite": {
+   "id": "Porite",
+   "name": "Porite",
+   "description": null,
+   "fill": [
+    0,
+    162,
+    232
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pocillopora_damicornis": {
+   "id": "Pocillopora_damicornis",
+   "name": "Pocillopora_damicornis",
+   "description": null,
+   "fill": [
+    231,
+    70,
+    170
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pocillopora_zelli": {
+   "id": "Pocillopora_zelli",
+   "name": "Pocillopora_zelli",
+   "description": null,
+   "fill": [
+    240,
+    171,
+    203
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pocillopora_eydouxi": {
+   "id": "Pocillopora_eydouxi",
+   "name": "Pocillopora_eydouxi",
+   "description": null,
+   "fill": [
+    102,
+    45,
+    145
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Stylophora": {
+   "id": "Stylophora",
+   "name": "Stylophora",
+   "description": null,
+   "fill": [
+    146,
+    39,
+    143
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Acropora_branching": {
+   "id": "Acropora_branching",
+   "name": "Acropora_branching",
+   "description": null,
+   "fill": [
+    158,
+    0,
+    93
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Acropora_corymbose": {
+   "id": "Acropora_corymbose",
+   "name": "Acropora_corymbose",
+   "description": null,
+   "fill": [
+    133,
+    96,
+    168
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Montipora_capitata": {
+   "id": "Montipora_capitata",
+   "name": "Montipora_capitata",
+   "description": null,
+   "fill": [
+    119,
+    255,
+    198
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pavona_cactus": {
+   "id": "Pavona_cactus",
+   "name": "Pavona_cactus",
+   "description": null,
+   "fill": [
+    23,
+    146,
+    144
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Porites_branching": {
+   "id": "Porites_branching",
+   "name": "Porites_branching",
+   "description": null,
+   "fill": [
+    0,
+    169,
+    157
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Favites_crust": {
+   "id": "Favites_crust",
+   "name": "Favites_crust",
+   "description": null,
+   "fill": [
+    255,
+    247,
+    153
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Montipora_crust/patula": {
+   "id": "Montipora_crust/patula",
+   "name": "Montipora_crust/patula",
+   "description": null,
+   "fill": [
+    171,
+    160,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Montipora": {
+   "id": "Montipora",
+   "name": "Montipora",
+   "description": null,
+   "fill": [
+    0,
+    128,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pavona_varians": {
+   "id": "Pavona_varians",
+   "name": "Pavona_varians",
+   "description": null,
+   "fill": [
+    255,
+    255,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Porites_superfusa": {
+   "id": "Porites_superfusa",
+   "name": "Porites_superfusa",
+   "description": null,
+   "fill": [
+    251,
+    175,
+    93
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Hydnophora_pilosa": {
+   "id": "Hydnophora_pilosa",
+   "name": "Hydnophora_pilosa",
+   "description": null,
+   "fill": [
+    253,
+    198,
+    137
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Leptastrea": {
+   "id": "Leptastrea",
+   "name": "Leptastrea",
+   "description": null,
+   "fill": [
+    255,
+    245,
+    104
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Psammocora": {
+   "id": "Psammocora",
+   "name": "Psammocora",
+   "description": null,
+   "fill": [
+    163,
+    211,
+    156
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Leptoseris": {
+   "id": "Leptoseris",
+   "name": "Leptoseris",
+   "description": null,
+   "fill": [
+    130,
+    123,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Fungia_single": {
+   "id": "Fungia_single",
+   "name": "Fungia_single",
+   "description": null,
+   "fill": [
+    242,
+    101,
+    34
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Fungia_multiple": {
+   "id": "Fungia_multiple",
+   "name": "Fungia_multiple",
+   "description": null,
+   "fill": [
+    247,
+    148,
+    29
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Porite_massive": {
+   "id": "Porite_massive",
+   "name": "Porite_massive",
+   "description": null,
+   "fill": [
+    109,
+    207,
+    246
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Porites_rus": {
+   "id": "Porites_rus",
+   "name": "Porites_rus",
+   "description": null,
+   "fill": [
+    81,
+    191,
+    223
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Flavia_matthai": {
+   "id": "Flavia_matthai",
+   "name": "Flavia_matthai",
+   "description": null,
+   "fill": [
+    122,
+    204,
+    200
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Hydnophora_microconos": {
+   "id": "Hydnophora_microconos",
+   "name": "Hydnophora_microconos",
+   "description": null,
+   "fill": [
+    131,
+    147,
+    202
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Montastrea": {
+   "id": "Montastrea",
+   "name": "Montastrea",
+   "description": null,
+   "fill": [
+    0,
+    174,
+    239
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Cyphastrea": {
+   "id": "Cyphastrea",
+   "name": "Cyphastrea",
+   "description": null,
+   "fill": [
+    140,
+    187,
+    184
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Lobophyllia": {
+   "id": "Lobophyllia",
+   "name": "Lobophyllia",
+   "description": null,
+   "fill": [
+    0,
+    84,
+    166
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Platgyra": {
+   "id": "Platgyra",
+   "name": "Platgyra",
+   "description": null,
+   "fill": [
+    0,
+    91,
+    127
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Favia_submassive": {
+   "id": "Favia_submassive",
+   "name": "Favia_submassive",
+   "description": null,
+   "fill": [
+    125,
+    167,
+    217
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Favites_submassive": {
+   "id": "Favites_submassive",
+   "name": "Favites_submassive",
+   "description": null,
+   "fill": [
+    27,
+    20,
+    100
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pavona_submassive": {
+   "id": "Pavona_submassive",
+   "name": "Pavona_submassive",
+   "description": null,
+   "fill": [
+    46,
+    49,
+    146
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Goniastrea_pectinata": {
+   "id": "Goniastrea_pectinata",
+   "name": "Goniastrea_pectinata",
+   "description": null,
+   "fill": [
+    86,
+    116,
+    185
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Astreopora": {
+   "id": "Astreopora",
+   "name": "Astreopora",
+   "description": null,
+   "fill": [
+    0,
+    52,
+    113
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Acropora_table": {
+   "id": "Acropora_table",
+   "name": "Acropora_table",
+   "description": null,
+   "fill": [
+    0,
+    94,
+    32
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Montipora_plate/flabellata": {
+   "id": "Montipora_plate/flabellata",
+   "name": "Montipora_plate/flabellata",
+   "description": null,
+   "fill": [
+    89,
+    133,
+    39
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Hydnophora_exesa": {
+   "id": "Hydnophora_exesa",
+   "name": "Hydnophora_exesa",
+   "description": null,
+   "fill": [
+    0,
+    166,
+    81
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Tubinaria": {
+   "id": "Tubinaria",
+   "name": "Tubinaria",
+   "description": null,
+   "fill": [
+    141,
+    198,
+    63
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Tubastrea": {
+   "id": "Tubastrea",
+   "name": "Tubastrea",
+   "description": null,
+   "fill": [
+    170,
+    202,
+    174
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "CCA": {
+   "id": "CCA",
+   "name": "CCA",
+   "description": null,
+   "fill": [
+    254,
+    207,
+    5
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Halimeda": {
+   "id": "Halimeda",
+   "name": "Halimeda",
+   "description": null,
+   "fill": [
+    0,
+    255,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Dictyophaeria": {
+   "id": "Dictyophaeria",
+   "name": "Dictyophaeria",
+   "description": null,
+   "fill": [
+    64,
+    102,
+    24
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Lobophora": {
+   "id": "Lobophora",
+   "name": "Lobophora",
+   "description": null,
+   "fill": [
+    233,
+    5,
+    254
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Peysonnelia": {
+   "id": "Peysonnelia",
+   "name": "Peysonnelia",
+   "description": null,
+   "fill": [
+    35,
+    177,
+    233
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "CCA Other": {
+   "id": "CCA Other",
+   "name": "CCA Other",
+   "description": null,
+   "fill": [
+    7,
+    55,
+    210
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "30/70 CCA + Turf": {
+   "id": "30/70 CCA + Turf",
+   "name": "30/70 CCA + Turf",
+   "description": null,
+   "fill": [
+    7,
+    210,
+    17
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "70/30 CCA + Turf": {
+   "id": "70/30 CCA + Turf",
+   "name": "70/30 CCA + Turf",
+   "description": null,
+   "fill": [
+    254,
+    5,
+    81
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "50/50 CCA + Turf": {
+   "id": "50/50 CCA + Turf",
+   "name": "50/50 CCA + Turf",
+   "description": null,
+   "fill": [
+    122,
+    7,
+    210
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Turf": {
+   "id": "Turf",
+   "name": "Turf",
+   "description": null,
+   "fill": [
+    36,
+    124,
+    77
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Caulerpa": {
+   "id": "Caulerpa",
+   "name": "Caulerpa",
+   "description": null,
+   "fill": [
+    133,
+    170,
+    81
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Avrainvillea": {
+   "id": "Avrainvillea",
+   "name": "Avrainvillea",
+   "description": null,
+   "fill": [
+    19,
+    41,
+    23
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Galaxaura": {
+   "id": "Galaxaura",
+   "name": "Galaxaura",
+   "description": null,
+   "fill": [
+    157,
+    29,
+    31
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Halimeda opuntia": {
+   "id": "Halimeda opuntia",
+   "name": "Halimeda opuntia",
+   "description": null,
+   "fill": [
+    161,
+    239,
+    24
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Halimeda fragilis": {
+   "id": "Halimeda fragilis",
+   "name": "Halimeda fragilis",
+   "description": null,
+   "fill": [
+    98,
+    151,
+    103
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Halimeda taenicola": {
+   "id": "Halimeda taenicola",
+   "name": "Halimeda taenicola",
+   "description": null,
+   "fill": [
+    20,
+    114,
+    20
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Diplosoma": {
+   "id": "Diplosoma",
+   "name": "Diplosoma",
+   "description": null,
+   "fill": [
+    89,
+    252,
+    100
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Unknow": {
+   "id": "Unknow",
+   "name": "Unknow",
+   "description": null,
+   "fill": [
+    225,
+    225,
+    225
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Unknow_submassive": {
+   "id": "Unknow_submassive",
+   "name": "Unknow_submassive",
+   "description": null,
+   "fill": [
+    183,
+    183,
+    183
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Unknow_massive": {
+   "id": "Unknow_massive",
+   "name": "Unknow_massive",
+   "description": null,
+   "fill": [
+    149,
+    149,
+    149
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Unknow_crust": {
+   "id": "Unknow_crust",
+   "name": "Unknow_crust",
+   "description": null,
+   "fill": [
+    85,
+    85,
+    85
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Other": {
+   "id": "Other",
+   "name": "Other",
+   "description": null,
+   "fill": [
+    54,
+    54,
+    54
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  }
+ },
+ "images": [
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": ".188",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [
+    {
+     "bbox": [
+      1426,
+      1582,
+      47,
+      216
+     ],
+     "centroid": [
+      1607.9237929946355,
+      1521.3176080782582
+     ],
+     "area": 6338.0,
+     "perimeter": 479.6597113194676,
+     "contour": [
+      [
+       1617.0,
+       1639.4
+      ],
+      [
+       1606.0,
+       1639.4
+      ],
+      [
+       1604.0,
+       1637.4
+      ],
+      [
+       1602.0,
+       1637.4
+      ],
+      [
+       1601.6,
+       1637.0
+      ],
+      [
+       1601.6,
+       1636.0
+      ],
+      [
+       1602.6,
+       1635.0
+      ],
+      [
+       1602.6,
+       1634.0
+      ],
+      [
+       1601.6,
+       1633.0
+      ],
+      [
+       1601.6,
+       1632.0
+      ],
+      [
+       1603.6,
+       1630.0
+      ],
+      [
+       1602.6,
+       1629.0
+      ],
+      [
+       1602.6,
+       1619.0
+      ],
+      [
+       1601.6,
+       1618.0
+      ],
+      [
+       1601.6,
+       1617.0
+      ],
+      [
+       1600.6,
+       1616.0
+      ],
+      [
+       1600.6,
+       1603.0
+      ],
+      [
+       1599.6,
+       1602.0
+      ],
+      [
+       1599.6,
+       1591.0
+      ],
+      [
+       1598.6,
+       1590.0
+      ],
+      [
+       1598.6,
+       1588.0
+      ],
+      [
+       1597.6,
+       1587.0
+      ],
+      [
+       1597.6,
+       1582.0
+      ],
+      [
+       1596.6,
+       1581.0
+      ],
+      [
+       1596.6,
+       1569.0
+      ],
+      [
+       1594.6,
+       1567.0
+      ],
+      [
+       1594.6,
+       1560.0
+      ],
+      [
+       1593.6,
+       1559.0
+      ],
+      [
+       1593.6,
+       1549.0
+      ],
+      [
+       1592.6,
+       1548.0
+      ],
+      [
+       1592.6,
+       1535.0
+      ],
+      [
+       1591.6,
+       1534.0
+      ],
+      [
+       1591.6,
+       1531.0
+      ],
+      [
+       1590.6,
+       1530.0
+      ],
+      [
+       1590.6,
+       1517.0
+      ],
+      [
+       1589.6,
+       1516.0
+      ],
+      [
+       1589.6,
+       1509.0
+      ],
+      [
+       1588.6,
+       1508.0
+      ],
+      [
+       1588.6,
+       1489.0
+      ],
+      [
+       1587.6,
+       1488.0
+      ],
+      [
+       1587.6,
+       1460.0
+      ],
+      [
+       1586.6,
+       1459.0
+      ],
+      [
+       1586.6,
+       1434.0
+      ],
+      [
+       1588.0,
+       1432.6
+      ],
+      [
+       1612.0,
+       1432.6
+      ],
+      [
+       1614.0,
+       1430.6
+      ],
+      [
+       1621.0,
+       1430.6
+      ],
+      [
+       1623.4,
+       1433.0
+      ],
+      [
+       1623.4,
+       1440.0
+      ],
+      [
+       1624.4,
+       1441.0
+      ],
+      [
+       1624.4,
+       1445.0
+      ],
+      [
+       1625.4,
+       1446.0
+      ],
+      [
+       1625.4,
+       1479.0
+      ],
+      [
+       1626.4,
+       1480.0
+      ],
+      [
+       1626.4,
+       1501.0
+      ],
+      [
+       1625.4,
+       1502.0
+      ],
+      [
+       1625.4,
+       1525.0
+      ],
+      [
+       1624.4,
+       1526.0
+      ],
+      [
+       1624.4,
+       1556.0
+      ],
+      [
+       1623.4,
+       1557.0
+      ],
+      [
+       1623.4,
+       1565.0
+      ],
+      [
+       1622.4,
+       1566.0
+      ],
+      [
+       1622.4,
+       1577.0
+      ],
+      [
+       1621.4,
+       1578.0
+      ],
+      [
+       1621.4,
+       1590.0
+      ],
+      [
+       1620.4,
+       1591.0
+      ],
+      [
+       1620.4,
+       1610.0
+      ],
+      [
+       1619.4,
+       1611.0
+      ],
+      [
+       1619.4,
+       1620.0
+      ],
+      [
+       1620.4,
+       1621.0
+      ],
+      [
+       1620.4,
+       1636.0
+      ],
+      [
+       1617.0,
+       1639.4
+      ]
+     ],
+     "inner contours": [],
+     "deep_extreme_points": [
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ]
+     ],
+     "class name": "Halimeda",
+     "class color": [
+      0,
+      255,
+      0
+     ],
+     "instance name": "coral1",
+     "blob name": "c-1-1607.9x-1521.3y",
+     "id": 0,
+     "note": ""
+    },
+    {
+     "bbox": [
+      1472,
+      1703,
+      75,
+      177
+     ],
+     "centroid": [
+      1738.2740805604203,
+      1558.8024518388793
+     ],
+     "area": 5710.0,
+     "perimeter": 415.68409793710725,
+     "contour": [
+      [
+       1731.0,
+       1646.4
+      ],
+      [
+       1716.0,
+       1646.4
+      ],
+      [
+       1707.6,
+       1638.0
+      ],
+      [
+       1707.6,
+       1620.0
+      ],
+      [
+       1708.6,
+       1619.0
+      ],
+      [
+       1708.6,
+       1615.0
+      ],
+      [
+       1709.6,
+       1614.0
+      ],
+      [
+       1709.6,
+       1608.0
+      ],
+      [
+       1710.6,
+       1607.0
+      ],
+      [
+       1710.6,
+       1603.0
+      ],
+      [
+       1711.6,
+       1602.0
+      ],
+      [
+       1711.6,
+       1592.0
+      ],
+      [
+       1713.6,
+       1590.0
+      ],
+      [
+       1713.6,
+       1586.0
+      ],
+      [
+       1714.6,
+       1585.0
+      ],
+      [
+       1714.6,
+       1584.0
+      ],
+      [
+       1715.6,
+       1583.0
+      ],
+      [
+       1715.6,
+       1578.0
+      ],
+      [
+       1716.6,
+       1577.0
+      ],
+      [
+       1716.6,
+       1575.0
+      ],
+      [
+       1717.6,
+       1574.0
+      ],
+      [
+       1717.6,
+       1573.0
+      ],
+      [
+       1718.6,
+       1572.0
+      ],
+      [
+       1718.6,
+       1563.0
+      ],
+      [
+       1719.6,
+       1562.0
+      ],
+      [
+       1719.6,
+       1561.0
+      ],
+      [
+       1720.6,
+       1560.0
+      ],
+      [
+       1720.6,
+       1554.0
+      ],
+      [
+       1721.6,
+       1553.0
+      ],
+      [
+       1721.6,
+       1549.0
+      ],
+      [
+       1722.6,
+       1548.0
+      ],
+      [
+       1722.6,
+       1547.0
+      ],
+      [
+       1723.6,
+       1546.0
+      ],
+      [
+       1723.6,
+       1540.0
+      ],
+      [
+       1724.6,
+       1539.0
+      ],
+      [
+       1724.6,
+       1537.0
+      ],
+      [
+       1725.6,
+       1536.0
+      ],
+      [
+       1725.6,
+       1532.0
+      ],
+      [
+       1726.6,
+       1531.0
+      ],
+      [
+       1726.6,
+       1527.0
+      ],
+      [
+       1727.6,
+       1526.0
+      ],
+      [
+       1727.6,
+       1521.0
+      ],
+      [
+       1728.6,
+       1520.0
+      ],
+      [
+       1728.6,
+       1519.0
+      ],
+      [
+       1729.6,
+       1518.0
+      ],
+      [
+       1729.6,
+       1513.0
+      ],
+      [
+       1730.6,
+       1512.0
+      ],
+      [
+       1730.6,
+       1511.0
+      ],
+      [
+       1731.6,
+       1510.0
+      ],
+      [
+       1731.6,
+       1505.0
+      ],
+      [
+       1732.6,
+       1504.0
+      ],
+      [
+       1732.6,
+       1501.0
+      ],
+      [
+       1733.6,
+       1500.0
+      ],
+      [
+       1733.6,
+       1498.0
+      ],
+      [
+       1734.6,
+       1497.0
+      ],
+      [
+       1734.6,
+       1496.0
+      ],
+      [
+       1735.6,
+       1495.0
+      ],
+      [
+       1735.6,
+       1490.0
+      ],
+      [
+       1738.6,
+       1487.0
+      ],
+      [
+       1738.6,
+       1484.0
+      ],
+      [
+       1742.0,
+       1480.6
+      ],
+      [
+       1747.0,
+       1480.6
+      ],
+      [
+       1751.0,
+       1476.6
+      ],
+      [
+       1756.0,
+       1476.6
+      ],
+      [
+       1760.0,
+       1480.6
+      ],
+      [
+       1761.0,
+       1480.6
+      ],
+      [
+       1764.0,
+       1483.6
+      ],
+      [
+       1766.0,
+       1483.6
+      ],
+      [
+       1768.0,
+       1485.6
+      ],
+      [
+       1774.0,
+       1485.6
+      ],
+      [
+       1775.4,
+       1487.0
+      ],
+      [
+       1775.4,
+       1491.0
+      ],
+      [
+       1773.4,
+       1493.0
+      ],
+      [
+       1773.4,
+       1494.0
+      ],
+      [
+       1772.4,
+       1495.0
+      ],
+      [
+       1772.4,
+       1499.0
+      ],
+      [
+       1771.4,
+       1500.0
+      ],
+      [
+       1771.4,
+       1509.0
+      ],
+      [
+       1768.4,
+       1512.0
+      ],
+      [
+       1768.4,
+       1518.0
+      ],
+      [
+       1766.4,
+       1520.0
+      ],
+      [
+       1766.4,
+       1522.0
+      ],
+      [
+       1765.4,
+       1523.0
+      ],
+      [
+       1765.4,
+       1526.0
+      ],
+      [
+       1764.4,
+       1527.0
+      ],
+      [
+       1764.4,
+       1528.0
+      ],
+      [
+       1763.4,
+       1529.0
+      ],
+      [
+       1763.4,
+       1532.0
+      ],
+      [
+       1762.4,
+       1533.0
+      ],
+      [
+       1762.4,
+       1535.0
+      ],
+      [
+       1761.4,
+       1536.0
+      ],
+      [
+       1761.4,
+       1538.0
+      ],
+      [
+       1760.4,
+       1539.0
+      ],
+      [
+       1760.4,
+       1543.0
+      ],
+      [
+       1759.4,
+       1544.0
+      ],
+      [
+       1759.4,
+       1545.0
+      ],
+      [
+       1758.4,
+       1546.0
+      ],
+      [
+       1758.4,
+       1549.0
+      ],
+      [
+       1757.4,
+       1550.0
+      ],
+      [
+       1757.4,
+       1553.0
+      ],
+      [
+       1756.4,
+       1554.0
+      ],
+      [
+       1756.4,
+       1559.0
+      ],
+      [
+       1755.4,
+       1560.0
+      ],
+      [
+       1755.4,
+       1562.0
+      ],
+      [
+       1754.4,
+       1563.0
+      ],
+      [
+       1754.4,
+       1564.0
+      ],
+      [
+       1753.4,
+       1565.0
+      ],
+      [
+       1753.4,
+       1570.0
+      ],
+      [
+       1752.4,
+       1571.0
+      ],
+      [
+       1752.4,
+       1572.0
+      ],
+      [
+       1751.4,
+       1573.0
+      ],
+      [
+       1751.4,
+       1577.0
+      ],
+      [
+       1750.4,
+       1578.0
+      ],
+      [
+       1750.4,
+       1580.0
+      ],
+      [
+       1747.4,
+       1583.0
+      ],
+      [
+       1747.4,
+       1592.0
+      ],
+      [
+       1743.4,
+       1596.0
+      ],
+      [
+       1743.4,
+       1604.0
+      ],
+      [
+       1742.4,
+       1605.0
+      ],
+      [
+       1742.4,
+       1607.0
+      ],
+      [
+       1741.4,
+       1608.0
+      ],
+      [
+       1741.4,
+       1611.0
+      ],
+      [
+       1740.4,
+       1612.0
+      ],
+      [
+       1740.4,
+       1618.0
+      ],
+      [
+       1739.4,
+       1619.0
+      ],
+      [
+       1739.4,
+       1621.0
+      ],
+      [
+       1738.4,
+       1622.0
+      ],
+      [
+       1738.4,
+       1626.0
+      ],
+      [
+       1737.4,
+       1627.0
+      ],
+      [
+       1737.4,
+       1630.0
+      ],
+      [
+       1736.4,
+       1631.0
+      ],
+      [
+       1736.4,
+       1638.0
+      ],
+      [
+       1735.4,
+       1639.0
+      ],
+      [
+       1735.4,
+       1642.0
+      ],
+      [
+       1731.0,
+       1646.4
+      ]
+     ],
+     "inner contours": [],
+     "deep_extreme_points": [
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ]
+     ],
+     "class name": "Halimeda",
+     "class color": [
+      0,
+      255,
+      0
+     ],
+     "instance name": "coral2",
+     "blob name": "c-2-1738.3x-1558.8y",
+     "id": 1,
+     "note": ""
+    },
+    {
+     "bbox": [
+      1478,
+      1868,
+      54,
+      163
+     ],
+     "centroid": [
+      1897.2135996926622,
+      1556.4942374183634
+     ],
+     "area": 5206.0,
+     "perimeter": 376.7307791313332,
+     "contour": [
+      [
+       1890.0,
+       1638.4
+      ],
+      [
+       1888.0,
+       1638.4
+      ],
+      [
+       1885.6,
+       1636.0
+      ],
+      [
+       1885.6,
+       1630.0
+      ],
+      [
+       1884.6,
+       1629.0
+      ],
+      [
+       1884.6,
+       1591.0
+      ],
+      [
+       1883.6,
+       1590.0
+      ],
+      [
+       1883.6,
+       1583.0
+      ],
+      [
+       1882.6,
+       1582.0
+      ],
+      [
+       1882.6,
+       1577.0
+      ],
+      [
+       1881.6,
+       1576.0
+      ],
+      [
+       1881.6,
+       1563.0
+      ],
+      [
+       1880.6,
+       1562.0
+      ],
+      [
+       1880.6,
+       1559.0
+      ],
+      [
+       1879.6,
+       1558.0
+      ],
+      [
+       1879.6,
+       1546.0
+      ],
+      [
+       1878.6,
+       1545.0
+      ],
+      [
+       1878.6,
+       1535.0
+      ],
+      [
+       1877.6,
+       1534.0
+      ],
+      [
+       1877.6,
+       1528.0
+      ],
+      [
+       1876.6,
+       1527.0
+      ],
+      [
+       1876.6,
+       1520.0
+      ],
+      [
+       1875.6,
+       1519.0
+      ],
+      [
+       1875.6,
+       1514.0
+      ],
+      [
+       1874.6,
+       1513.0
+      ],
+      [
+       1874.6,
+       1506.0
+      ],
+      [
+       1873.6,
+       1505.0
+      ],
+      [
+       1873.6,
+       1498.0
+      ],
+      [
+       1872.6,
+       1497.0
+      ],
+      [
+       1872.6,
+       1486.0
+      ],
+      [
+       1874.0,
+       1484.6
+      ],
+      [
+       1889.0,
+       1484.6
+      ],
+      [
+       1890.0,
+       1483.6
+      ],
+      [
+       1900.0,
+       1483.6
+      ],
+      [
+       1901.0,
+       1482.6
+      ],
+      [
+       1905.0,
+       1482.6
+      ],
+      [
+       1906.4,
+       1484.0
+      ],
+      [
+       1906.4,
+       1487.0
+      ],
+      [
+       1907.4,
+       1488.0
+      ],
+      [
+       1907.4,
+       1492.0
+      ],
+      [
+       1908.4,
+       1493.0
+      ],
+      [
+       1908.4,
+       1496.0
+      ],
+      [
+       1909.4,
+       1497.0
+      ],
+      [
+       1909.4,
+       1506.0
+      ],
+      [
+       1910.4,
+       1507.0
+      ],
+      [
+       1910.4,
+       1511.0
+      ],
+      [
+       1911.4,
+       1512.0
+      ],
+      [
+       1911.4,
+       1518.0
+      ],
+      [
+       1912.4,
+       1519.0
+      ],
+      [
+       1912.4,
+       1524.0
+      ],
+      [
+       1913.4,
+       1525.0
+      ],
+      [
+       1913.4,
+       1535.0
+      ],
+      [
+       1914.4,
+       1536.0
+      ],
+      [
+       1914.4,
+       1543.0
+      ],
+      [
+       1915.4,
+       1544.0
+      ],
+      [
+       1915.4,
+       1551.0
+      ],
+      [
+       1916.4,
+       1552.0
+      ],
+      [
+       1916.4,
+       1561.0
+      ],
+      [
+       1917.4,
+       1562.0
+      ],
+      [
+       1917.4,
+       1571.0
+      ],
+      [
+       1918.4,
+       1572.0
+      ],
+      [
+       1918.4,
+       1587.0
+      ],
+      [
+       1919.4,
+       1588.0
+      ],
+      [
+       1919.4,
+       1623.0
+      ],
+      [
+       1918.0,
+       1624.4
+      ],
+      [
+       1906.0,
+       1624.4
+      ],
+      [
+       1905.0,
+       1625.4
+      ],
+      [
+       1904.0,
+       1625.4
+      ],
+      [
+       1893.0,
+       1636.4
+      ],
+      [
+       1892.0,
+       1636.4
+      ],
+      [
+       1890.0,
+       1638.4
+      ]
+     ],
+     "inner contours": [],
+     "deep_extreme_points": [
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ]
+     ],
+     "class name": "Halimeda",
+     "class color": [
+      0,
+      255,
+      0
+     ],
+     "instance name": "coral3",
+     "blob name": "c-3-1897.2x-1556.5y",
+     "id": 2,
+     "note": ""
+    },
+    {
+     "bbox": [
+      1411,
+      1955,
+      58,
+      199
+     ],
+     "centroid": [
+      1982.0656002348107,
+      1510.7478720281772
+     ],
+     "area": 6814.0,
+     "perimeter": 465.3581961293027,
+     "contour": [
+      [
+       1976.0,
+       1607.4
+      ],
+      [
+       1966.0,
+       1607.4
+      ],
+      [
+       1964.6,
+       1606.0
+      ],
+      [
+       1964.6,
+       1605.0
+      ],
+      [
+       1961.6,
+       1602.0
+      ],
+      [
+       1961.6,
+       1600.0
+      ],
+      [
+       1960.6,
+       1599.0
+      ],
+      [
+       1960.6,
+       1596.0
+      ],
+      [
+       1959.6,
+       1595.0
+      ],
+      [
+       1959.6,
+       1542.0
+      ],
+      [
+       1960.6,
+       1541.0
+      ],
+      [
+       1960.6,
+       1528.0
+      ],
+      [
+       1961.6,
+       1527.0
+      ],
+      [
+       1961.6,
+       1522.0
+      ],
+      [
+       1962.6,
+       1521.0
+      ],
+      [
+       1962.6,
+       1508.0
+      ],
+      [
+       1963.6,
+       1507.0
+      ],
+      [
+       1963.6,
+       1492.0
+      ],
+      [
+       1964.6,
+       1491.0
+      ],
+      [
+       1964.6,
+       1484.0
+      ],
+      [
+       1965.6,
+       1483.0
+      ],
+      [
+       1965.6,
+       1476.0
+      ],
+      [
+       1966.6,
+       1475.0
+      ],
+      [
+       1966.6,
+       1461.0
+      ],
+      [
+       1967.6,
+       1460.0
+      ],
+      [
+       1967.6,
+       1457.0
+      ],
+      [
+       1968.6,
+       1456.0
+      ],
+      [
+       1968.6,
+       1448.0
+      ],
+      [
+       1969.6,
+       1447.0
+      ],
+      [
+       1969.6,
+       1440.0
+      ],
+      [
+       1970.6,
+       1439.0
+      ],
+      [
+       1970.6,
+       1434.0
+      ],
+      [
+       1971.6,
+       1433.0
+      ],
+      [
+       1971.6,
+       1427.0
+      ],
+      [
+       1972.6,
+       1426.0
+      ],
+      [
+       1972.6,
+       1421.0
+      ],
+      [
+       1973.6,
+       1420.0
+      ],
+      [
+       1973.6,
+       1417.0
+      ],
+      [
+       1975.0,
+       1415.6
+      ],
+      [
+       1981.0,
+       1415.6
+      ],
+      [
+       1983.0,
+       1417.6
+      ],
+      [
+       1984.0,
+       1417.6
+      ],
+      [
+       1985.0,
+       1418.6
+      ],
+      [
+       1988.4,
+       1422.0
+      ],
+      [
+       1988.4,
+       1423.0
+      ],
+      [
+       1991.0,
+       1425.6
+      ],
+      [
+       1999.0,
+       1425.6
+      ],
+      [
+       2003.6,
+       1421.0
+      ],
+      [
+       2003.6,
+       1420.0
+      ],
+      [
+       2007.0,
+       1416.6
+      ],
+      [
+       2010.0,
+       1416.6
+      ],
+      [
+       2010.4,
+       1417.0
+      ],
+      [
+       2010.4,
+       1429.0
+      ],
+      [
+       2008.4,
+       1431.0
+      ],
+      [
+       2008.4,
+       1441.0
+      ],
+      [
+       2007.4,
+       1442.0
+      ],
+      [
+       2007.4,
+       1445.0
+      ],
+      [
+       2006.4,
+       1446.0
+      ],
+      [
+       2006.4,
+       1461.0
+      ],
+      [
+       2005.4,
+       1462.0
+      ],
+      [
+       2005.4,
+       1466.0
+      ],
+      [
+       2004.4,
+       1467.0
+      ],
+      [
+       2004.4,
+       1469.0
+      ],
+      [
+       2003.4,
+       1470.0
+      ],
+      [
+       2003.4,
+       1482.0
+      ],
+      [
+       2002.4,
+       1483.0
+      ],
+      [
+       2002.4,
+       1485.0
+      ],
+      [
+       2001.4,
+       1486.0
+      ],
+      [
+       2001.4,
+       1495.0
+      ],
+      [
+       2000.4,
+       1496.0
+      ],
+      [
+       2000.4,
+       1510.0
+      ],
+      [
+       1999.4,
+       1511.0
+      ],
+      [
+       1999.4,
+       1512.0
+      ],
+      [
+       1998.4,
+       1513.0
+      ],
+      [
+       1998.4,
+       1534.0
+      ],
+      [
+       1997.4,
+       1535.0
+      ],
+      [
+       1997.4,
+       1552.0
+      ],
+      [
+       1996.4,
+       1553.0
+      ],
+      [
+       1996.4,
+       1568.0
+      ],
+      [
+       1995.4,
+       1569.0
+      ],
+      [
+       1995.4,
+       1575.0
+      ],
+      [
+       1994.4,
+       1576.0
+      ],
+      [
+       1994.4,
+       1588.0
+      ],
+      [
+       1993.4,
+       1589.0
+      ],
+      [
+       1993.4,
+       1590.0
+      ],
+      [
+       1992.4,
+       1591.0
+      ],
+      [
+       1992.4,
+       1597.0
+      ],
+      [
+       1990.4,
+       1599.0
+      ],
+      [
+       1990.4,
+       1602.0
+      ],
+      [
+       1988.0,
+       1604.4
+      ],
+      [
+       1979.0,
+       1604.4
+      ],
+      [
+       1976.0,
+       1607.4
+      ]
+     ],
+     "inner contours": [],
+     "deep_extreme_points": [
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0
+      ]
+     ],
+     "class name": "Halimeda",
+     "class color": [
+      0,
+      255,
+      0
+     ],
+     "instance name": "coral4",
+     "blob name": "c-4-1982.1x-1510.7y",
+     "id": 3,
+     "note": ""
+    }
+   ],
+   "channels": [
+    {
+     "filename": "M:/herbivoryAssayPhotos/EB140077.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "U1-1After",
+   "name": "U1-1After",
+   "workspace": [],
+   "working_area": [],
+   "acquisition_date": "2020-10-18",
+   "georef_filename": "",
+   "metadata": {}
+  }
+ ],
+ "correspondences": {},
+ "spatial_reference_system": null,
+ "metadata": {},
+ "image_metadata_template": {}
+}
