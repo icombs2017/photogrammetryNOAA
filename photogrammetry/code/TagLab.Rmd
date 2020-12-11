@@ -1,0 +1,140 @@
+---
+title: "TagLab"
+author: "Ian Combs -- icombs@mote.org"
+output:
+  html_document:
+    theme: flatly
+    code_folding: show
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_doctument:
+      toc: yes
+      toc_depth: 3
+---
+
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, fig.align = 'left')
+library(magrittr)
+```
+
+### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
+
+<!-- this is where the DOI would go  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3675991.svg)](https://doi.org/10.5281/zenodo.3675991)
+-->
+
+
+#### [GitHub repository](https://github.com/icombs2017/photogrammetryNOAA.git){target="_blank"}
+
+###
+***
+This is the analysis pipeline for data generated from TagLab annotations of our 6 10x10m plots.
+
+
+***
+### All analyses performe with R verion `r getRversion()`
+# Basic setup of R environment
+***
+## Loading required packages
+
+For the following analyses we will require the use of a number of different R packages. Most of which can be sourced from CRAN, but some must be downloaded from GitHub. We can use the following code to load in the packages and install any packages not previously installed in the R console. 
+
+```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan")
+```
+
+<br><br>
+
+# Loading Data
+
+
+
+
+
+```{r, load data, include = TRUE, results = 'hide'}
+
+mydir <- "../data"
+tagLabFiles <- list.files(path = mydir, pattern = "_2020_", full.names = TRUE)
+tagLabFiles
+
+
+# This loads the list of .csv's that we made above and adds a column of file names to the data frame
+tagLabFiles_list <- lapply(tagLabFiles, function(x){
+  out <- tryCatch(read.csv(x, header = TRUE, sep = "\t"), error = function(e) NULL)
+  if (!is.null(out)){
+    out$source_file <- x
+  }
+  return(out)
+})
+tagLabData <- data.table::rbindlist(tagLabFiles_list)
+
+# This takes the data, removes everything from the file name column except the important data to us, and sorts the data frame 
+# so it contains only the information we care about 
+tagLabData <- tagLabData %>% 
+              separate(source_file, into = c("dir","source","file"), sep = "[/]", remove = FALSE) %>% 
+              separate(file, c("assay", "file"), sep = "[.]") %>% 
+              separate(assay, c("site", "status"), sep = "_") %>% 
+  separate(site, c("status", "site"), sep = "-") %>%
+  dplyr::select(site, Blob.id, Class.name, Coral.area)
+
+tagLabData$Class.name <- as.factor(tagLabData$Class.name)
+
+
+
+
+
+
+
+
+```
+
+```{r, plotting, include = TRUE}
+
+freqPlotData <- tagLabData
+
+freqPlotData$speciesCount <- frequency(freqPlotData$Class.name)
+
+freqPlotData1 <- freqPlotData %>% 
+  dplyr::select(site, Class.name, speciesCount) %>% 
+  group_by(site, Class.name) %>% 
+  summarise(speciesCount = sum(speciesCount))
+
+
+
+speciesFreq1 <- ggplot(freqPlotData1, aes(x = Class.name, y  = speciesCount, fill = site))+
+                geom_bar(stat = 'identity', position = "stack")+
+  coord_polar()
+
+speciesFreq1
+
+
+# freqPlotData2$Class.name <- factor(speciesFreq1$Class.name, levels = speciesFreq1$Class.name[order(-speciesFreq1$speciesCount)])
+
+
+
+speciesBar1 <- ggplot(freqPlotData1, aes(x = reorder(Class.name, -speciesCount), y = speciesCount, fill = Class.name))+
+  geom_bar(stat = 'identity')
+
+
+
+speciesBar <- speciesBar1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(hjust = 0.5), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black")
+)
+
+speciesBar
+
+
+
+
+
+
+```
+

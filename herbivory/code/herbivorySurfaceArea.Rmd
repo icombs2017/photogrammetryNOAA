@@ -42,7 +42,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan")
 
 ```
 # Loading data
@@ -74,13 +74,16 @@ beforeData <- beforeData %>%
               separate(file, c("assay", "file"), sep = "[.]") %>% 
               separate(assay, c("assay", "status"), sep = "Before") %>% 
               dplyr::select(assay, Blob.id, Class.name, Coral.area) %>% 
-              filter(Class.name == "Halimeda")
+              filter(Class.name == "Halimeda") %>%
+              rename(id = assay) %>% 
+              separate(id, c("site", "assay"), sep = "[-]", remove = FALSE)
+              
 
 beforeData$assay <- as.factor(beforeData$assay)
 
 # This adds all of the area data for each assay since we are treating each assay as one event
 totalBeforeData <- beforeData %>% 
-                  group_by(assay) %>% 
+                  group_by(site, assay) %>% 
                   summarise(beforeArea = sum(Coral.area)) %>% 
                   add_column(status = "before")
 
@@ -104,18 +107,22 @@ afterData <- afterData %>%
               separate(file, c("assay", "file"), sep = "[.]") %>% 
               separate(assay, c("assay", "status"), sep = "After") %>% 
               dplyr::select(c(assay, Blob.id, Class.name, Coral.area)) %>% 
-              filter(Class.name == "Halimeda") 
+              filter(Class.name == "Halimeda") %>% 
+              rename(id = assay) %>% 
+             separate(id, c("site", "assay"), sep = "[-]", remove = FALSE)
 
 afterData$assay <- as.factor(afterData$assay)
 
 totalAfterData <- afterData %>% 
-                  group_by(assay) %>% 
+                  group_by(id,site,assay) %>% 
                   summarise(afterArea = sum(Coral.area)) %>% 
                   add_column(status = "after")
 
 
+
+
 # Combining the "before" and "after" dataframes
-totalData <- merge(totalBeforeData, totalAfterData, by = "assay")
+totalData <- merge(totalBeforeData, totalAfterData, by = "site")
 
 totalData
 
@@ -133,11 +140,13 @@ Now we have the data set up so we can calculate the percent change in **T. testu
 
 totalData$percentChange <- ((totalData$afterArea - totalData$beforeArea)/totalData$beforeArea)*100
 
-lossPlot <- ggplot(totalData, aes(x = assay, y = abs(percentChange)))+
-                     geom_bar(stat = 'identity')
+#this needs to change or be used on hte original data (w/o site and assay split)
+lossPlot <- ggplot(totalData, aes(x = id, y = abs(percentChange), fill = assay.x))+
+            geom_bar(position = "dodge", stat = 'identity')
+  
+
 lossPlot
 
-groupedPlot <- ggplot(totalData, aes(x =))
 
 
 
@@ -147,14 +156,27 @@ plotBefore <- totalBeforeData %>% rename(area = beforeArea)
 plotAfter <- totalAfterData %>% rename(area = afterArea)
 
 plotData <- bind_rows(plotBefore, plotAfter)
+plotData$status <- as.factor(plotData$status)
 plotData$status = factor(plotData$status, levels(plotData$status)[c(2,1)])
 levels(plotData$status)
 
-head(plotData)
 
-groupPlot <- ggplot(plotData, aes(x = assay, y = area, fill = status))+
-              geom_bar(position = 'dodge', stat = 'identity')
-groupPlot
+
+
+
+```
+
+```{r, proportion, include = TRUE}
+
+propData <- totalData %>% dplyr::select(c(assay, beforeArea, afterArea)) %>%  dplyr::mutate(propBefore = beforeArea/beforeArea, propAfter = afterArea/beforeArea) %>% mutate(change = 1-propAfter) %>% select(c(assay,propAfter, change))
+
+propDataNew <- melt(propData, id = 1)
+
+propPlot <- ggplot(propDataNew, aes(x = assay, y = value, fill = variable))+geom_bar(stat = 'identity')
+
+propPlot
+
+
 
 
 
@@ -162,7 +184,22 @@ groupPlot
 ```
 
 
+```{r, permanova}
 
+prop.perm <- adonis(formula = percentChange ~ assay, data = totalData, method = "euclidian", permutations = 9999, na.rm = TRUE)
+prop.perm
+
+kw.prop <- kruskal.test(percentChange ~ site, data = totalData)
+kw.prop
+
+asinTransform <- function(p) { asin(sqrt(p)) }
+p <- abs(totalData$percentChange)
+pAsin <- asinTransform(p)
+plot(p, pAsin, type='l', lwd=2, col='blue', las=1, xlab='p', ylab='arcsine(p)')
+
+
+
+```
 
 
 
