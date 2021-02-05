@@ -53,8 +53,7 @@ pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patc
 
 
 ```{r, load data, include = TRUE, results = 'hide'}
-
-mydir <- "../data"
+mydir <- "../data/TagLab/8.18.20"
 tagLabFiles <- list.files(path = mydir, pattern = "_2020_", full.names = TRUE)
 tagLabFiles
 
@@ -72,7 +71,7 @@ tagLabData <- data.table::rbindlist(tagLabFiles_list)
 # This takes the data, removes everything from the file name column except the important data to us, and sorts the data frame 
 # so it contains only the information we care about 
 tagLabData <- tagLabData %>% 
-              separate(source_file, into = c("dir","source","file"), sep = "[/]", remove = FALSE) %>% 
+              separate(source_file, into = c("dir","source","program","date","file"), sep = "[/]", remove = FALSE) %>% 
               separate(file, c("assay", "file"), sep = "[.]") %>% 
               separate(assay, c("site", "status"), sep = "_") %>% 
   separate(site, c("status", "site"), sep = "-") %>%
@@ -80,8 +79,9 @@ tagLabData <- tagLabData %>%
 
 tagLabData$Class.name <- as.factor(tagLabData$Class.name)
 
+tagC1Pre <- tagLabData %>% filter(site == "C1")
 
-
+tagC1Pre$speciesCount <- frequency(tagC1Pre$Class.name)
 
 
 
@@ -100,6 +100,14 @@ freqPlotData1 <- freqPlotData %>%
   group_by(site, Class.name) %>% 
   summarise(speciesCount = sum(speciesCount))
 
+
+
+tagC1Pre$speciesCount <- frequency(tagC1Pre$Class.name)
+tagC1Pre <- tagC1Pre %>% dplyr::select(site, Class.name, speciesCount) %>% 
+  group_by(site, Class.name) %>% 
+  summarise(speciesCount = sum(speciesCount))
+tagC1Pre$Abundance <- tagC1Pre$speciesCount/sum(tagC1Pre$speciesCount)
+tagC1Pre <- tagC1Pre %>% filter(Abundance > 0.01)
 
 
 speciesFreq1 <- ggplot(freqPlotData1, aes(x = Class.name, y  = speciesCount, fill = site))+
@@ -133,8 +141,108 @@ speciesBar
 
 
 
+c1PreSpeciesBar1 <- ggplot(tagC1Pre, aes(x = fct_reorder(Class.name, -speciesCount), y = Abundance, fill = Class.name))+
+  geom_bar(stat = 'identity')+
+  labs(x = "", y = "Percent Abundance", title = "Pre-Restoration")+
+  scale_x_discrete(name = " ",limits=c("Siderastrea spp.","Stephannocoenia intersepta","Porites astreoides", "Orbicella faveolata"), labels =c("SSID","SINT","PAST", "OFAV"))+
+  ylim(0,1)
+
+c1PreSpeciesBar <- c1PreSpeciesBar1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=12, color="black"), 
+  axis.text.y=element_text(size=12, color="black")
+)+rremove('legend')
+
+c1PreSpeciesBar
+
+ggsave("../figures/tagLabC1Pre.png", plot = c1PreSpeciesBar, width = 15, height = 10, units = "in", dpi = 600)
+
+```
 
 
 
+
+
+```{r}
+
+mydir <- "../data/TagLab/12.14.20"
+tagLabFiles <- list.files(path = mydir, pattern = "_2020_", full.names = TRUE)
+tagLabFiles
+
+
+# This loads the list of .csv's that we made above and adds a column of file names to the data frame
+tagLabFiles_list <- lapply(tagLabFiles, function(x){
+  out <- tryCatch(read.csv(x, header = TRUE, sep = "\t"), error = function(e) NULL)
+  if (!is.null(out)){
+    out$source_file <- x
+  }
+  return(out)
+})
+tagLabData <- data.table::rbindlist(tagLabFiles_list)
+
+# This takes the data, removes everything from the file name column except the important data to us, and sorts the data frame 
+# so it contains only the information we care about 
+tagLabData <- tagLabData %>% 
+              separate(source_file, into = c("dir","source","program","date","file"), sep = "[/]", remove = FALSE) %>% 
+              separate(file, c("assay", "file"), sep = "[.]") %>% 
+              separate(assay, c("site", "status"), sep = "_") %>% 
+  separate(site, c("status", "site"), sep = "-") %>%
+  dplyr::select(site, Blob.id, Class.name, Coral.area)
+
+tagLabData$Class.name <- as.factor(tagLabData$Class.name)
+
+tagC1Post <- tagLabData %>% filter(site == "C1")
+
+
+tagC1Post$speciesCount <- frequency(tagC1Post$Class.name)
+tagC1Post <- tagC1Post %>% dplyr::select(site, Class.name, speciesCount) %>% 
+  group_by(site, Class.name) %>% 
+  summarise(speciesCount = sum(speciesCount))
+tagC1Post$Abundance <- tagC1Post$speciesCount/sum(tagC1Post$speciesCount)
+
+tagC1Post <- tagC1Post %>% filter(Abundance > .01)
+
+c1PostSpeciesBar1 <- ggplot(tagC1Post, aes(x = fct_reorder(Class.name, -speciesCount), y = Abundance, fill = Class.name))+
+  geom_bar(stat = 'identity')+
+  labs(y = "Percent Abundance", title = "Post-Restoration")+
+  scale_x_discrete(name = "Class",limits=c("Acropora cervicornis", "Siderastrea spp.","Orbicella faveolata","Stephannocoenia intersepta","Porites astreoides"), labels =c("ACER","SSID","OFAV","SINT","PAST"))+
+  ylim(0,1)
+
+c1PostSpeciesBar <- c1PostSpeciesBar1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black")
+)+rremove('legend')
+
+c1PostSpeciesBar
+
+
+compBar <- c1PreSpeciesBar / c1PostSpeciesBar + plot_annotation(
+  title = 'Coral Community Composition Pre- and Post- Restoration using TagLab',
+  theme = theme(plot.title = element_text(size = 30)))
+
+
+plot_annotation(
+  title = 'Benthic Community Composition Pre- and Post- Restoration using Virtual Point Intercept',
+  theme = theme(plot.title = element_text(size = 30)))
+
+
+
+
+ggsave("../figures/tagLabComp.png", plot = compBar, width = 15, height = 10, units = "in", dpi = 600)
+
+
+
+```
 ```
 

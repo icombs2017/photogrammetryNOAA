@@ -57,12 +57,12 @@ Viscore produces rugosity measurement outputs as *.csv* files. We will be loadin
 
 ```{r, load, include = TRUE, results = "hide"}
 
-c1 <- read.csv("../data/c1r0-lines.csv", header = F)
-c2 <- read.csv("../data/c2r0-lines.csv", header = F)
-u1 <- read.csv("../data/u1r0-lines.csv", header = F)
-u2 <- read.csv("../data/u2r0-lines.csv", header = F)
-z1 <- read.csv("../data/z1r0-lines.csv", header = F)
-z2 <- read.csv("../data/z2r0-lines.csv", header = F)
+c1 <- read.csv("../data/rugosity/8.18.20/c1r0-lines.csv", header = F)
+c2 <- read.csv("../data/rugosity/8.18.20/c2r0-lines.csv", header = F)
+u1 <- read.csv("../data/rugosity/8.18.20/u1r0-lines.csv", header = F)
+u2 <- read.csv("../data/rugosity/8.18.20/u2r0-lines.csv", header = F)
+z1 <- read.csv("../data/rugosity/8.18.20/z1r0-lines.csv", header = F)
+z2 <- read.csv("../data/rugosity/8.18.20/z2r0-lines.csv", header = F)
 head(c1)
 
 
@@ -156,8 +156,25 @@ z2plot
 
 c1ggplot <- ggplot(data = c1, aes(x = point, y = z, color = transect))+
   geom_line()+
-  facet_wrap(vars(transect))
+  ylim(-8, -6)+
+  facet_wrap(vars(transect))+
+  labs(x = "Point", y = "Depth (m)", title = "Rugosity of Plot Pre-Restoration")+
+  theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
 c1ggplot
+ggsave("../figures/rugoC1Pre.png", plot = c1ggplot, width = 15, height = 10, units = "in", dpi = 600)
+
+
 
 c2ggplot <- ggplot(data = c2, aes(x = point, y = z, color = transect))+
   geom_line()+

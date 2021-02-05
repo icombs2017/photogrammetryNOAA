@@ -1,7 +1,7 @@
 ---
-title: "FKNMS PopGen"
-author: "Ryan Eckert"
-date: "5/7/2020"
+title: "NOAA Ecosystem Recovery"
+author: "Ian COmbs"
+date: "1/11/2021"
 output:
   html_document:
     theme: flatly
@@ -41,8 +41,9 @@ For the following analyses we will require the use of a number of different R pa
 setwd("../data")
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("cowplot", "flextable", "ggrepel", "ggspatial", "lubridate", "officer", "paletteer", "patchwork", "rgdal", "rnaturalearth", "sf", "tidyverse", "gdata")
+pacman::p_load("cowplot", "flextable", "ggrepel", "ggspatial", "lubridate", "officer", "paletteer", "patchwork", "rgdal", "rnaturalearth", "sf", "tidyverse", "gdata", "rgeos")
 pacman::p_load_gh("eliocamp/ggnewscale")
+pacman::p_load_gh("ropensci/rnaturalearthhires")
 ```
 <br>
 
@@ -51,7 +52,7 @@ pacman::p_load_gh("eliocamp/ggnewscale")
 <br>
 
 ```{r, map data}
-sites = read.xls("../data/siteCoordinates.xlsx", header =T)
+sites = read.xls("../data/metadata/siteCoordinates.xlsx", header =T)
 sites$Reef <- as.factor(sites$Reef)
 sites$Site_ID <- as.factor(sites$Site_ID)
 studySites <- sites %>% filter(Site_ID != c("C", "U", "Z"))
@@ -151,9 +152,9 @@ fknmsMap = ggdraw() +
   draw_plot(floridaMap, x = .75, y = 0.7, width = 0.25, height = 0.25) +
   draw_plot(noaaSites, x =.28, y = .22, width = 0.4, height = 0.4)
   
-ggsave("../figures/figure1.png", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 300)
+ggsave("../figures/figure1.png", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
 
-ggsave("../figures/figure1.tiff", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 300)
+ggsave("../figures/figure1.eps", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
 
 
 
@@ -223,47 +224,3 @@ uReef = noaaSites +
 ```
 ![](../figures/figure1.png)
 <br>
-
-```{r, sample data}
-sampleData = fknmsSites %>% group_by(region, site)%>% summarize(latDD = first(latDD), longDD = first(longDD), depthRange = paste(min(depthM), "-", max(depthM), sep = ""), n = n(), date = as.character(min(date)), collection = as.character(first(collection)))%>% droplevels() %>% as.data.frame()
-
-multiDate = fknmsSites %>% group_by(region, site) %>% summarize(date = paste(min(date), "-", max(date)))
-soloDepth = fknmsSites %>% group_by(region, site)%>% summarize(depth = min(depthM))
-multiCollection = fknmsSites %>% group_by(region, site)%>% summarize(collection = paste(first(collection), ", ", last(collection), sep = ""))
-
-sampleData$depthRange
-#3, 4, 19 all have only 1 depth, replace them with single depth from soloDepth
-soloDepth = fknmsSites %>% group_by(region, site)%>% summarize(depth = min(depthM))
-sampleData$depthRange[c(3,4,19)] = as.character(soloDepth$depth[c(3,4,19)])
-
-sampleData$date[1] = paste("13 & 28 Aug 2019")
-sampleData$collection[1] = multiCollection$collection[1]
-
-sampleData
-
-sampleTab = sampleData
-colnames(sampleTab) = c("Region", "Site", "Latitude", "Longitude", "Sampling \ndepth (M)", "n", "Sampling date", "Sampling \nmethod")
-
-sampleTab$Region
-finalTabRegion = c("Upper Keys", "", "", "", "", "", "", "", "", "Lower Keys", "", "", "TER North", "", "", "TER South", "", "", "", "")
-
-sampleTab$Region = finalTabRegion
-sampleTab$Site = as.character(sampleTab$Site)
-sampleTab$Site[9] = paste("Ian's Lumps")
-
-sampleTabPub = sampleTab %>% flextable() %>%
-  flextable::compose(part = "header", j = "n", value = as_paragraph(as_i("n"))) %>%
-  font(fontname = "Times New Roman", part = "all") %>%
-  fontsize(size = 10, part = "all") %>%
-  bold(part = "header") %>%
-  align(align = "left", part = "all") %>%
-  autofit()
-
-table1 = read_docx()
-table1 = body_add_flextable(table1, value = sampleTabPub)
-print(table1, target = "../tables/table1.docx")
-
-sampleTabPub
-```
-
-

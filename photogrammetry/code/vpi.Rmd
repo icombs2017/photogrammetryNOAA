@@ -1,0 +1,110 @@
+---
+title: "VPI"
+author: "Ian Combs -- icombs@mote.org"
+output:
+  html_document:
+    theme: flatly
+    code_folding: show
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_doctument:
+      toc: yes
+      toc_depth: 3
+---
+
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, fig.align = 'left')
+library(magrittr)
+```
+
+### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
+
+<!-- this is where the DOI would go  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3675991.svg)](https://doi.org/10.5281/zenodo.3675991)
+-->
+
+
+#### [GitHub repository](https://github.com/icombs2017/photogrammetryNOAA.git){target="_blank"}
+
+###
+***
+This is the analysis pipeline for data generated from TagLab annotations of our 6 10x10m plots.
+
+
+***
+### All analyses performe with R verion `r getRversion()`
+# Basic setup of R environment
+***
+## Loading required packages
+
+For the following analyses we will require the use of a number of different R packages. Most of which can be sourced from CRAN, but some must be downloaded from GitHub. We can use the following code to load in the packages and install any packages not previously installed in the R console. 
+
+```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats")
+```
+
+<br><br>
+
+# Loading Data
+
+
+
+
+
+```{r, load data, include = TRUE, results = 'hide'}
+vpiC1Pre <- read.csv("../data/vpi/IC_C1_2020_08_18.pqs-all-Combs.csv")
+vpiC1Post <- read.csv("../data/vpi/IC-C1_2020_12_14.pqs-all-Combs.csv")
+vpiC1Pre<- vpiC1Pre %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
+vpiC1Post<- vpiC1Post %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
+```
+
+```{r, plotting, include = TRUE}
+
+
+vpiPrePlot1 <- ggplot(vpiC1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "",title = "Pre-Restoration")+
+              ylim(0,60)
+vpiPrePlot <- vpiPrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiPrePlot
+
+vpiPostPlot1 <- ggplot(vpiC1Post, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "Class", title = "Post-Restoration")+
+              ylim(0,60)
+
+
+vpiPostPlot <- vpiPostPlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiPostPlot
+
+compPlot <- vpiPrePlot / vpiPostPlot + plot_annotation(
+  title = 'Benthic Community Composition Pre- and Post- Restoration using Virtual Point Intercept',
+  theme = theme(plot.title = element_text(size = 18)))
+ggsave("../figures/vpiCompPlot.png", plot = compPlot, width = 15, height = 10, units = "in", dpi = 300)
+```
+

@@ -1,15 +1,15 @@
 id,class,count,%
 -1,None,,
-,Review,3,0.29325513196480935
+,Review,3,0.293255132
 1,Unknown,,
 2,Acropora spp.,,
-3,Acropora cervicornis,11,1.075268817204301
+3,Acropora cervicornis,11,1.075268817
 4,Acropora palmata,,
 5,Porites spp.,,
 6,Porites porites,,
 7,Porites furcata,,
 8,Porites divaricata,,
-9,Porites astreoides,1,0.09775171065493646
+9,Porites astreoides,1,0.097751711
 10,Oculina spp.,,
 11,Oculina robusta,,
 12,Oculina varicosa,,
@@ -20,13 +20,13 @@ id,class,count,%
 17,Madracis decactis,,
 18,Dendrogyra cylindrus,,
 19,Siderastrea spp.,,
-20,Siderastrea siderea,10,0.9775171065493646
+20,Siderastrea siderea,10,0.977517107
 21,Siderastrea radians,,
 22,Stephanocoenia intersepta,,
 23,Montastraea cavernosa,,
 24,Orbicella spp.,,
 25,Orbicella annularis,,
-26,Orbicella faveolata,1,0.09775171065493646
+26,Orbicella faveolata,1,0.097751711
 27,Orbicella franksi,,
 28,Favia fragum,,
 29,Dichocoenia stokesii,,
@@ -46,7 +46,7 @@ id,class,count,%
 43,Agaricia spp.,,
 44,Agaricia fragilis,,
 45,Agaricia lamarcki,,
-46, Agaricia agaricites,1,0.09775171065493646
+46, Agaricia agaricites,1,0.097751711
 47,Mycetophyllia spp.,,
 48,Mycetophyllia lamarckiana,,
 49,Mycetophyllia aliciae,,
@@ -60,21 +60,21 @@ id,class,count,%
 57,Scolymia wellsi,,
 58,Mussa angulosa,,
 59,Eusmilia fastigiata,,
-60,Gorgonian,88,8.602150537634408
-61,Gorgonia ventalina,17,1.6617790811339197
-62,Xestospongia muta,1,0.09775171065493646
+60,Gorgonian,88,8.602150538
+61,Gorgonia ventalina,17,1.661779081
+62,Xestospongia muta,1,0.097751711
 63,Thalassia testudinum,,
 64,Halimeda,,
 65,Dictyota spp.,,
-66,Crustose coralline algae natans,2,0.19550342130987292
-67,Porifera,60,5.865102639296188
+66,Crustose coralline algae ,2,0.195503421
+67,Porifera,60,5.865102639
 68,Cnidaria,,
 69,Red algae,,
 70,Green algae,,
 71,Brown algae,,
-72,Palythoa,73,7.135874877810362
-73,Rubble,539,52.68817204301075
-74,Turf algae,195,19.06158357771261
-75,Other,14,1.3685239491691104
-76,Millepora spp.,7,0.6842619745845552
+72,Palythoa,73,7.135874878
+73,Rubble,539,52.68817204
+74,Turf algae,195,19.06158358
+75,Other,14,1.368523949
+76,Millepora spp.,7,0.684261975
 77,Shell,,
