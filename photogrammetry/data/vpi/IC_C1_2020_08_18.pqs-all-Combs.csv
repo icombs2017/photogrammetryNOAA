@@ -1,6 +1,6 @@
 id,class,count,%
 -1,None,,
-,Review,,
+,Review,1,0.040016006402561026
 1,Unknown,,
 2,Acropora spp.,,
 3,Acropora cervicornis,,
@@ -9,7 +9,7 @@ id,class,count,%
 6,Porites porites,,
 7,Porites furcata,,
 8,Porites divaricata,,
-9,Porites astreoides,2,0.1953125
+9,Porites astreoides,3,0.12004801920768307
 10,Oculina spp.,,
 11,Oculina robusta,,
 12,Oculina varicosa,,
@@ -20,23 +20,23 @@ id,class,count,%
 17,Madracis decactis,,
 18,Dendrogyra cylindrus,,
 19,Siderastrea spp.,,
-20,Siderastrea siderea,11,1.07421875
+20,Siderastrea siderea,21,0.8403361344537815
 21,Siderastrea radians,,
-22,Stephanocoenia intersepta,,
+22,Stephanocoenia intersepta,7,0.2801120448179272
 23,Montastraea cavernosa,,
 24,Orbicella spp.,,
 25,Orbicella annularis,,
-26,Orbicella faveolata,2,0.1953125
+26,Orbicella faveolata,,
 27,Orbicella franksi,,
 28,Favia fragum,,
 29,Dichocoenia stokesii,,
 30,Solenastraea bournoni,,
 31,Solenastraea hyades,,
-32,Colpophyllia natans,,
+32,Colpophyllia natans,1,0.040016006402561026
 33,Pseudodiploria spp.,,
 34,Pseudodiploria strigosa,,
 35,Pseudodiploria clivosa,,
-36,Diploria labyrinthiformis,1,0.09765625
+36,Diploria labyrinthiformis,1,0.040016006402561026
 37,Manicina areolata,,
 38,Meandrina spp.,,
 39,Meandrina meandrites,,
@@ -60,21 +60,20 @@ id,class,count,%
 57,Scolymia wellsi,,
 58,Mussa angulosa,,
 59,Eusmilia fastigiata,,
-60,Gorgonian,69,6.73828125
-61,Gorgonia ventalina,13,1.26953125
+60,Octocorallia,80,3.201280512204882
+61,Gorgonia ventalina,,
 62,Xestospongia muta,,
 63,Thalassia testudinum,,
-64,Halimeda,5,0.48828125
-65,Dictyota spp.,58,5.6640625
-66,Crustose coralline algae ,1,0.09765625
-67,Porifera,49,4.78515625
+64,Halimeda,,
+65,Dictyota spp.,,
+66,Crustose coralline algae natans,2,0.08003201280512205
+67,Porifera,125,5.002000800320128
 68,Cnidaria,,
 69,Red algae,,
 70,Green algae,,
 71,Brown algae,,
-72,Palythoa,45,4.39453125
-73,Rubble,397,38.76953125
-74,Turf algae,358,34.9609375
-75,Other,6,0.5859375
-76,Millepora spp.,6,0.5859375
-77,Shell,1,0.09765625
+72,Palythoa,147,5.882352941176471
+73,Rubble,835,33.413365346138455
+74,Turf algae,1244,49.77991196478592
+75,Other,16,0.6402561024409764
+76,Millepora spp.,16,0.6402561024409764
