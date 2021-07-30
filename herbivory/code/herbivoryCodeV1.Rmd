@@ -1,0 +1,106 @@
+---
+title: "herbivoryCodeV1"
+author: "Brie"
+date: "7/27/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+Reading in/Installs probably needed**
+```{r Package Installation, include = F}
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install()
+
+#install.packages("phyloseq")
+#install.packages("vegan")
+#install.packages("DESeq2")
+#install.packages("ggplot2")
+#install.packages("dendextend")
+#install.packages("tidyr")
+#install.packages("viridis")
+#install.packages("reshape")
+#BiocManager::install("ALDEx2")
+#BiocManager::install("CoDaSeq")
+
+#install.packages('devtools')
+#devtools::install_github('ggloor/CoDaSeq/CoDaSeq', force = T)
+
+```
+most likely gonna need\/
+```{r package read in, include = F}
+library("phyloseq")
+library("vegan")
+library("DESeq2")
+library("ggplot2")
+library("dendextend")
+library("tidyr")
+library("viridis")
+library("reshape")
+library("tidyverse")
+library(ALDEx2)
+library(CoDaSeq)
+library(ggdendro)
+library(factoextra)
+library(PCAtools)
+library(FSA)
+```
+
+creating count tab
+```{r}
+count_tab <- read.table("C:/Users/gleno/OneDrive/Documents/GitHub/photogrammetryNOAA/herbivory/data/herbivoryDataSheet4R.csv", header = T, sep = "\t", row.names = 1)
+nrow(count_tab)
+```
+
+isolating variables 
+```{r reading in sample info and ordering factors, include = F}
+read.csv(file = "C:/Users/gleno/OneDrive/Documents/16s Thesis 2/MD_2016_16s_margaretmiller.csv", 
+         row.names = 1) %>% 
+  mutate(Genotype_ourname = Genotype.designation..our.name., 
+         Genotype_CRFname = Genotype.name..nursery.listed.as.) %>%
+  dplyr::select(Year, Spp, Spp_colour, Genotype_ourname, Genotype_CRFname, 
+                Sample_time, Sample_time_colour, Outcome, Outcome_colour) %>%
+  mutate(Treatment_s = case_when(Sample_time == "baseline" ~ "control", 
+                               Sample_time == "exposed" ~ "inoculated"), 
+         Outcome_s = case_when(Outcome == "baseline" ~ "control", 
+                            Outcome == "no transmission" ~ "visually unaffected", 
+                            Outcome == "transmission" ~ "diseased")) %>% 
+  mutate(Outcome_s = fct_relevel(.$Outcome_s, c("control", "visually unaffected", "diseased")))-> sample_info_tab
+
+View(sample_info_tab)
+```
+
+
+
+
+
+
+
+
+
+
+
