@@ -75,24 +75,21 @@ creating count tab
 count_tab <- read.table("C:/Users/gleno/OneDrive/Documents/GitHub/photogrammetryNOAA/herbivory/data/herbivoryDataSheet4R.csv", header = T, sep = "\t", row.names = 1)
 nrow(count_tab)
 ```
+Shannon: How difficult it is to predict the identity of a randomly chosen individual.
+Simpson: The probability that two randomly chosen individuals are the same species.
 
-isolating variables 
-```{r reading in sample info and ordering factors, include = F}
-read.csv(file = "C:/Users/gleno/OneDrive/Documents/16s Thesis 2/MD_2016_16s_margaretmiller.csv", 
-         row.names = 1) %>% 
-  mutate(Genotype_ourname = Genotype.designation..our.name., 
-         Genotype_CRFname = Genotype.name..nursery.listed.as.) %>%
-  dplyr::select(Year, Spp, Spp_colour, Genotype_ourname, Genotype_CRFname, 
-                Sample_time, Sample_time_colour, Outcome, Outcome_colour) %>%
-  mutate(Treatment_s = case_when(Sample_time == "baseline" ~ "control", 
-                               Sample_time == "exposed" ~ "inoculated"), 
-         Outcome_s = case_when(Outcome == "baseline" ~ "control", 
-                            Outcome == "no transmission" ~ "visually unaffected", 
-                            Outcome == "transmission" ~ "diseased")) %>% 
-  mutate(Outcome_s = fct_relevel(.$Outcome_s, c("control", "visually unaffected", "diseased")))-> sample_info_tab
 
-View(sample_info_tab)
+```{r}
+
+library(vegan)
+count_tab$alpha <- diversity(reviewer1SpeciesCm$site[, count_tab$reviewer1SpeciesCm],
+                                 MARGIN = 2,
+                                 index = "invsimpson")
+hist(count_tab$alpha)
+
 ```
+
+
 
 
 
