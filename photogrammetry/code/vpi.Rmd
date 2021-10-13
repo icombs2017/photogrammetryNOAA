@@ -41,23 +41,357 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "adonis", "viridis")
+pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
+
 ```
 
 <br><br>
 
 # Loading Data
+***
 
-
-
-
-
+Data is exported from Viscore's VPI scriplet as a .csv file and named according to the file. 
+Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same.
 ```{r, load data, include = TRUE, results = 'hide'}
-vpiC1Pre <- read.csv("../data/vpi/IC_C1_2020_08_18.pqs-all-Combs.csv")
-vpiC1Post <- read.csv("../data/vpi/IC-C1_2020_12_14.pqs-all-Combs.csv")
-vpiC1Pre<- vpiC1Pre %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
-vpiC1Post<- vpiC1Post %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
+vpiC1Pre <- read_csv("../data/vpi/IC_C1_2020_08_18.pqs-all-Combs.csv")
+myColors <- gg_color_hue(length(vpiC1Pre$class))
+vpiC1Pre <- vpiC1Pre %>% dplyr::rename(abundance = `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiC2Pre <- read_csv("../data/vpi/IC_C2_2020_08_18.pqs-all-Combs.csv")
+vpiC2Pre <- vpiC2Pre %>% dplyr::rename(abundance = `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiU1Pre <- read_csv("../data/vpi/IC_U1_2020_08_19.pqs-all-Combs.csv")
+vpiU1Pre <- vpiU1Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiU2Pre <- read_csv("../data/vpi/IC_U2_2020_08_19.pqs-all-Combs.csv")
+vpiU2Pre <- vpiU2Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiZ1Pre <- read_csv("../data/vpi/IC_Z1_2020_08_18.pqs-all-Combs.csv")
+vpiZ1Pre <- vpiZ1Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiZ2Pre <- read_csv("../data/vpi/IC_Z2_2020_08_18.pqs-all-Combs.csv")
+vpiZ2Pre <- vpiZ2Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+
+# vpiC1Post <- read.csv("../data/vpi/IC-C1_2020_12_14.pqs-all-Combs.csv")
+# vpiC1Pre<- vpiC1Pre %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
+# vpiC1Post<- vpiC1Post %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
 ```
+<br><br>
+# Combining the data
+***
+
+To make plotting easier, we are combinging the datasets. We're adding a column that represents each site and then we will combine all into a larger dataset. 
+```{r, combiningData, include = TRUE}
+
+sitec1 <- as.factor("c1")
+vpiC1Pre<- vpiC1Pre %>% add_column(sitec1) %>% select(c("id", "sitec1", "class", "count", "abundance")) %>% rename(site = sitec1) 
+
+
+sitec2 <- as.factor("c2")
+vpiC2Pre<- vpiC2Pre %>% add_column(sitec2) %>% select(c("id", "sitec2", "class", "count", "abundance")) %>% rename(site = sitec2) 
+
+
+siteu1 <- as.factor("u1")
+vpiU1Pre<- vpiU1Pre %>% add_column(siteu1) %>% select(c("id", "siteu1", "class", "count", "abundance")) %>% rename(site = siteu1) 
+
+siteu2 <- as.factor("u2")
+vpiU2Pre<- vpiU2Pre %>% add_column(siteu2) %>% select(c("id", "siteu2", "class", "count", "abundance")) %>% rename(site = siteu2) 
+
+sitez1 <- as.factor("z1")
+vpiZ1Pre<- vpiZ1Pre %>% add_column(sitez1) %>% select(c("id", "sitez1", "class", "count", "abundance")) %>% rename(site = sitez1) 
+
+sitez2 <- as.factor("z2")
+vpiZ2Pre<- vpiZ2Pre %>% add_column(sitez2) %>% select(c("id", "sitez2", "class", "count", "abundance")) %>% rename(site = sitez2) 
+
+head(vpiC1Pre)
+head(vpiC2Pre)
+head(vpiU1Pre)
+head(vpiU2Pre)
+head(vpiZ1Pre)
+head(vpiZ2Pre)
+
+vpiPre <- bind_rows(vpiC1Pre,vpiC2Pre,vpiU1Pre,vpiU2Pre,vpiZ1Pre,vpiZ2Pre)
+
+summary(vpiPre)
+
+vpiPre <- as_tibble(vpiPre)
+vpiPre$site <- as.factor(vpiPre$site)
+vpiPre$class <- as.factor(vpiPre$class)
+
+vpiPre$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiPre$class)
+vpiPre$class <- as.factor(vpiPre$class)
+
+```
+
+
+
+
+
+
+<br><br>
+# Plotting the data
+***
+
+To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways.
+
+
+```{r}
+
+
+vpiPrePlot1 <- ggplot(vpiPre, aes(x = fct_reorder(class, -abundance)
+ , y = abundance, fill = class))+
+              geom_bar(stat = 'identity', position = position_fill(reverse =))+
+              labs(y = "Percent Abundance", x = "C1",title = "Pre-Restoration")+
+              ylim(0,100)+
+              facet_wrap(~site, scales = "free", drop = TRUE)
+vpiPrePlot <- vpiPrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiPrePlot
+
+
+
+
+```
+
+
+
+```{r}
+myColors<-viridis_pal(option = "C")(23)
+
+vpiPreStack1 <- ggplot(vpiPre, aes(x = site, y = abundance, fill = class, )) + 
+    geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
+    scale_y_continuous(expand = c(0,0)) + 
+    labs(x = "Site", y = "Relative Abundance (%)", fill = "Class")+
+    scale_fill_manual(values = myColors)  
+    
+vpiPreStack <- vpiPreStack1+theme(
+    axis.text.x = element_text(size = 14, colour = "black", vjust = 0.5, hjust = 1, face= "bold"), 
+    axis.title.x = element_text(size = 14, color = "black", face = "bold"),
+    axis.title.y = element_text(size = 16, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 12, face = "bold"),
+    legend.title = element_text(size = 16, face = "bold"), 
+    legend.text = element_text(size = 12, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 15, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=20, color="black"), 
+    legend.position = "bottom")
+
+vpiPreStack
+
+ggsave("../figures/noaaReportFig2.png", plot = vpiPreStack, width = 15, height = 10, units = "in", dpi = 600)
+```
+
+
+<br><br>
+
+# Normality Test
+***
+
+Conducting a few normality tests to determine the distribution of the data.
+
+```{r}
+
+ggqqplot(vpiPre$abundance)
+
+shapiro.test(vpiPre$abundance)
+
+
+kruskal.test(abundance ~ class, data = vpiPre)
+
+vpiDunn <- dunnTest(abundance ~ class, data = vpiPre, method="bh")
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+```{r, plotting, include = TRUE}
+
+
+vpiC1PrePlot1 <- ggplot(vpiC1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "C1",title = "Pre-Restoration")+
+              ylim(0,100)+
+              scale_color_brewer(palette = "Set3")
+vpiC1PrePlot <- vpiC1PrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiC1PrePlot
+
+vpiC2PrePlot1 <- ggplot(vpiC2Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "C2",title = "Pre-Restoration")+
+              ylim(0,100)+
+              scale_color_brewer(palette = "Set3")
+vpiC2PrePlot <- vpiC2PrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiC2PrePlot
+
+vpiU1PrePlot1 <- ggplot(vpiU1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "U1",title = "Pre-Restoration")+
+              ylim(0,100)+
+              scale_color_brewer(palette = "Set3")
+vpiU1PrePlot <- vpiU1PrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiU1PrePlot
+
+vpiU2PrePlot1 <- ggplot(vpiU2Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "U2",title = "Pre-Restoration")+
+              ylim(0,100)+
+              scale_color_brewer(palette = "Set3")
+vpiU2PrePlot <- vpiU2PrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiU2PrePlot
+
+
+vpiZ1PrePlot1 <- ggplot(vpiZ1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "Z1",title = "Pre-Restoration")+
+              ylim(0,100)+
+              scale_color_brewer(palette = "Set3")
+vpiZ1PrePlot <- vpiZ1PrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiZ1PrePlot
+
+
+
+vpiZ2PrePlot1 <- ggplot(vpiZ2Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
+              geom_bar(stat = 'identity')+
+              labs(y = "Percent Abundance", x = "Z2",title = "Pre-Restoration")+
+              ylim(0,100)+
+              scale_color_brewer(palette = "Set3")
+vpiZ2PrePlot <- vpiZ2PrePlot1 + theme(
+  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+  panel.background = element_rect(fill = '#F5F5F5'), 
+  plot.title = element_text(size = 15, face = "bold"), 
+  axis.line = element_line(colour = "black"), 
+  axis.ticks = element_line(color="black"), 
+  text = element_text(size=20, color="black"), 
+  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
+  axis.text.y=element_text(size=12, color="black"),
+  axis.title.y = element_text(size = 12),
+  axis.title.x = element_blank()
+)+rremove("legend")
+
+vpiZ2PrePlot
+
+
+compPlotPre <- vpiC1PrePlot + vpiC2PrePlot + vpiU1PrePlot + vpiU2PrePlot + vpiZ1PrePlot + vpiZ2PrePlot + plot_annotation(
+  title = 'Baseline Benthic Community Composition using Virtual Point Intercept',
+  theme = theme(plot.title = element_text(size = 18)))
+
+
+ggsave("../figures/vpiCompPlotPre.png", plot = compPlotPre, width = 15, height = 10, units = "in", dpi = 300)
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r, plotting, include = TRUE}
 
