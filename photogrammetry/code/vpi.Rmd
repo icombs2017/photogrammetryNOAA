@@ -41,9 +41,8 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "adonis", "viridis")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA","viridis", "paletteer")
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
-
 ```
 
 <br><br>
@@ -115,7 +114,11 @@ vpiPre$site <- as.factor(vpiPre$site)
 vpiPre$class <- as.factor(vpiPre$class)
 
 vpiPre$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiPre$class)
+vpiPre$class <- gsub("Rubble", "Bare Substrate", vpiPre$class)
 vpiPre$class <- as.factor(vpiPre$class)
+vpiPre1 <- vpiPre %>% filter(abundance > 2) %>% droplevels()
+vpiPre1$class = factor(vpiPre1$class, levels(vpiPre1$class)[c(2,3,4,5,1)])
+
 
 ```
 
@@ -131,64 +134,42 @@ vpiPre$class <- as.factor(vpiPre$class)
 To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways.
 
 
-```{r}
-
-
-vpiPrePlot1 <- ggplot(vpiPre, aes(x = fct_reorder(class, -abundance)
- , y = abundance, fill = class))+
-              geom_bar(stat = 'identity', position = position_fill(reverse =))+
-              labs(y = "Percent Abundance", x = "C1",title = "Pre-Restoration")+
-              ylim(0,100)+
-              facet_wrap(~site, scales = "free", drop = TRUE)
-vpiPrePlot <- vpiPrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiPrePlot
-
-
-
-
-```
-
 
 
 ```{r}
-myColors<-viridis_pal(option = "C")(23)
+myColors <- paletteer_c("harrypotter::gryffindor", 5, direction = 1 )
 
-vpiPreStack1 <- ggplot(vpiPre, aes(x = site, y = abundance, fill = class, )) + 
+
+
+
+
+
+
+vpiPreStack1 <- ggplot(vpiPre1, aes(x = site, y = abundance, fill = class, )) + 
     geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
-    scale_y_continuous(expand = c(0,0)) + 
-    labs(x = "Site", y = "Relative Abundance (%)", fill = "Class")+
-    scale_fill_manual(values = myColors)  
+    ylim(0,100) + 
+    labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
+    scale_fill_manual(values = myColors)+
+    scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
     
 vpiPreStack <- vpiPreStack1+theme(
-    axis.text.x = element_text(size = 14, colour = "black", vjust = 0.5, hjust = 1, face= "bold"), 
-    axis.title.x = element_text(size = 14, color = "black", face = "bold"),
-    axis.title.y = element_text(size = 16, face = "bold"), 
-    axis.text.y = element_text(colour = "black", size = 12, face = "bold"),
-    legend.title = element_text(size = 16, face = "bold"), 
-    legend.text = element_text(size = 12, face = "bold", colour = "black"), 
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_text(size = 40, color = "black", face = "bold"),
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
     panel.background = element_rect(fill = '#F5F5F5'), 
-    plot.title = element_text(size = 15, face = "bold"), 
+    plot.title = element_text(size = 40, face = "bold"), 
     axis.line = element_line(colour = "black"), 
     axis.ticks = element_line(color="black"), 
-    text = element_text(size=20, color="black"), 
+    text = element_text(size=40, color="black"), 
     legend.position = "bottom")
 
 vpiPreStack
 
-ggsave("../figures/noaaReportFig2.png", plot = vpiPreStack, width = 15, height = 10, units = "in", dpi = 600)
+ggsave("../figures/noaaReportFig2.png", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
 ```
 
 
@@ -197,18 +178,20 @@ ggsave("../figures/noaaReportFig2.png", plot = vpiPreStack, width = 15, height =
 # Normality Test
 ***
 
-Conducting a few normality tests to determine the distribution of the data.
+Conducting a few normality tests to determine the distribution of the data. And then running the appropriate statistical test. 
 
 ```{r}
 
-ggqqplot(vpiPre$abundance)
+summaryStats <- vpiPre %>% select(class, abundance) %>% group_by( class) %>% summarise(mean(abundance)) %>% arrange(desc(`mean(abundance)`)) %>% as_tibble()
+
+
+ggqqplot(vpiPre$count)
 
 shapiro.test(vpiPre$abundance)
 
 
-kruskal.test(abundance ~ class, data = vpiPre)
+kruskal.test(abundance ~ site, data = vpiPre)
 
-vpiDunn <- dunnTest(abundance ~ class, data = vpiPre, method="bh")
 
 
 ```

@@ -44,8 +44,11 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2", "dplyr", "tibble", "plotly", "vegan", "ggpubr")
-pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", "plotly")
+pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis", "tzerk/roughness")
+
+
+
 ```
 
 <br><br>
@@ -113,7 +116,7 @@ Now we want to merge datasets using the `bind_rows` function in `dplyr`.
 ```{r, merge, include = TRUE, results = 'hide'}
 
 rugo <- bind_rows(c1,c2,u1,u2,z1,z2)
-
+rugo <- as_tibble(rugo)
 summary(rugo)
 
 ```
@@ -122,14 +125,44 @@ summary(rugo)
 
 # Calculating variance
 ***
-We have a very large dataset, however, what we are really concerned with is the **variance** of our z coordinate for each transect (and maybe, eventually, for each site). Using `dplyr` we are going to calculate our variance as well as collapse our data set so it is easier to work with. We will end up with 1 variance value for each transect within each site. We are also calculating standard deviation and mean. 
+We have a very large dataset, however, what we are really concerned with is the **Root Mean Square of Heights**, rather, the **standard deviation** of our z coordinate (height) for each transect (and maybe, eventually, for each site). Using `dplyr` we are going to calculate our **standard deviation** as well as collapse our data set so it is easier to work with. We will end up with 1 variance value for each transect within each site. We are also calculating standard deviation and mean. 
 
 
 ```{r, variance, include = TRUE}
-rugoVar <- rugo %>% dplyr::select(site, transect, x, y, z) %>% group_by(site, transect) %>%  summarise(var(z), mean(z), sd(z))
 
-siteVar <- rugo %>% dplyr::select(site, z) %>% group_by(site) %>%  summarise(var(z), mean(z), sd(z), sqrt(mean((z)^2))) %>% rename(variance = `var(z)`, mean = `mean(z)`, sd = `sd(z)`, rms = `sqrt(mean((z)^2))`)
+rugoSd <- rugo %>% dplyr::select(site, transect, z) %>% group_by(site, transect) %>% summarise(sd(z)) %>% rename(sd = `sd(z)`)
+rugoSd$transect <-  as.ordered(rugoSd$transect)
+rugo$sd <- sd(rugo$z)
+rugoSdSite <- rugo %>%  dplyr::select(site, z) %>% group_by(site) %>% summarise(sd(z)) %>% rename(sd = `sd(z)`)
 
+qqnorm(rugoSd$sd)
+hist(rugoSd$sd)
+shapiro.test(rugoSd$sd)
+
+kruskal.test(sd~site, data = rugoSd)
+rugoSdDunn <- dunnTest(sd~site, data = rugoSd, method = "bh")
+
+
+kruskal.test(sd~transect, data = rugoSd)
+rugoSdDunn <- dunnTest(sd~site, data = rugoSd, method = "bh")
+#Just the Significant pairwise comparisons 
+rugoSdDunnSig <- rugoSdDunn$res %>% filter(P.adj < 0.05)
+
+
+
+rugoSdC1 <- rugoSd %>%  filter(site == "c1")
+kruskal.test(sd~transect, data = rugoSdC1)
+
+kruskal.test(sd~site, data = rugoSdSite)
+
+
+
+
+
+# rugoVar <- rugo %>% dplyr::select(site, transect, x, y, z) %>% group_by(site, transect) %>%  summarise(var(z), mean(z), sd(z))
+# 
+# siteVar <- rugo %>% dplyr::select(site, z) %>% group_by(site) %>%  summarise(var(z), mean(z), sd(z), sqrt(mean((z)^2))) %>% rename(variance = `var(z)`, mean = `mean(z)`, sd = `sd(z)`, rms = `sqrt(mean((z)^2))`)
+# 
 rugoMean <- rugo %>% dplyr::select(site, point, x, y, z) %>% group_by(site, point) %>% summarise(mean(z))
 
 ```
@@ -219,34 +252,27 @@ Now we are going to calculate the Root Mean Square Height as described in [David
 
 
 ```{r, Root Mean Square Height, include = FALSE}
-# 
-# # NOT SURE IF THIS IS THE CORRECT THING, KEEPING FOR RECORDS
-# # find and remove outliers
-# data_cleaned <- find_Outliers(data = rugo)
-#                               
-#                               ,
-#                               prefilter = TRUE,
-#                               method = c("iqr", "sd", "mad"),
-#                               remove = "mad",
-#                               window = FALSE,
-#                               width = 20,
-#                               step = 10,
-#                               hist = TRUE,
-#                               plot = TRUE)
-# 
-# # de-trend the data set
-# data_detrend <- detrend_Data(data_cleaned, plot = TRUE)
-# 
-# # calculate RMS
-# RMS <- calc_RMS(rugoVar)
-# print(RMS)
-# 
-# # note that the function returns a data frame
-# 
-# 
-# 
-# sd(rugo$z)
-# 
+
+# find and remove outliers
+rugo_cleaned <- find_Outliers(data = rugo$z,
+                              prefilter = TRUE,
+                              method = c("iqr", "sd", "mad"),
+                              remove = "mad",
+                              window = FALSE,
+                              width = 20,
+                              step = 10, 
+                              hist = TRUE,
+                              plot = TRUE)
+                              
+# de-trend the data set
+rugo_detrend <- detrend_Data(rugo_cleaned, plot = TRUE)
+
+# calculate RMS
+RMS <- calc_RMS(rugo_detrend)
+print(RMS)
+
+# note that the function returns a data frame
+str(RMS)
 
 
 ```
