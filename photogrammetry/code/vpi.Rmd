@@ -54,18 +54,43 @@ Data is exported from Viscore's VPI scriplet as a .csv file and named according 
 Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same.
 ```{r, load data, include = TRUE, results = 'hide'}
 vpiC1Pre <- read_csv("../data/vpi/IC_C1_2020_08_18.pqs-all-Combs.csv")
+
 myColors <- gg_color_hue(length(vpiC1Pre$class))
-vpiC1Pre <- vpiC1Pre %>% dplyr::rename(abundance = `%`)%>% na.omit() %>% arrange(desc(abundance))
+
+vpiC1Pre <- vpiC1Pre %>% 
+  dplyr::rename(abundance = `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
 vpiC2Pre <- read_csv("../data/vpi/IC_C2_2020_08_18.pqs-all-Combs.csv")
-vpiC2Pre <- vpiC2Pre %>% dplyr::rename(abundance = `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiC2Pre <- vpiC2Pre %>% 
+  dplyr::rename(abundance = `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
 vpiU1Pre <- read_csv("../data/vpi/IC_U1_2020_08_19.pqs-all-Combs.csv")
-vpiU1Pre <- vpiU1Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiU1Pre <- vpiU1Pre %>% 
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
 vpiU2Pre <- read_csv("../data/vpi/IC_U2_2020_08_19.pqs-all-Combs.csv")
-vpiU2Pre <- vpiU2Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiU2Pre <- vpiU2Pre %>% 
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
 vpiZ1Pre <- read_csv("../data/vpi/IC_Z1_2020_08_18.pqs-all-Combs.csv")
-vpiZ1Pre <- vpiZ1Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiZ1Pre <- vpiZ1Pre %>% 
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
 vpiZ2Pre <- read_csv("../data/vpi/IC_Z2_2020_08_18.pqs-all-Combs.csv")
-vpiZ2Pre <- vpiZ2Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrange(desc(abundance))
+vpiZ2Pre <- vpiZ2Pre %>% 
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
 
 # vpiC1Post <- read.csv("../data/vpi/IC-C1_2020_12_14.pqs-all-Combs.csv")
 # vpiC1Pre<- vpiC1Pre %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
@@ -78,25 +103,43 @@ vpiZ2Pre <- vpiZ2Pre %>% dplyr::rename(abundance =  `%`)%>% na.omit() %>% arrang
 To make plotting easier, we are combinging the datasets. We're adding a column that represents each site and then we will combine all into a larger dataset. 
 ```{r, combiningData, include = TRUE}
 
-sitec1 <- as.factor("c1")
-vpiC1Pre<- vpiC1Pre %>% add_column(sitec1) %>% select(c("id", "sitec1", "class", "count", "abundance")) %>% rename(site = sitec1) 
+siteC1 <- as.factor("C1")
+vpiC1Pre<- vpiC1Pre %>% 
+  add_column(siteC1) %>% 
+  select(c("id", "siteC1", "class", "count", "abundance")) %>% 
+  rename(site = siteC1) 
 
 
-sitec2 <- as.factor("c2")
-vpiC2Pre<- vpiC2Pre %>% add_column(sitec2) %>% select(c("id", "sitec2", "class", "count", "abundance")) %>% rename(site = sitec2) 
+siteC2 <- as.factor("C2")
+vpiC2Pre<- vpiC2Pre %>% 
+  add_column(siteC2) %>% 
+  select(c("id", "siteC2", "class", "count", "abundance")) %>% 
+  rename(site = siteC2) 
 
 
-siteu1 <- as.factor("u1")
-vpiU1Pre<- vpiU1Pre %>% add_column(siteu1) %>% select(c("id", "siteu1", "class", "count", "abundance")) %>% rename(site = siteu1) 
+siteU1 <- as.factor("U1")
+vpiU1Pre<- vpiU1Pre %>% 
+  add_column(siteU1) %>% 
+  select(c("id", "siteU1", "class", "count", "abundance")) %>% 
+  rename(site = siteU1) 
 
-siteu2 <- as.factor("u2")
-vpiU2Pre<- vpiU2Pre %>% add_column(siteu2) %>% select(c("id", "siteu2", "class", "count", "abundance")) %>% rename(site = siteu2) 
+siteU2 <- as.factor("U2")
+vpiU2Pre<- vpiU2Pre %>% 
+  add_column(siteU2) %>% 
+  select(c("id", "siteU2", "class", "count", "abundance")) %>%
+  rename(site = siteU2) 
 
-sitez1 <- as.factor("z1")
-vpiZ1Pre<- vpiZ1Pre %>% add_column(sitez1) %>% select(c("id", "sitez1", "class", "count", "abundance")) %>% rename(site = sitez1) 
+siteZ1 <- as.factor("Z1")
+vpiZ1Pre<- vpiZ1Pre %>% 
+  add_column(siteZ1) %>% 
+  select(c("id", "siteZ1", "class", "count", "abundance")) %>% 
+  rename(site = siteZ1) 
 
-sitez2 <- as.factor("z2")
-vpiZ2Pre<- vpiZ2Pre %>% add_column(sitez2) %>% select(c("id", "sitez2", "class", "count", "abundance")) %>% rename(site = sitez2) 
+siteZ2 <- as.factor("Z2")
+vpiZ2Pre<- vpiZ2Pre %>% 
+  add_column(siteZ2) %>% 
+  select(c("id", "siteZ2", "class", "count", "abundance")) %>% 
+  rename(site = siteZ2) 
 
 head(vpiC1Pre)
 head(vpiC2Pre)
@@ -116,8 +159,18 @@ vpiPre$class <- as.factor(vpiPre$class)
 vpiPre$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiPre$class)
 vpiPre$class <- gsub("Rubble", "Bare Substrate", vpiPre$class)
 vpiPre$class <- as.factor(vpiPre$class)
-vpiPre1 <- vpiPre %>% filter(abundance > 2) %>% droplevels()
-vpiPre1$class = factor(vpiPre1$class, levels(vpiPre1$class)[c(2,3,4,5,1)])
+
+vpiPre$treatment = if_else(vpiPre$site %in% c("C2", "Z1", "U1"), "Control","Outplanted") 
+
+
+
+#vpiPre <- vpiPre1
+
+
+
+
+
+
 
 
 ```
@@ -131,7 +184,7 @@ vpiPre1$class = factor(vpiPre1$class, levels(vpiPre1$class)[c(2,3,4,5,1)])
 # Plotting the data
 ***
 
-To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways.
+To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways. First we are going to just plot those with >2% abundance at our sites.
 
 
 
@@ -140,8 +193,11 @@ To visualize the data and what our species composition looks like at our sites, 
 myColors <- paletteer_c("harrypotter::gryffindor", 5, direction = 1 )
 
 
-
-
+# Using this just to plot the top 2% of species
+vpiPre1 <- vpiPre %>% 
+  filter(abundance > 2) %>% 
+  droplevels()
+vpiPre1$class = factor(vpiPre1$class, levels(vpiPre1$class)[c(2,3,4,5,1)])
 
 
 
@@ -150,8 +206,8 @@ vpiPreStack1 <- ggplot(vpiPre1, aes(x = site, y = abundance, fill = class, )) +
     ylim(0,100) + 
     labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
     scale_fill_manual(values = myColors)+
-    scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
-    
+    facet_wrap(treatment~. , scales = 'free_x')
+
 vpiPreStack <- vpiPreStack1+theme(
     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_text(size = 40, color = "black", face = "bold"),
@@ -167,6 +223,7 @@ vpiPreStack <- vpiPreStack1+theme(
     text = element_text(size=40, color="black"), 
     legend.position = "bottom")
 
+
 vpiPreStack
 
 ggsave("../figures/noaaReportFig2.png", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
@@ -178,11 +235,16 @@ ggsave("../figures/noaaReportFig2.png", plot = vpiPreStack, width = 20, height =
 # Normality Test
 ***
 
-Conducting a few normality tests to determine the distribution of the data. And then running the appropriate statistical test. 
+Conducting a few normality tests to see whether or not the data violates the assumptions of normality. And then running the appropriate statistical test. In this case we are running a single-factor Kruskal-Wallis (for non-normally distributed data) and then a multi-factor Permuational Analysis of Variance (PERMANOVA) using the function `adonis` in the package `vegan` looking at abundance across treatment (control vs outplanted) and functional groups (gorgonians, corals, etc). The factors and variables are likely to change as we add in variables from other data sets (potentially) and timepoints (definitely). 
 
 ```{r}
 
-summaryStats <- vpiPre %>% select(class, abundance) %>% group_by( class) %>% summarise(mean(abundance)) %>% arrange(desc(`mean(abundance)`)) %>% as_tibble()
+# summaryStats <- vpiPre %>% 
+#   select(class, abundance) %>% 
+#   group_by(class) %>% 
+#   summarise(mean(abundance)) %>% 
+#   arrange(desc(`mean(abundance)`)) %>% 
+#   as_tibble()
 
 
 ggqqplot(vpiPre$count)
@@ -190,8 +252,10 @@ ggqqplot(vpiPre$count)
 shapiro.test(vpiPre$abundance)
 
 
-kruskal.test(abundance ~ site, data = vpiPre)
+kruskal.test(abundance ~ treatment, data = vpiPre)
 
+set.seed(999)
+adonis(formula = abundance ~ treatment*class, data = vpiPre, method = "euclidian", permutations = 999)
 
 
 ```
