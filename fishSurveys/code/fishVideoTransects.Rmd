@@ -1,0 +1,75 @@
+---
+title: "Fish Video Transect Survey Analysis"
+title: "Analysis of Herbivory Assays: Surface Area"
+author: "Ian Combs -- icombs@mote.org"
+date created: "01/13/2022"
+output:
+  html_document:
+    theme: flatly
+    code_folding: show
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_doctument:
+      toc: yes
+      toc_depth: 3
+---
+
+
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, fig.align = 'left')
+library(magrittr)
+```
+
+### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
+###
+***
+This is the analysis pipeline to analyze the community composition from fish video transects. Six experimental 10m x 10m plots were established. Three transects of video were captured per site three times 1 month post-outplant and again, three more times 12 months post-outplant. Each transect was swam from the ledge to the hardpan, and 5 minutes elapsed between transects to allow for fish communities to return post diver disturbance. Still frames were pulled from each video at discrete intervals (NEED TO SAY WHAT THE INTERVALS WERE). Using the open source program **Ffmpeg**, the protocol for which can be found in the ../protocols folder within this repository. Fish were identified to the lowest taxonomic level possible, if applica ble, the phase of the fish species was noted (terminal, initial, etc).
+
+***
+
+### All analyses performed with R version `r getRversion()`
+
+
+# Basic setup of R environment
+***
+## Loading required packages
+For the following analyses we will require the use of a number of different R packages. Most of which can be sourced from CRAN, but some may be downloaded from GitHub. We can use the following code to load in the packages and install any packages not previously installed in the R console. 
+
+```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata")
+
+
+```
+
+
+# Loading data
+***
+Data generated from reviewing these videos and stills are stored in an excel spreadsheet found in the ../data folder. And loaded in using the `readxlsx()` from the package `readxl`. Note: we are also loading the `officer` package which has a similarly named function, so we are explicitly calling the `read_xlsx()` function from `readxl` using `::` notation.   
+
+
+```{r, load and subset, include = TRUE, results = "hide"}
+
+fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE)
+fish1$date <- as.Date.factor(fish1$date)
+fish1$site <- as.factor(fish1$site)
+fish1$transect <- as.factor(fish1$transect)
+fish1$frame <- as.factor(fish1$frame)
+fish1$reviewer1SpeciesCm <- as.factor(fish1$reviewer1SpeciesCm)
+fish1$reviewer1SpeciesGn <- as.factor(fish1$reviewer1SpeciesGn)
+fish1$reviewer1SpeciesSc <- as.factor(fish1$reviewer1SpeciesSc)
+fish1$reviewer1FullSciName <- as.factor(fish1$reviewer1FullSciName)
+fish1$phase <- as.factor(fish1$phase)
+
+
+fish <- fish1 %>% select(date, site, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count) %>%
+group_by(date, site) %>% 
+  add_count() %>% 
+  ungroup() %>% 
+  group_by(date, site, reviewer1FullSciName) %>% 
+  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+                        
+
+```
+

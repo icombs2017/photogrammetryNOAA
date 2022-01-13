@@ -1,6 +1,5 @@
 ---
 title: "Analysis of Herbivory Assay: Herbivore Community Composition"
-title: "Analysis of Herbivory Assays: Surface Area"
 author: "Ian Combs -- icombs@mote.org"
 date created: "07/30/2021"
 last modified: "01/08/2022"
@@ -47,15 +46,14 @@ pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patc
 
 # Loading data
 ***
-Data generated in TagLab is exported as a .csv for each project. So there are 24 .csv files, a "before" and "after" for each assay. We want to compile all of the .csv files into one larger dataframe. To do this we will use the function `list.files()` and `ldply` from the package `plyr`. 
+Data generated from reviewing these videos are stored in an excel spreadsheet found in the ../data folder. And loaded in using the `read.xls()` from the package `gdata`.  
 
 ```{r, load and subset, include = TRUE, results = "hide"}
-
+# I WANT TO CHANGE THIS DATAFRAME NAME TO HERBIVORY OR SOMETHIGN LIKE THAT, KEEP FISH FOR THE FISH TRANSECTS
 fish1 <- read.xls("../data/herbivoryVideoDataSheet.xlsx", header =T)
 fish1 <- as.tibble(fish1)
 fish1$date <- as.Date.factor(fish1$date)
 fish1$site <- as.factor(fish1$site)
-fish1$assay <- as.factor(fish1$assay)
 fish1$assay <- as.factor(fish1$assay)
 fish1$reviewer1SpeciesCm <- as.factor(fish1$reviewer1SpeciesCm)
 fish1$reviewer1SpeciesGn <- as.factor(fish1$reviewer1SpeciesGn)
