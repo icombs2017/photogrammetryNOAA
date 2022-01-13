@@ -79,10 +79,10 @@ group_by(date, site) %>%
 
 fishPlot <- subset(fish, date == c("2020-12-14", "2020-12-16"))
 
-c <- ggplot(fish, aes(x = site, y = abundance, fill = reviewer1FullSciName)) + 
+fishStack1 <- ggplot(fish, aes(x = site, y = abundance, fill = reviewer1FullSciName)) + 
     geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
     labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")+
-    facet_wrap(~date)
+    facet_wrap(date~. , scale = 'free')
     #scale_fill_manual(values = myColors)+
     #scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
     
