@@ -169,7 +169,7 @@ vpiPreStack <- vpiPreStack1+theme(
 
 vpiPreStack
 
-ggsave("../figures/noaaReportFig2.png", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
+ggsave("../figures/noaaReportFig2.jpeg", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
 ```
 
 

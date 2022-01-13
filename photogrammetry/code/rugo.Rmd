@@ -205,7 +205,7 @@ c1ggplot <- ggplot(data = c1, aes(x = point, y = z, color = transect))+
   axis.title.x = element_blank()
 )+rremove("legend")
 c1ggplot
-ggsave("../figures/rugoC1Pre.png", plot = c1ggplot, width = 15, height = 10, units = "in", dpi = 600)
+ggsave("../figures/rugoC1Pre.jpeg", plot = c1ggplot, width = 15, height = 10, units = "in", dpi = 600)
 
 
 

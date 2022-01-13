@@ -1,6 +1,8 @@
 ---
-title: "Analysis of Herbivory Assays"
+title: "Analysis of Herbivory Assays: Surface Area"
 author: "Ian Combs -- combsi9892@gmail.com"
+date created: "07/30/2021"
+last modified: "01/08/2022"
 output:
   html_document:
     theme: flatly

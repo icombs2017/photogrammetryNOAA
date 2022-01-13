@@ -1,0 +1,141 @@
+---
+title: "Analysis of Herbivory Assay: Herbivore Community Composition"
+title: "Analysis of Herbivory Assays: Surface Area"
+author: "Ian Combs -- icombs@mote.org"
+date created: "07/30/2021"
+last modified: "01/08/2022"
+output:
+  html_document:
+    theme: flatly
+    code_folding: show
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_doctument:
+      toc: yes
+      toc_depth: 3
+---
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, fig.align = 'left')
+library(magrittr)
+```
+
+### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
+###
+***
+This is the analysis pipeline to analyze the community composition of herbivores predating upon the herbivory assays. Six experimental 10m x 10m plots were established. Two herbivory assays were deployed at each site. Each assay consisted for 5 blades of **Thalassia testudinum** set in clothespins threaded onto galvanized wire at 6in. intervals. The assays were deployed for 2 hours and filmed using a GoPro camera. The videos were analyzed to determine which species of herbivorous fish were predating upon the herbivory assays. Only fish that actually ate seagrass were noted, the blades that were predated upon were noted to hte best of the reviewers ability, and, if applicable, the phase of the herbivore was noted (terminal, initial, etc).
+
+
+***
+
+### All analyses performed with R version `r getRversion()`
+
+
+# Basic setup of R environment
+***
+## Loading required packages
+For the following analyses we will require the use of a number of different R packages. Most of which can be sourced from CRAN, but some must be downloaded from GitHub. We can use the following code to load in the packages and install any packages not previously installed in the R console. 
+
+```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata")
+
+
+```
+
+
+
+# Loading data
+***
+Data generated in TagLab is exported as a .csv for each project. So there are 24 .csv files, a "before" and "after" for each assay. We want to compile all of the .csv files into one larger dataframe. To do this we will use the function `list.files()` and `ldply` from the package `plyr`. 
+
+```{r, load and subset, include = TRUE, results = "hide"}
+
+fish1 <- read.xls("../data/herbivoryVideoDataSheet.xlsx", header =T)
+fish1 <- as.tibble(fish1)
+fish1$date <- as.Date.factor(fish1$date)
+fish1$site <- as.factor(fish1$site)
+fish1$assay <- as.factor(fish1$assay)
+fish1$assay <- as.factor(fish1$assay)
+fish1$reviewer1SpeciesCm <- as.factor(fish1$reviewer1SpeciesCm)
+fish1$reviewer1SpeciesGn <- as.factor(fish1$reviewer1SpeciesGn)
+fish1$reviewer1SpeciesSc <- as.factor(fish1$reviewer1SpeciesSc)
+fish1$reviewer1FullSciName <- as.factor(fish1$reviewer1FullSciName)
+
+
+fish <- fish1 %>% select(date, site, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count, reviewer1Blade) %>%
+group_by(date, site) %>% 
+  add_count() %>% 
+  ungroup() %>% 
+  group_by(date, site, reviewer1FullSciName) %>% 
+  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+                        
+  
+
+ 
+
+
+
+
+
+```
+
+<br><br>
+# Plotting the data
+***
+
+To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways.
+
+
+
+```{r, graph, include = TRUE}
+
+#subsetting for just one time point
+
+herbivoryPlot <- subset(fish, date == c("2020-10-14", "2020-10-15"))
+
+herbStack1 <- ggplot(herbivoryPlot, aes(x = site, y = abundance, fill = reviewer1FullSciName)) + 
+    geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
+    #ylim(0,100) + 
+    labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")
++
+    facet_wrap(~date)
+    #scale_fill_manual(values = myColors)+
+    #scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
+    
+herbStack <- herbStack1+theme(
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_text(size = 40, color = "black", face = "bold"),
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 40, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
+    legend.position = "right")
+
+herbStack
+
+ggsave("../figures/knowledgeExchangeHerbivory.png", plot = herbStack1, width = 20, height = 15, units = "in", dpi = 600)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
