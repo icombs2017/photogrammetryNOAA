@@ -51,7 +51,7 @@ Data generated from reviewing these videos and stills are stored in an excel spr
 
 ```{r, load and subset, include = TRUE, results = "hide"}
 
-fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE)
+fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE, na = c("", "N/A", "NA"))
 fish1$date <- as.Date.factor(fish1$date)
 fish1$site <- as.factor(fish1$site)
 fish1$transect <- as.factor(fish1$transect)
@@ -72,4 +72,43 @@ group_by(date, site) %>%
                         
 
 ```
+
+```{r}
+
+#subsetting for just one time point
+
+fishPlot <- subset(fish, date == c("2020-12-14", "2020-12-16"))
+
+fishStack1 <- ggplot(fishPlot, aes(x = site, y = abundance, fill = reviewer1FullSciName)) + 
+    geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
+    labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")+
+    facet_wrap(~date)
+    #scale_fill_manual(values = myColors)+
+    #scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
+    
+herbStack <- herbStack1+theme(
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_text(size = 40, color = "black", face = "bold"),
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 40, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
+    legend.position = "right")
+
+herbStack
+
+
+
+
+
+```
+
+
+
 
