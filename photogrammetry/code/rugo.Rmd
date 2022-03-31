@@ -60,12 +60,12 @@ Viscore produces rugosity measurement outputs as *.csv* files. We will be loadin
 
 ```{r, load, include = TRUE, results = "hide"}
 
-c1 <- read.csv("../data/rugosity/8.18.20/c1r0-lines.csv", header = F)
-c2 <- read.csv("../data/rugosity/8.18.20/c2r0-lines.csv", header = F)
-u1 <- read.csv("../data/rugosity/8.18.20/u1r0-lines.csv", header = F)
-u2 <- read.csv("../data/rugosity/8.18.20/u2r0-lines.csv", header = F)
-z1 <- read.csv("../data/rugosity/8.18.20/z1r0-lines.csv", header = F)
-z2 <- read.csv("../data/rugosity/8.18.20/z2r0-lines.csv", header = F)
+c1 <- read.csv("../data/rugosity/2020.08.18/c1r0-lines.csv", header = F)
+c2 <- read.csv("../data/rugosity/2020.08.18/c2r0-lines.csv", header = F)
+u1 <- read.csv("../data/rugosity/2020.08.18/u1r0-lines.csv", header = F)
+u2 <- read.csv("../data/rugosity/2020.08.18/u2r0-lines.csv", header = F)
+z1 <- read.csv("../data/rugosity/2020.08.18/z1r0-lines.csv", header = F)
+z2 <- read.csv("../data/rugosity/2020.08.18/z2r0-lines.csv", header = F)
 head(c1)
 
 

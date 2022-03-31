@@ -244,5 +244,7 @@ ggsave("../figures/tagLabComp.png", plot = compBar, width = 15, height = 10, uni
 
 
 ```
+
+```{r}
 ```
 
