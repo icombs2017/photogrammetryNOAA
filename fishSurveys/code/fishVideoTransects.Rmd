@@ -1,6 +1,5 @@
 ---
 title: "Fish Video Transect Survey Analysis"
-title: "Analysis of Herbivory Assays: Surface Area"
 author: "Ian Combs -- icombs@mote.org"
 date created: "01/13/2022"
 output:
@@ -24,7 +23,7 @@ library(magrittr)
 ### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
 ###
 ***
-This is the analysis pipeline to analyze the community composition from fish video transects. Six experimental 10m x 10m plots were established. Three transects of video were captured per site three times 1 month post-outplant and again, three more times 12 months post-outplant. Each transect was swam from the ledge to the hardpan, and 5 minutes elapsed between transects to allow for fish communities to return post diver disturbance. Still frames were pulled from each video at discrete intervals (NEED TO SAY WHAT THE INTERVALS WERE). Using the open source program **Ffmpeg**, the protocol for which can be found in the ../protocols folder within this repository. Fish were identified to the lowest taxonomic level possible, if applica ble, the phase of the fish species was noted (terminal, initial, etc).
+This is the analysis pipeline to analyze the community composition from fish video transects. Six experimental 10m x 10m plots were established in August 2020. Three more experimental 10m x 10m plots were established in June of 2021. Three transects of video were captured per site three times 1 month post-outplant and again, three more times 12 months post-outplant. Each transect was swam from the ledge to the hardpan, and 5 minutes elapsed between transects to allow for fish communities to return post diver disturbance. Still frames were pulled from each video every 3 seconds. Using the open source program **Ffmpeg**, the protocol for which can be found in the ../protocols folder within this repository. Fish were identified to the lowest taxonomic level possible, if applicable, the phase of the fish species was noted (terminal, initial, etc).
 
 ***
 
@@ -64,13 +63,17 @@ fish1$phase <- as.factor(fish1$phase)
 
 
 fish <- fish1 %>% select(date, site, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count) %>%
-group_by(date, site) %>% 
+  filter(site == c("IC-C1", "IC-U1", "IC-Z1", "IC-C2", "IC-U2", "IC-Z2")) %>% 
+  droplevels() %>% 
+  group_by(date, site) %>% 
   add_count() %>% 
   ungroup() %>% 
   group_by(date, site, reviewer1FullSciName) %>% 
   summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
-                        
 
+levels(fish$site)
+                      
+#filter(Date > "2015-09-04" & Date <"2015-09-18")
 ```
 
 ```{r}

@@ -48,6 +48,27 @@ pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patc
 
 # Loading Data
 
+```{r, load data, include = TRUE, results = 'hide'}
+
+
+c1Pre <- read.csv("../data/TagLab/IC-C1_2020_08_18.csv", header = T)
+c1Post <- read.csv("../data/TagLab/IC-C1_2021_12_08.csv", header = T)
+
+sitec1 <- as.factor("c1")
+c1Pre<- c1Pre %>% add_column(sitec1) %>% rename(site = sitec1)
+
+sitec1 <- as.factor("c1")
+c1Post<- c1Post %>% add_column(sitec1) %>% rename(site = sitec1)
+
+head(c1Pre)
+
+C1 <- bind_rows(c1Pre, c1Post)
+C1 <- as_tibble(C1)
+summary(C1)
+
+
+
+```
 
 
 
