@@ -1,6 +1,6 @@
 {
-  "Name": "Mote Dictionary",
-  "Description": "Dictionary used for the segmentation of orthomosaics from Mote Marine Laboratory. Caribbean specific. ",
+  "Name": "Mote",
+  "Description": "These are the color codes used for the segmentation of orthoprojections/mosaics from Mote Marine Laboratory",
   "Labels": [
     {
       "id": "Siderastrea siderea",
@@ -42,6 +42,102 @@
         0,
         85,
         0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Stephanocoenia intersepta",
+      "name": "Stephanocoenia intersepta",
+      "description": null,
+      "fill": [
+        170,
+        85,
+        0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Orbicella faveolata",
+      "name": "Orbicella faveolata",
+      "description": null,
+      "fill": [
+        0,
+        170,
+        0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Pseudodiploria strigosa",
+      "name": "Pseudodiploria strigosa",
+      "description": null,
+      "fill": [
+        170,
+        170,
+        0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Agaricia agaricites",
+      "name": "Agaricia agaricites",
+      "description": null,
+      "fill": [
+        170,
+        170,
+        0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Acropora cervicornis",
+      "name": "Acropora cervicornis",
+      "description": null,
+      "fill": [
+        0,
+        255,
+        0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Dichocoenia stokesi",
+      "name": "Dichocoenia stokesi",
+      "description": null,
+      "fill": [
+        0,
+        0,
+        127
       ],
       "border": [
         200,
