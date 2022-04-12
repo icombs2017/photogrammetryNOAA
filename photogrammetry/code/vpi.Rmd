@@ -51,50 +51,159 @@ pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 ***
 
 Data is exported from Viscore's VPI scriplet as a .csv file and named according to the file. 
-Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same.
+Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same. I am also adding **site** and **time** columns to each subset, combining all subsets into one large dataframe using `bind_rows()`, adding a **treatment** column and using the `gsub()` to rename some 
 ```{r, load data, include = TRUE, results = 'hide'}
-vpiC1Pre <- read_csv("../data/vpi/IC_C1_2020_08_18.pqs-all-Combs.csv")
 
-myColors <- gg_color_hue(length(vpiC1Pre$class))
 
+
+sitec1 <- as.factor("c1")
+sitec2 <- as.factor("c2")
+siteu1 <- as.factor("u1")
+siteu2 <- as.factor("u2")
+sitez1 <- as.factor("z1")
+sitez2 <- as.factor("z2")
+pre <- as.factor("pre")
+post <- as.factor("post")
+
+
+vpiC1Pre <- read_csv("../data/vpi/2020_08_18_IC-C1pq.csv")
 vpiC1Pre <- vpiC1Pre %>% 
+  add_column(sitec1) %>% 
+  rename(site = sitec1) %>%
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
   dplyr::rename(abundance = `%`) %>% 
   na.omit() %>% 
   arrange(desc(abundance))
 
-vpiC2Pre <- read_csv("../data/vpi/IC_C2_2020_08_18.pqs-all-Combs.csv")
-vpiC2Pre <- vpiC2Pre %>% 
+vpiC2Pre <- read_csv("../data/vpi/2020_08_18_IC-C2pq.csv")
+vpiC2Pre <- vpiC2Pre %>%
+  add_column(sitec2) %>%
+  rename(site = sitec2) %>% 
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
   dplyr::rename(abundance = `%`) %>% 
   na.omit() %>% 
   arrange(desc(abundance))
 
-vpiU1Pre <- read_csv("../data/vpi/IC_U1_2020_08_19.pqs-all-Combs.csv")
-vpiU1Pre <- vpiU1Pre %>% 
+
+vpiU1Pre <- read_csv("../data/vpi/2020_08_19_IC-U1pq.csv")
+vpiU1Pre <- vpiU1Pre %>%
+  add_column(siteu1) %>%
+  rename(site = siteu1) %>%
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
   dplyr::rename(abundance =  `%`) %>% 
   na.omit() %>% 
   arrange(desc(abundance))
 
-vpiU2Pre <- read_csv("../data/vpi/IC_U2_2020_08_19.pqs-all-Combs.csv")
-vpiU2Pre <- vpiU2Pre %>% 
+vpiU2Pre <- read_csv("../data/vpi/2020_08_19_IC-U2pq.csv")
+vpiU2Pre <- vpiU2Pre %>%
+  add_column(siteu2) %>% 
+  rename(site = siteu2) %>%
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
   dplyr::rename(abundance =  `%`) %>% 
   na.omit() %>% 
   arrange(desc(abundance))
 
-vpiZ1Pre <- read_csv("../data/vpi/IC_Z1_2020_08_18.pqs-all-Combs.csv")
-vpiZ1Pre <- vpiZ1Pre %>% 
+vpiZ1Pre <- read_csv("../data/vpi/2020_08_18_IC-Z1pq.csv")
+vpiZ1Pre <- vpiZ1Pre %>%
+  add_column(sitez1) %>%
+  rename(site = sitez1) %>%
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
   dplyr::rename(abundance =  `%`) %>% 
   na.omit() %>% 
   arrange(desc(abundance))
 
-vpiZ2Pre <- read_csv("../data/vpi/IC_Z2_2020_08_18.pqs-all-Combs.csv")
+vpiZ2Pre <- read_csv("../data/vpi/2020_08_18_IC-Z2pq.csv")
 vpiZ2Pre <- vpiZ2Pre %>% 
+  add_column(sitez2) %>% 
+  rename(site = sitez2) %>%
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
   dplyr::rename(abundance =  `%`) %>% 
   na.omit() %>% 
   arrange(desc(abundance))
 
-# vpiC1Post <- read.csv("../data/vpi/IC-C1_2020_12_14.pqs-all-Combs.csv")
-# vpiC1Pre<- vpiC1Pre %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
-# vpiC1Post<- vpiC1Post %>% dplyr::rename(abundance = X.) %>% na.omit() %>% arrange(desc(abundance))
+vpiC1Post <- read_csv("../data/vpi/2021_12_08_IC-C1pq.csv")
+vpiC1Post <- vpiC1Post %>%
+  add_column(sitec1) %>%
+  rename(site = sitec1) %>%
+  add_column(post) %>% 
+  rename(time = post) %>% 
+  dplyr::rename(abundance = `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
+vpiC2Post <- read_csv("../data/vpi/2021_12_07_IC-C2pq.csv")
+vpiC2Post <- vpiC2Post %>% 
+  add_column(sitec2) %>% 
+  rename(site = sitec2) %>%
+  add_column(post) %>% 
+  rename(time = post) %>%
+  dplyr::rename(abundance = `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
+vpiU1Post <- read_csv("../data/vpi/2021_12_08_IC-U1pq.csv")
+vpiU1Post <- vpiU1Post %>%
+  add_column(siteu1) %>%
+  rename(site = siteu1) %>%
+  add_column(post) %>% 
+  rename(time = post) %>%
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
+vpiU2Post <- read_csv("../data/vpi/2021_12_08_IC-U2pq.csv")
+vpiU2Post <- vpiU2Post %>%
+  add_column(siteu2) %>% 
+  rename(site = siteu2) %>%
+  add_column(post) %>% 
+  rename(time = post) %>%
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
+vpiZ1Post <- read_csv("../data/vpi/2021_12_07_IC-Z1pq.csv")
+vpiZ1Post <- vpiZ1Post %>%
+  add_column(sitez1) %>%
+  rename(site = sitez1) %>%
+  add_column(post) %>% 
+  rename(time = post) %>%
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
+vpiZ2Post <- read_csv("../data/vpi/2021_12_07_IC-Z2pq.csv")
+vpiZ2Post <- vpiZ2Post %>%
+  add_column(sitez2) %>%
+  rename(site = sitez2) %>%
+  add_column(post) %>% 
+  rename(time = post) %>%
+  dplyr::rename(abundance =  `%`) %>% 
+  na.omit() %>% 
+  arrange(desc(abundance))
+
+vpi <- bind_rows(vpiC1Pre, vpiC1Post, vpiC2Pre, vpiC2Post, vpiU1Pre, vpiU1Post, vpiU2Pre, vpiU2Post, vpiZ1Pre, vpiZ1Post, vpiZ2Pre, vpiZ2Post)
+vpi <- as_tibble(vpi)
+
+
+vpi$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpi$class)
+vpi$class <- gsub("Rubble", "Bare Substrate", vpi$class)
+vpi$class <- as.factor(vpi$class)
+
+vpi$treatment = if_else(vpi$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
+
+myColors <- gg_color_hue(length(vpi$class))
+
+
+
+
+
+
 ```
 <br><br>
 # Combining the data
