@@ -145,6 +145,38 @@
         200
       ],
       "visible": true
+    },
+    {
+      "id": "Porites porites",
+      "name": "Porites porites",
+      "description": null,
+      "fill": [
+        170,
+        0,
+        255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Montastraea cavernosa\n",
+      "name": "Montastraea cavernosa\n",
+      "description": null,
+      "fill": [
+        255,
+        0,
+        255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
     }
   ]
 }
