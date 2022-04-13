@@ -62,8 +62,8 @@ siteu1 <- as.factor("u1")
 siteu2 <- as.factor("u2")
 sitez1 <- as.factor("z1")
 sitez2 <- as.factor("z2")
-pre <- as.factor("pre")
-post <- as.factor("post")
+pre <- as.factor("Baseline")
+post <- as.factor("1 Year")
 
 
 vpiC1Pre <- read_csv("../data/vpi/2020_08_18_IC-C1pq.csv")
@@ -196,6 +196,9 @@ vpi$class <- gsub("Rubble", "Bare Substrate", vpi$class)
 vpi$class <- as.factor(vpi$class)
 
 vpi$treatment = if_else(vpi$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
+vpi$reef = if_else(vpi$site %in% c("c1", "c2"), "Site C",
+                   if_else(vpi$site %in% c("u1", "u2"), "Site U", "Site Z"))
+vpi$reef <- as.factor(vpi$reef)
 
 myColors <- gg_color_hue(length(vpi$class))
 
@@ -205,89 +208,6 @@ myColors <- gg_color_hue(length(vpi$class))
 
 
 ```
-<br><br>
-# Combining the data
-***
-
-To make plotting easier, we are combinging the datasets. We're adding a column that represents each site and then we will combine all into a larger dataset. 
-```{r, combiningData, include = TRUE}
-
-siteC1 <- as.factor("C1")
-vpiC1Pre<- vpiC1Pre %>% 
-  add_column(siteC1) %>% 
-  select(c("id", "siteC1", "class", "count", "abundance")) %>% 
-  rename(site = siteC1) 
-
-
-siteC2 <- as.factor("C2")
-vpiC2Pre<- vpiC2Pre %>% 
-  add_column(siteC2) %>% 
-  select(c("id", "siteC2", "class", "count", "abundance")) %>% 
-  rename(site = siteC2) 
-
-
-siteU1 <- as.factor("U1")
-vpiU1Pre<- vpiU1Pre %>% 
-  add_column(siteU1) %>% 
-  select(c("id", "siteU1", "class", "count", "abundance")) %>% 
-  rename(site = siteU1) 
-
-siteU2 <- as.factor("U2")
-vpiU2Pre<- vpiU2Pre %>% 
-  add_column(siteU2) %>% 
-  select(c("id", "siteU2", "class", "count", "abundance")) %>%
-  rename(site = siteU2) 
-
-siteZ1 <- as.factor("Z1")
-vpiZ1Pre<- vpiZ1Pre %>% 
-  add_column(siteZ1) %>% 
-  select(c("id", "siteZ1", "class", "count", "abundance")) %>% 
-  rename(site = siteZ1) 
-
-siteZ2 <- as.factor("Z2")
-vpiZ2Pre<- vpiZ2Pre %>% 
-  add_column(siteZ2) %>% 
-  select(c("id", "siteZ2", "class", "count", "abundance")) %>% 
-  rename(site = siteZ2) 
-
-head(vpiC1Pre)
-head(vpiC2Pre)
-head(vpiU1Pre)
-head(vpiU2Pre)
-head(vpiZ1Pre)
-head(vpiZ2Pre)
-
-vpiPre <- bind_rows(vpiC1Pre,vpiC2Pre,vpiU1Pre,vpiU2Pre,vpiZ1Pre,vpiZ2Pre)
-
-summary(vpiPre)
-
-vpiPre <- as_tibble(vpiPre)
-vpiPre$site <- as.factor(vpiPre$site)
-vpiPre$class <- as.factor(vpiPre$class)
-
-vpiPre$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiPre$class)
-vpiPre$class <- gsub("Rubble", "Bare Substrate", vpiPre$class)
-vpiPre$class <- as.factor(vpiPre$class)
-
-vpiPre$treatment = if_else(vpiPre$site %in% c("C2", "Z1", "U1"), "Control","Outplanted") 
-
-
-
-#vpiPre <- vpiPre1
-
-
-
-
-
-
-
-
-```
-
-
-
-
-
 
 <br><br>
 # Plotting the data
@@ -299,27 +219,45 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 ```{r}
-myColors <- paletteer_c("harrypotter::gryffindor", 5, direction = 1 )
+myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
+#myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
 
 
 # Using this just to plot the top 2% of species
-vpiPre1 <- vpiPre %>% 
+vpi1 <- vpi %>% 
   filter(abundance > 2) %>% 
   droplevels()
-vpiPre1$class = factor(vpiPre1$class, levels(vpiPre1$class)[c(2,3,4,5,1)])
+vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
 
-vpiPreStack1 <- ggplot(vpiPre1, aes(x = site, y = abundance, fill = class, )) + 
-    geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
+vpiStack1 <- ggplot(vpi1, aes(x = site, y = abundance, fill = class, )) + 
+    geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = TRUE))+
     ylim(0,100) + 
     labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
     scale_fill_manual(values = myColors)+
-    facet_wrap(treatment~. , scales = 'free_x')
+    facet_wrap(treatment~ time , scales = 'free_x')
 
-vpiPreStack <- vpiPreStack1+theme(
+
+
+
+vpiStack
+
+ggsave("../figures/noaaReportFig2.jpeg", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
+
+
+
+
+
+vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = reef))+
+                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
+                      ylim(0,100)+
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
+                      scale_fill_manual(values = myColors)+
+                      facet_grid(treatment ~ time)
+vpiStack <- vpiStack1+theme(
     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
-    axis.title.x = element_text(size = 40, color = "black", face = "bold"),
+    axis.title.x = element_blank(),
     axis.title.y = element_text(size = 40, face = "bold"), 
     axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
     legend.title = element_text(size = 40, face = "bold"), 
@@ -331,11 +269,14 @@ vpiPreStack <- vpiPreStack1+theme(
     axis.ticks = element_line(color="black"), 
     text = element_text(size=40, color="black"), 
     legend.position = "bottom")
-
-
-vpiPreStack
+vpiStack
 
 ggsave("../figures/noaaReportFig2.jpeg", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
+
+
+
+
+
 ```
 
 
@@ -348,23 +289,19 @@ Conducting a few normality tests to see whether or not the data violates the ass
 
 ```{r}
 
-# summaryStats <- vpiPre %>% 
-#   select(class, abundance) %>% 
-#   group_by(class) %>% 
-#   summarise(mean(abundance)) %>% 
-#   arrange(desc(`mean(abundance)`)) %>% 
-#   as_tibble()
+vpiPerm <- adonis(formula = abundance ~ time*treatment*class, data = vpi, method = "euclidian", permutations = 9999)
+
+vpiPairwise <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 9999)
+
+vpiPairwise <- vpiPairwise %>% filter(p.adjusted < 0.05)
+
+wilcox.test(count ~ class, data = vpi)
+vpiDunn <- dunnTest(count ~ class, data = vpi, method = 'bh')
+vpiDunn <- vpiDunn$res %>% filter(P.adj < 0.05)
 
 
-ggqqplot(vpiPre$count)
-
-shapiro.test(vpiPre$abundance)
 
 
-kruskal.test(abundance ~ treatment, data = vpiPre)
-
-set.seed(999)
-adonis(formula = abundance ~ treatment*class, data = vpiPre, method = "euclidian", permutations = 999)
 
 
 ```
