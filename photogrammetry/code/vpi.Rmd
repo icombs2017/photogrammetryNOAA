@@ -219,32 +219,16 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 ```{r}
-myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
+# myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
 #myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
-
+#Color Palette using a selection of Mote's preferred colors
+myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
 
 # Using this just to plot the top 2% of species
 vpi1 <- vpi %>% 
   filter(abundance > 2) %>% 
   droplevels()
 vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
-
-
-
-vpiStack1 <- ggplot(vpi1, aes(x = site, y = abundance, fill = class, )) + 
-    geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = TRUE))+
-    ylim(0,100) + 
-    labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
-    scale_fill_manual(values = myColors)+
-    facet_wrap(treatment~ time , scales = 'free_x')
-
-
-
-
-vpiStack
-
-ggsave("../figures/noaaReportFig2.jpeg", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
-
 
 
 
@@ -255,6 +239,7 @@ vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = ree
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
                       scale_fill_manual(values = myColors)+
                       facet_grid(treatment ~ time)
+
 vpiStack <- vpiStack1+theme(
     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_blank(),
@@ -271,7 +256,8 @@ vpiStack <- vpiStack1+theme(
     legend.position = "bottom")
 vpiStack
 
-ggsave("../figures/noaaReportFig2.jpeg", plot = vpiPreStack, width = 20, height = 15, units = "in", dpi = 600)
+ggsave("../figures/vpiStackBar.png", plot = vpiStack, width = 20, height = 15, units = 'in', dpi = 600)
+ggsave("../figures/noaaReportFig2.jpeg", plot = vpiStack, width = 20, height = 15, units = "in", dpi = 600)
 
 
 
@@ -311,227 +297,18 @@ vpiDunn <- vpiDunn$res %>% filter(P.adj < 0.05)
 
 
 
+```{r, subsetDate, include = TRUE, }
 
 
+post <- vpi %>% filter(time == '1 Year')
+coolStuff <- vpi %>% filter(class != "Bare Substrate") %>% filter(class != "Turf algae")
 
 
+adonis(count ~ time*treatment*class, data = coolStuff, method = 'euclidian', permutation = 9999)
 
 
-```{r, plotting, include = TRUE}
 
 
-vpiC1PrePlot1 <- ggplot(vpiC1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "C1",title = "Pre-Restoration")+
-              ylim(0,100)+
-              scale_color_brewer(palette = "Set3")
-vpiC1PrePlot <- vpiC1PrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
 
-vpiC1PrePlot
-
-vpiC2PrePlot1 <- ggplot(vpiC2Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "C2",title = "Pre-Restoration")+
-              ylim(0,100)+
-              scale_color_brewer(palette = "Set3")
-vpiC2PrePlot <- vpiC2PrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiC2PrePlot
-
-vpiU1PrePlot1 <- ggplot(vpiU1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "U1",title = "Pre-Restoration")+
-              ylim(0,100)+
-              scale_color_brewer(palette = "Set3")
-vpiU1PrePlot <- vpiU1PrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiU1PrePlot
-
-vpiU2PrePlot1 <- ggplot(vpiU2Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "U2",title = "Pre-Restoration")+
-              ylim(0,100)+
-              scale_color_brewer(palette = "Set3")
-vpiU2PrePlot <- vpiU2PrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiU2PrePlot
-
-
-vpiZ1PrePlot1 <- ggplot(vpiZ1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "Z1",title = "Pre-Restoration")+
-              ylim(0,100)+
-              scale_color_brewer(palette = "Set3")
-vpiZ1PrePlot <- vpiZ1PrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiZ1PrePlot
-
-
-
-vpiZ2PrePlot1 <- ggplot(vpiZ2Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "Z2",title = "Pre-Restoration")+
-              ylim(0,100)+
-              scale_color_brewer(palette = "Set3")
-vpiZ2PrePlot <- vpiZ2PrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiZ2PrePlot
-
-
-compPlotPre <- vpiC1PrePlot + vpiC2PrePlot + vpiU1PrePlot + vpiU2PrePlot + vpiZ1PrePlot + vpiZ2PrePlot + plot_annotation(
-  title = 'Baseline Benthic Community Composition using Virtual Point Intercept',
-  theme = theme(plot.title = element_text(size = 18)))
-
-
-ggsave("../figures/vpiCompPlotPre.png", plot = compPlotPre, width = 15, height = 10, units = "in", dpi = 300)
-
-
-
-
-
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r, plotting, include = TRUE}
-
-
-vpiPrePlot1 <- ggplot(vpiC1Pre, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "",title = "Pre-Restoration")+
-              ylim(0,60)
-vpiPrePlot <- vpiPrePlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiPrePlot
-
-vpiPostPlot1 <- ggplot(vpiC1Post, aes(x = fct_reorder(class, -abundance), y = abundance, fill = class))+
-              geom_bar(stat = 'identity')+
-              labs(y = "Percent Abundance", x = "Class", title = "Post-Restoration")+
-              ylim(0,60)
-
-
-vpiPostPlot <- vpiPostPlot1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-
-vpiPostPlot
-
-compPlot <- vpiPrePlot / vpiPostPlot + plot_annotation(
-  title = 'Benthic Community Composition Pre- and Post- Restoration using Virtual Point Intercept',
-  theme = theme(plot.title = element_text(size = 18)))
-ggsave("../figures/vpiCompPlot.png", plot = compPlot, width = 15, height = 10, units = "in", dpi = 300)
 ```
 
