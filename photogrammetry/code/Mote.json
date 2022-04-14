@@ -161,6 +161,22 @@
         200
       ],
       "visible": true
+    },
+    {
+      "id": "Porites porites",
+      "name": "Porites porites",
+      "description": null,
+      "fill": [
+        255,
+        170,
+        255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
     }
   ]
 }
