@@ -281,9 +281,7 @@ vpiPairwise <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euc
 
 vpiPairwise <- vpiPairwise %>% filter(p.adjusted < 0.05)
 
-wilcox.test(count ~ class, data = vpi)
-vpiDunn <- dunnTest(count ~ class, data = vpi, method = 'bh')
-vpiDunn <- vpiDunn$res %>% filter(P.adj < 0.05)
+
 
 
 

@@ -51,26 +51,75 @@ pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patc
 ```{r, load data, include = TRUE, results = 'hide'}
 
 
-c1Pre <- read.csv("../data/TagLab/IC-C1_2020_08_18.csv", header = T)
-c1Post <- read.csv("../data/TagLab/IC-C1_2021_12_08.csv", header = T)
-
-sitec1 <- as.factor("c1")
-c1Pre<- c1Pre %>% add_column(sitec1) %>% rename(site = sitec1)
-
-sitec1 <- as.factor("c1")
-c1Post<- c1Post %>% add_column(sitec1) %>% rename(site = sitec1)
-
-head(c1Pre)
-
-C1 <- bind_rows(c1Pre, c1Post)
-C1 <- as_tibble(C1)
-summary(C1)
-
-
+tagC1Pre <- read.csv("../data/TagLab/2020_08_18_IC-C1.csv", header = T)
+tagC1Post <- read.csv("../data/TagLab/2021_12_08_IC-C1.csv", header = T)
+tagU1Pre <- read.csv("../data/TagLab/2020_08_19_IC-U1.csv", header = T)
+tagU1Post <- read.csv("../data/TagLab/20201_12_08_IC-U1.csv", header = T)
 
 ```
 
+<br><br>
+# Manipulating data
+***
 
+We have loaded a lot of individual data into R and we want to combine the data and create one cohesive dataframe with which to work. In order to do that we have to add a few identifiers to our data frames to hwen combining we can differentiate between the two, but this is also a good time to add other columsn like **treatment** and **time** as well. The majority of this is done using various functions from the package `dplyr`. 
+
+```{r}
+sitec1 <- as.factor("c1")
+sitec2 <- as.factor("c2")
+siteu1 <- as.factor("u1")
+siteu2 <- as.factor("u2")
+sitez1 <- as.factor("z1")
+sitez2 <- as.factor("z2")
+pre <- as.factor("Baseline")
+post <- as.factor("1 Year")
+
+
+tagC1Pre <- read.csv("../data/TagLab/2020_08_18_IC-C1.csv", header = T)
+tagC1Pre$TagLab.Class.name <- as.factor(tagC1Pre$TagLab.Class.name)
+tagC1Pre$TagLab.Date <- as.Date.factor(tagC1Pre$TagLab.Date) 
+
+tagC1Pre <- tagC1Pre %>% 
+  select(TagLab.Date, TagLab.Class.name) %>% 
+  add_column(sitec1) %>% 
+  rename(site = sitec1) %>%
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
+  na.omit() %>%
+  group_by(TagLab.Date, TagLab.Class.name, site, time) %>% 
+  summarise(TagLab.Class.name, n()) %>% 
+  rename(count = `n()`) %>% 
+  distinct()
+  tagC1Pre$abundance <- (tagC1Pre$count/sum(tagC1Pre$count)*100) 
+ 
+tagC1Post <- read.csv("../data/TagLab/2021_12_08_IC-C1.csv", header = T)
+tagC1Post$TagLab.Class.name <- as.factor(tagC1Post$TagLab.Class.name)
+tagC1Post$TagLab.Date <- as.Date.factor(tagC1Post$TagLab.Date) 
+
+tagC1Post <- tagC1Post %>% 
+  select(TagLab.Date, TagLab.Class.name) %>% 
+  add_column(sitec1) %>% 
+  rename(site = sitec1) %>%
+  add_column(post) %>% 
+  rename(time = post) %>% 
+  na.omit() %>%
+  group_by(TagLab.Date, TagLab.Class.name) %>% 
+  summarise(TagLab.Class.name, n()) %>% 
+  rename(count = `n()`) %>%
+  distinct()
+tagC1Post$abundance <- (tagC1Post$count/sum(tagC1Post$count)*100) 
+
+
+
+vpi$treatment = if_else(vpi$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
+vpi$reef = if_else(vpi$site %in% c("c1", "c2"), "Site C",
+                   if_else(vpi$site %in% c("u1", "u2"), "Site U", "Site Z"))
+vpi$reef <- as.factor(vpi$reef)
+
+myColors <- gg_color_hue(length(vpi$class))
+
+
+```
 
 
 ```{r, load data, include = TRUE, results = 'hide'}

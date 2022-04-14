@@ -377,6 +377,16 @@ permTab
 
 ```
 
+
+
+
+<br><br>
+
+# Visualizing the data
+We are visualizing the standard deviation of elevation (what we tested above) using boxplots and plotting each x, y and z coordinate for the above sites using the package `plotly` and the function `plot_ly` just to make sure our data looks normal (ie: there should be 9 lines, fairly evenly spaced)
+
+
+
 ```{r, plottingData, include = TRUE}
 myColors <- c("#4a83c4", "#badef5")
 
@@ -386,24 +396,14 @@ rugoPlot <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
   facet_grid(.~reef, scales = 'free')
 
 rugoPlot
+ggsave("../figures/rugoSDboxplot.jpeg", plot = rugoPlot, width = 15, height = 10, units = "in", dpi = 600)
+ggsave("../figures/rugoSDboxplot.png", plot = rugoPlot, width = 15, height = 10, units = "in", dpi = 600)
 
-vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = reef))+
-                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
-                      ylim(0,100)+
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
-                      scale_fill_manual(values = myColors)+
-                      facet_grid(treatment ~ time)
 
 
 
 
 ```
-
-
-<br><br>
-
-# Visualizing the data
-We are going to plot each x, y and z coordinate for the above sites using the package `plotly` and the function `plot_ly` just to make sure our data looks normal (ie: there should be 9 lines, fairly evenly spaced)
 
 ```{r, plotting, include = TRUE}
 
@@ -463,6 +463,10 @@ siteProfile <- ggplot(data = rugoMean, aes(x = point, y = `mean(z)`, color = sit
   facet_wrap(vars(site))
 siteProfile
 ```
+
+
+
+
 
 
 

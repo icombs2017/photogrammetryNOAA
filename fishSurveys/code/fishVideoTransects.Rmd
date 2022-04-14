@@ -62,7 +62,8 @@ fish1$reviewer1FullSciName <- as.factor(fish1$reviewer1FullSciName)
 fish1$phase <- as.factor(fish1$phase)
 
 
-fish <- fish1 %>% select(date, site, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count) %>%
+fish <- fish1 %>% 
+  select(date, site, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count) %>%
   filter(site == c("IC-C1", "IC-U1", "IC-Z1", "IC-C2", "IC-U2", "IC-Z2")) %>% 
   droplevels() %>% 
   group_by(date, site) %>% 
@@ -78,9 +79,69 @@ levels(fish$site)
 
 ```{r}
 
-#subsetting for just one time point
 
-fishPlot <- subset(fish, date == c("2020-12-14", "2020-12-16"))
+# myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
+#myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
+#Color Palette using a selection of Mote's preferred colors
+myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
+
+# Using this just to plot the top 2% of species
+vpi1 <- vpi %>% 
+  filter(abundance > 2) %>% 
+  droplevels()
+vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+
+
+
+
+vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = reef))+
+                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
+                      ylim(0,100)+
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
+                      scale_fill_manual(values = myColors)+
+                      facet_grid(treatment ~ time)
+
+vpiStack <- vpiStack1+theme(
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 40, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
+    legend.position = "bottom")
+vpiStack
+
+
+
+
+
+
+
+
+
+#subsetting for just one time point, and filtering outo anything lower than 2% abundance
+
+fishPlot <- subset(fish, date < "2021-07-20")
+
+fishPlot <- fish %>% 
+  filter(date <"2021-07-20") %>%
+  filter(abundance > 2) %>%
+  droplevels()
+levels(fishPlot$reviewer1FullSciName)
+
+
+vpi1 <- vpi %>% 
+  filter(abundance > 2) %>% 
+  droplevels()
+vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+
+
 
 fishStack1 <- ggplot(fish, aes(x = site, y = abundance, fill = reviewer1FullSciName)) + 
     geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
