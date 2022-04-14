@@ -234,7 +234,7 @@ vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
 vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = reef))+
-                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
+                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE), alpha = 0.8)+
                       ylim(0,100)+
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
                       scale_fill_manual(values = myColors)+

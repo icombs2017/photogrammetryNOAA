@@ -44,27 +44,14 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan")
 ```
 
-<br><br>
-
-# Loading Data
-
-```{r, load data, include = TRUE, results = 'hide'}
-
-
-tagC1Pre <- read.csv("../data/TagLab/2020_08_18_IC-C1.csv", header = T)
-tagC1Post <- read.csv("../data/TagLab/2021_12_08_IC-C1.csv", header = T)
-tagU1Pre <- read.csv("../data/TagLab/2020_08_19_IC-U1.csv", header = T)
-tagU1Post <- read.csv("../data/TagLab/20201_12_08_IC-U1.csv", header = T)
-
-```
 
 <br><br>
-# Manipulating data
+# Loading and Manipulating data
 ***
 
 We have loaded a lot of individual data into R and we want to combine the data and create one cohesive dataframe with which to work. In order to do that we have to add a few identifiers to our data frames to hwen combining we can differentiate between the two, but this is also a good time to add other columsn like **treatment** and **time** as well. The majority of this is done using various functions from the package `dplyr`. 
 
-```{r}
+```{r, loading, include = TRUE, results = hide}
 sitec1 <- as.factor("c1")
 sitec2 <- as.factor("c2")
 siteu1 <- as.factor("u1")
@@ -90,7 +77,9 @@ tagC1Pre <- tagC1Pre %>%
   summarise(TagLab.Class.name, n()) %>% 
   rename(count = `n()`) %>% 
   distinct()
-  tagC1Pre$abundance <- (tagC1Pre$count/sum(tagC1Pre$count)*100) 
+  tagC1Pre$abundance <- (tagC1Pre$count/sum(tagC1Pre$count)*100)
+  tagC1Pre <- tagC1Pre %>% arrange(desc(abundance))
+ 
  
 tagC1Post <- read.csv("../data/TagLab/2021_12_08_IC-C1.csv", header = T)
 tagC1Post$TagLab.Class.name <- as.factor(tagC1Post$TagLab.Class.name)
@@ -103,218 +92,157 @@ tagC1Post <- tagC1Post %>%
   add_column(post) %>% 
   rename(time = post) %>% 
   na.omit() %>%
-  group_by(TagLab.Date, TagLab.Class.name) %>% 
+  group_by(TagLab.Date, TagLab.Class.name, site, time) %>% 
   summarise(TagLab.Class.name, n()) %>% 
   rename(count = `n()`) %>%
   distinct()
 tagC1Post$abundance <- (tagC1Post$count/sum(tagC1Post$count)*100) 
+tagC1Post <- tagC1Post %>% arrange(desc(abundance))
+
+
+tagU1Pre <- read.csv("../data/TagLab/2020_08_19_IC-U1.csv", header = T)
+tagU1Pre$TagLab.Class.name <- as.factor(tagU1Pre$TagLab.Class.name)
+tagU1Pre$TagLab.Date <- as.Date.factor(tagU1Pre$TagLab.Date) 
+
+tagU1Pre <- tagU1Pre %>% 
+  select(TagLab.Date, TagLab.Class.name) %>% 
+  add_column(siteu1) %>% 
+  rename(site = siteu1) %>%
+  add_column(pre) %>% 
+  rename(time = pre) %>% 
+  na.omit() %>%
+  group_by(TagLab.Date, TagLab.Class.name, site, time) %>% 
+  summarise(TagLab.Class.name, n()) %>% 
+  rename(count = `n()`) %>%
+  distinct()
+tagU1Pre$abundance <- (tagU1Pre$count/sum(tagU1Pre$count)*100) 
+tagU1Pre <- tagU1Pre %>% arrange(desc(abundance))
+
+
+tagU1Post <- read.csv("../data/TagLab/20201_12_08_IC-U1.csv", header = T)
+tagU1Post$TagLab.Class.name <- as.factor(tagU1Post$TagLab.Class.name)
+tagU1Post$TagLab.Date <- as.Date.factor(tagU1Post$TagLab.Date) 
+
+tagU1Post <- tagU1Post %>% 
+  select(TagLab.Date, TagLab.Class.name) %>% 
+  add_column(siteu1) %>% 
+  rename(site = siteu1) %>%
+  add_column(post) %>% 
+  rename(time = post) %>% 
+  na.omit() %>%
+  group_by(TagLab.Date, TagLab.Class.name, site, time) %>% 
+  summarise(TagLab.Class.name, n()) %>% 
+  rename(count = `n()`) %>%
+  distinct()
+tagU1Post$abundance <- (tagU1Post$count/sum(tagU1Post$count)*100) 
+tagU1Post <- tagU1Post %>% arrange(desc(abundance))
 
 
 
-vpi$treatment = if_else(vpi$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
-vpi$reef = if_else(vpi$site %in% c("c1", "c2"), "Site C",
-                   if_else(vpi$site %in% c("u1", "u2"), "Site U", "Site Z"))
-vpi$reef <- as.factor(vpi$reef)
 
-myColors <- gg_color_hue(length(vpi$class))
+tag <- bind_rows(tagC1Pre,tagU1Pre,tagC1Post,tagU1Post)
+tag <- as_tibble(tag)
+
+tag$treatment = if_else(tag$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
+tag$reef = if_else(tag$site %in% c("c1", "c2"), "Site C",
+                   if_else(tag$site %in% c("u1", "u2"), "Site U", "Site Z"))
+tag$reef <- as.factor(tag$reef)
+
+
+
+```
+
+<br><br>
+# Checking for Normality
+***
+
+Now that we have the data all in one place with the appropriate columns added, we are going to check to see if our data is normally distributed. 
+
+
+
+```{r, normality, include = TRUE}
+
+hist(tag$abundance)
+qqnorm(tag$abundance)
+shapiro.test(tag$abundance)
+
+
 
 
 ```
 
 
-```{r, load data, include = TRUE, results = 'hide'}
-mydir <- "../data/TagLab/8.18.20"
-tagLabFiles <- list.files(path = mydir, pattern = "_2020_", full.names = TRUE)
-tagLabFiles
+<br><br>
+# PERMANOVA
+***
+
+Since our data violates the assumptions of normality and is not normally distributed we will carry out non-parametric statistical analyses. This includes a Permuational Analysis of Variance (PERMANOVA) suing the `adonis` function from the package `vegan`. We are using **abundance** as the variable and **treatment** and **time** as the factors as well as the interaction between the two.
+
+```{r, permanova, include = TRUE}
+
+tagPerm <- adonis(formula = count ~ time*treatment, data = tag, method = "euclidian", permutations = 9999)
 
 
-# This loads the list of .csv's that we made above and adds a column of file names to the data frame
-tagLabFiles_list <- lapply(tagLabFiles, function(x){
-  out <- tryCatch(read.csv(x, header = TRUE, sep = "\t"), error = function(e) NULL)
-  if (!is.null(out)){
-    out$source_file <- x
-  }
-  return(out)
-})
-tagLabData <- data.table::rbindlist(tagLabFiles_list)
+kruskal.test(abundance ~ treatment, data = tag)
 
-# This takes the data, removes everything from the file name column except the important data to us, and sorts the data frame 
-# so it contains only the information we care about 
-tagLabData <- tagLabData %>% 
-              separate(source_file, into = c("dir","source","program","date","file"), sep = "[/]", remove = FALSE) %>% 
-              separate(file, c("assay", "file"), sep = "[.]") %>% 
-              separate(assay, c("site", "status"), sep = "_") %>% 
-  separate(site, c("status", "site"), sep = "-") %>%
-  dplyr::select(site, Blob.id, Class.name, Coral.area)
-
-tagLabData$Class.name <- as.factor(tagLabData$Class.name)
-
-tagC1Pre <- tagLabData %>% filter(site == "C1")
-
-tagC1Pre$speciesCount <- frequency(tagC1Pre$Class.name)
-
-
+oneYear <- subset(tag, time = "1 Year")
 
 
 
 ```
 
-```{r, plotting, include = TRUE}
-
-freqPlotData <- tagLabData
-
-freqPlotData$speciesCount <- frequency(freqPlotData$Class.name)
-
-freqPlotData1 <- freqPlotData %>% 
-  dplyr::select(site, Class.name, speciesCount) %>% 
-  group_by(site, Class.name) %>% 
-  summarise(speciesCount = sum(speciesCount))
-
-
-
-tagC1Pre$speciesCount <- frequency(tagC1Pre$Class.name)
-tagC1Pre <- tagC1Pre %>% dplyr::select(site, Class.name, speciesCount) %>% 
-  group_by(site, Class.name) %>% 
-  summarise(speciesCount = sum(speciesCount))
-tagC1Pre$Abundance <- tagC1Pre$speciesCount/sum(tagC1Pre$speciesCount)
-tagC1Pre <- tagC1Pre %>% filter(Abundance > 0.01)
-
-
-speciesFreq1 <- ggplot(freqPlotData1, aes(x = Class.name, y  = speciesCount, fill = site))+
-                geom_bar(stat = 'identity', position = "stack")+
-  coord_polar()
-
-speciesFreq1
-
-
-# freqPlotData2$Class.name <- factor(speciesFreq1$Class.name, levels = speciesFreq1$Class.name[order(-speciesFreq1$speciesCount)])
-
-
-
-speciesBar1 <- ggplot(freqPlotData1, aes(x = reorder(Class.name, -speciesCount), y = speciesCount, fill = Class.name))+
-  geom_bar(stat = 'identity')
-
-
-
-speciesBar <- speciesBar1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(hjust = 0.5), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black")
-)
-
-speciesBar
-
-
-
-c1PreSpeciesBar1 <- ggplot(tagC1Pre, aes(x = fct_reorder(Class.name, -speciesCount), y = Abundance, fill = Class.name))+
-  geom_bar(stat = 'identity')+
-  labs(x = "", y = "Percent Abundance", title = "Pre-Restoration")+
-  scale_x_discrete(name = " ",limits=c("Siderastrea spp.","Stephannocoenia intersepta","Porites astreoides", "Orbicella faveolata"), labels =c("SSID","SINT","PAST", "OFAV"))+
-  ylim(0,1)
-
-c1PreSpeciesBar <- c1PreSpeciesBar1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=12, color="black"), 
-  axis.text.y=element_text(size=12, color="black")
-)+rremove('legend')
-
-c1PreSpeciesBar
-
-ggsave("../figures/tagLabC1Pre.png", plot = c1PreSpeciesBar, width = 15, height = 10, units = "in", dpi = 600)
-
-```
-
-
-
-
+<br><br>
+# Visualizing Data
+***
+We are visualizing the data we just tested for. 
 
 ```{r}
 
-mydir <- "../data/TagLab/12.14.20"
-tagLabFiles <- list.files(path = mydir, pattern = "_2020_", full.names = TRUE)
-tagLabFiles
+myColors <- paletteer_c("pals::ocean.balance", 11, direction = 1)
 
 
-# This loads the list of .csv's that we made above and adds a column of file names to the data frame
-tagLabFiles_list <- lapply(tagLabFiles, function(x){
-  out <- tryCatch(read.csv(x, header = TRUE, sep = "\t"), error = function(e) NULL)
-  if (!is.null(out)){
-    out$source_file <- x
-  }
-  return(out)
-})
-tagLabData <- data.table::rbindlist(tagLabFiles_list)
+# myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
 
-# This takes the data, removes everything from the file name column except the important data to us, and sorts the data frame 
-# so it contains only the information we care about 
-tagLabData <- tagLabData %>% 
-              separate(source_file, into = c("dir","source","program","date","file"), sep = "[/]", remove = FALSE) %>% 
-              separate(file, c("assay", "file"), sep = "[.]") %>% 
-              separate(assay, c("site", "status"), sep = "_") %>% 
-  separate(site, c("status", "site"), sep = "-") %>%
-  dplyr::select(site, Blob.id, Class.name, Coral.area)
+# # Using this just to plot the top 2% of species
+# vpi1 <- vpi %>% 
+#   filter(abundance > 2) %>% 
+#   droplevels()
+# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+# 
 
-tagLabData$Class.name <- as.factor(tagLabData$Class.name)
+tag1 <- subset(tag, TagLab.Class.name != "Empty")
 
-tagC1Post <- tagLabData %>% filter(site == "C1")
+tagStack1 <- ggplot(tag1, aes(x = treatment, y = abundance, fill = TagLab.Class.name, group = reef))+
+                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE), alpha = 0.8)+
+                      ylim(0,100)+
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance")+
+                      scale_fill_manual(values = myColors)+
+                      facet_grid(site ~ time)
 
+tagStack <- tagStack1+theme(
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 40, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
+    legend.position = "left")
+tagStack
 
-tagC1Post$speciesCount <- frequency(tagC1Post$Class.name)
-tagC1Post <- tagC1Post %>% dplyr::select(site, Class.name, speciesCount) %>% 
-  group_by(site, Class.name) %>% 
-  summarise(speciesCount = sum(speciesCount))
-tagC1Post$Abundance <- tagC1Post$speciesCount/sum(tagC1Post$speciesCount)
-
-tagC1Post <- tagC1Post %>% filter(Abundance > .01)
-
-c1PostSpeciesBar1 <- ggplot(tagC1Post, aes(x = fct_reorder(Class.name, -speciesCount), y = Abundance, fill = Class.name))+
-  geom_bar(stat = 'identity')+
-  labs(y = "Percent Abundance", title = "Post-Restoration")+
-  scale_x_discrete(name = "Class",limits=c("Acropora cervicornis", "Siderastrea spp.","Orbicella faveolata","Stephannocoenia intersepta","Porites astreoides"), labels =c("ACER","SSID","OFAV","SINT","PAST"))+
-  ylim(0,1)
-
-c1PostSpeciesBar <- c1PostSpeciesBar1 + theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(angle = 45, hjust = 1, size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black")
-)+rremove('legend')
-
-c1PostSpeciesBar
-
-
-compBar <- c1PreSpeciesBar / c1PostSpeciesBar + plot_annotation(
-  title = 'Coral Community Composition Pre- and Post- Restoration using TagLab',
-  theme = theme(plot.title = element_text(size = 30)))
-
-
-plot_annotation(
-  title = 'Benthic Community Composition Pre- and Post- Restoration using Virtual Point Intercept',
-  theme = theme(plot.title = element_text(size = 30)))
+ggsave("../figures/vpiStackBar.png", plot = vpiStack, width = 20, height = 15, units = 'in', dpi = 600)
+ggsave("../figures/noaaReportFig2.jpeg", plot = vpiStack, width = 20, height = 15, units = "in", dpi = 600)
 
 
 
-
-ggsave("../figures/tagLabComp.png", plot = compBar, width = 15, height = 10, units = "in", dpi = 600)
 
 
 
 ```
 
-```{r}
-```
 
