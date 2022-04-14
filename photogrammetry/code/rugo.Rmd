@@ -67,11 +67,11 @@ u2Pre <- read.csv("../data/rugosity/2020.08.18/u2r0-lines.csv", header = F)
 z1Pre <- read.csv("../data/rugosity/2020.08.18/z1r0-lines.csv", header = F)
 z2Pre <- read.csv("../data/rugosity/2020.08.18/z2r0-lines.csv", header = F)
 c1Post <- read.csv("../data/rugosity/2021.12.08/c1r2-lines.csv", header = F)
-c2Post <- read.csv("../data/rugosity/2021.12.08/c2r0-lines.csv", header = F)
+c2Post <- read.csv("../data/rugosity/2021.12.08/c2r1-lines.csv", header = F)
 u1Post <- read.csv("../data/rugosity/2021.12.08/u1r1-lines.csv", header = F)
 u2Post <- read.csv("../data/rugosity/2021.12.08/u2r1-lines.csv", header = F)
-z1Post <- read.csv("../data/rugosity/2021.12.08/z1r0-lines.csv", header = F)
-z2Post <- read.csv("../data/rugosity/2021.12.08/z2r0-lines.csv", header = F)
+z1Post <- read.csv("../data/rugosity/2021.12.08/z1r1-lines.csv", header = F)
+z2Post <- read.csv("../data/rugosity/2021.12.08/z2r1-lines.csv", header = F)
 head(c1Pre)
 
 
@@ -84,10 +84,21 @@ head(c1Pre)
 The data comes Viscore without headers and with some extraneous columns. We will be using the package `dplyr` to manipulate the data into a more user-friendly format. Currently, the data is given to us with a first column of some binary, we are going to remove that. The next column is the transect number, in this instance, we ran 9 transects (1m apart) so the transects should be labeled 0-8. The next column is the individual point that was placed. Here we place 1000 points (1cm apart) on each transect. The fourth column is the x coordinate, the fifth column is the y coordinate, and the sixth column is the z coordinate. The z coordinate is depth and the coordinate we want to pay particular attention to in downstream rugosity analysis. We will rename all the columns appropriately as well as give each dataframe a new column labeled "site".
 ```{r, manipulation, include = TRUE, results = 'hide'}
 sitec1 <- as.factor("c1")
+sitec2 <- as.factor("c2")
+siteu1 <- as.factor("u1")
+siteu2 <- as.factor("u2")
+sitez1 <- as.factor("z1")
+sitez2 <- as.factor("z2")
+pre <- as.factor("Baseline")
+post <- as.factor("1 Year")
+
+
 c1Pre<- c1Pre %>% 
   add_column(sitec1) %>%
-  select(c("sitec1", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(pre) %>%
+  select(c("sitec1","pre", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitec1) %>% 
+  rename(time = pre) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>% 
@@ -96,8 +107,10 @@ c1Pre<- c1Pre %>%
 
 c1Post<- c1Post %>%
   add_column(sitec1) %>%
-  select(c("sitec1", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(post) %>% 
+  select(c("sitec1", "post", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitec1) %>%
+  rename(time = post) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>%
@@ -106,12 +119,12 @@ c1Post<- c1Post %>%
 
 
 
-
-sitec2 <- as.factor("c2")
 c2Pre<- c2Pre %>% 
   add_column(sitec2) %>%
-  select(c("sitec2", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(pre) %>% 
+  select(c("sitec2", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitec2) %>%
+  rename(time = pre) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>%
@@ -120,8 +133,10 @@ c2Pre<- c2Pre %>%
 
 c2Post<- c2Post %>%
   add_column(sitec2) %>% 
-  select(c("sitec2", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(post) %>% 
+  select(c("sitec2", "post", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitec2) %>%
+  rename(time = post) %>% 
   rename(transect = V2) %>% 
   rename(point = V3) %>%
   rename(y = V4) %>%
@@ -130,11 +145,12 @@ c2Post<- c2Post %>%
 
 
 
-siteu1 <- as.factor("u1")
 u1Pre<- u1Pre %>%
   add_column(siteu1) %>%
-  select(c("siteu1", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(pre) %>% 
+  select(c("siteu1", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = siteu1) %>%
+  rename(time = pre) %>%
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>%
@@ -143,19 +159,24 @@ u1Pre<- u1Pre %>%
 
 u1Post<- u1Post %>%
   add_column(siteu1) %>%
-  select(c("siteu1", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(post) %>% 
+  select(c("siteu1", "post", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = siteu1) %>%
+  rename(time = post) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>% 
   rename(y = V4) %>%
   rename(x = V5) %>%
   rename(z = V6)
 
-siteu2 <- as.factor("u2")
+
+
 u2Pre <- u2Pre %>%
   add_column(siteu2) %>%
-  select(c("siteu2", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(pre) %>% 
+  select(c("siteu2", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = siteu2) %>%
+  rename(time = pre) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>%
@@ -164,8 +185,10 @@ u2Pre <- u2Pre %>%
 
 u2Post <- u2Post %>%
   add_column(siteu2) %>%
-  select(c("siteu2", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(post) %>% 
+  select(c("siteu2", "post", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = siteu2) %>%
+  rename(time = post) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>% 
@@ -173,11 +196,13 @@ u2Post <- u2Post %>%
   rename(z = V6)
 
 
-sitez1 <- as.factor("z1")
+
 z1Pre <- z1Pre %>%
   add_column(sitez1) %>%
-  select(c("sitez1", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(pre) %>% 
+  select(c("sitez1", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitez1) %>%
+  rename(time = pre) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>%
@@ -186,29 +211,36 @@ z1Pre <- z1Pre %>%
 
 z1Post <- z1Post %>%
   add_column(sitez1) %>%
-  select(c("sitez1", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(post) %>% 
+  select(c("sitez1", "post", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitez1) %>%
+  rename(time = post) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>%
   rename(x = V5) %>%
   rename(z = V6)
 
-sitez2 <- as.factor("z2")
-z2<- z2 %>%
+
+
+z2Pre<- z2Pre %>%
   add_column(sitez2) %>%
-  select(c("sitez2", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(pre) %>% 
+  select(c("sitez2", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitez2) %>%
+  rename(time = pre) %>% 
   rename(transect = V2) %>% 
   rename(point = V3) %>%
   rename(y = V4) %>%
   rename(x = V5) %>%
   rename(z = V6)
 
-z2<- z2 %>%
+z2Post<- z2Post %>%
   add_column(sitez2) %>%
-  select(c("sitez2", "V2", "V3", "V4", "V5", "V6")) %>%
+  add_column(post) %>% 
+  select(c("sitez2", "post", "V2", "V3", "V4", "V5", "V6")) %>%
   rename(site = sitez2) %>%
+  rename(time = post) %>% 
   rename(transect = V2) %>%
   rename(point = V3) %>%
   rename(y = V4) %>%
@@ -216,12 +248,6 @@ z2<- z2 %>%
   rename(z = V6)
 
 
-head(c1)
-head(c2)
-head(u1)
-head(u2)
-head(z1)
-head(z2)
 
 
 
@@ -234,9 +260,20 @@ Now we want to merge datasets using the `bind_rows` function in `dplyr`.
 
 ```{r, merge, include = TRUE, results = 'hide'}
 
-rugo <- bind_rows(c1,c2,u1,u2,z1,z2)
+rugo <- bind_rows(c1Pre,c2Pre,u1Pre,u2Pre,z1Pre,z2Pre,c1Post,c2Post,u1Post,u2Post,z1Post,z2Post)
 rugo <- as_tibble(rugo)
+
+rugo$treatment = if_else(rugo$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
+rugo$reef = if_else(rugo$site %in% c("c1", "c2"), "Site C",
+                   if_else(rugo$site %in% c("u1", "u2"), "Site U", "Site Z"))
+rugo$reef <- as.factor(rugo$reef)
+
+
+
+
 summary(rugo)
+
+
 
 ```
 
@@ -249,42 +286,119 @@ We have a very large dataset, however, what we are really concerned with is the 
 
 ```{r, variance, include = TRUE}
 
-rugoSd <- rugo %>% dplyr::select(site, transect, z) %>% group_by(site, transect) %>% summarise(sd(z)) %>% rename(sd = `sd(z)`)
-rugoSd$transect <-  as.ordered(rugoSd$transect)
-rugo$sd <- sd(rugo$z)
-rugoSdSite <- rugo %>%  dplyr::select(site, z) %>% group_by(site) %>% summarise(sd(z)) %>% rename(sd = `sd(z)`)
-
-qqnorm(rugoSd$sd)
-hist(rugoSd$sd)
-shapiro.test(rugoSd$sd)
-
-kruskal.test(sd~site, data = rugoSd)
-rugoSdDunn <- dunnTest(sd~site, data = rugoSd, method = "bh")
+rugoRMS <- rugo %>% 
+  dplyr::select(site, time, treatment, reef, transect, z) %>%
+  group_by(site, time, treatment, reef, transect) %>%
+  summarise(sd(z), var(z)) %>%
+  rename(sd = `sd(z)`) %>% 
+  rename(variance = `var(z)`)
 
 
-kruskal.test(sd~transect, data = rugoSd)
-rugoSdDunn <- dunnTest(sd~site, data = rugoSd, method = "bh")
-#Just the Significant pairwise comparisons 
-rugoSdDunnSig <- rugoSdDunn$res %>% filter(P.adj < 0.05)
+rugo1 <- rugo %>% 
+  dplyr::select(site, time, treatment, reef, transect, z) %>%
+  group_by(site, time, treatment, reef, transect) %>% 
+  summarise(mean(z)) %>% 
+  rename(mean = `mean(z)`)
 
-
-
-rugoSdC1 <- rugoSd %>%  filter(site == "c1")
-kruskal.test(sd~transect, data = rugoSdC1)
-
-kruskal.test(sd~site, data = rugoSdSite)
+by(rugoRMS$sd, rugoRMS$treatment, mean)
+by(rugoRMS$sd, rugoRMS$time, mean)
 
 
 
 
 
-# rugoVar <- rugo %>% dplyr::select(site, transect, x, y, z) %>% group_by(site, transect) %>%  summarise(var(z), mean(z), sd(z))
-# 
-# siteVar <- rugo %>% dplyr::select(site, z) %>% group_by(site) %>%  summarise(var(z), mean(z), sd(z), sqrt(mean((z)^2))) %>% rename(variance = `var(z)`, mean = `mean(z)`, sd = `sd(z)`, rms = `sqrt(mean((z)^2))`)
-# 
-rugoMean <- rugo %>% dplyr::select(site, point, x, y, z) %>% group_by(site, point) %>% summarise(mean(z))
+set.seed(999)
+rugoPerm <- adonis(formula = sd ~ reef*time*treatment, data = rugoRMS, method = "euclidian", permutations = 9999)
+
+set.seed(999)
+rugoPairTime <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$time,
+                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 9999)
+
+set.seed(999)
+rugoPairTreatment <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$treatment,
+                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 9999)
+
+
+
+
+
 
 ```
+<br><br>
+# Making a Table
+***
+We are taking our results from our PERMANOVA and creating a table using functions from the packages `flextable` and `officer`.
+
+
+```{r, PERMANOVAtable, include = TRUE, results = hide}
+
+permTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Reef", "df" = rugoPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Time", "df" = rugoPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Reef:Time", "df" = rugoPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Reef:Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Reef:Time:Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
+
+
+mutate_if(is.numeric, round, digits = 3) %>%     
+mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+flextable() %>%
+set_header_labels(Data.set = "Data set") %>% 
+flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
+flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+autofit() %>%
+font(fontname = "Times New Roman", part = "all") %>%
+fontsize(size = 12, part = "all") %>%
+bold(part = "header") %>%
+colformat_num(j = 'df', digits = 2) %>% 
+colformat_num(j = "Pseudo.F", digits = 2) %>%
+colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+align(align = "center", j = "p.value")
+
+rugoDoc = read_docx()
+rugoDoc = body_add_flextable(rugoDoc, value = permTab)
+print(rugoDoc, target = "../tables/rugoTable.docx")
+permTab
+
+
+
+
+
+
+
+
+
+
+
+```
+
+```{r, plottingData, include = TRUE}
+myColors <- c("#4a83c4", "#badef5")
+
+rugoPlot <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
+  geom_boxplot(aes(fill = time))+
+  scale_fill_manual(values = myColors)+
+  facet_grid(.~reef, scales = 'free')
+
+rugoPlot
+
+vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = reef))+
+                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
+                      ylim(0,100)+
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
+                      scale_fill_manual(values = myColors)+
+                      facet_grid(treatment ~ time)
+
+
+
+
+```
+
 
 <br><br>
 
@@ -293,18 +407,7 @@ We are going to plot each x, y and z coordinate for the above sites using the pa
 
 ```{r, plotting, include = TRUE}
 
-c1plot <- plot_ly(data = c1, x = c1$x, y = c1$y, z = c1$z, type = 'scatter3d', mode = "markers", color = c1$transect)
-c1plot
-c2plot <- plot_ly(data = c2, x = c2$x, y = c2$y, z = c2$z, type = 'scatter3d', mode = "markers", color = c2$transect)
-c2plot
-u1plot <- plot_ly(data = u1, x = u1$x, y = u1$y, z = u1$z, type = 'scatter3d', mode = "markers", color = u1$transect)
-u1plot
-u2plot <- plot_ly(data = u2, x = u2$x, y = u2$y, z = u2$z, type = 'scatter3d', mode = "markers", color = u2$transect)
-u2plot
-z1plot <- plot_ly(data = z1, x = z1$x, y = z1$y, z = z1$z, type = 'scatter3d', mode = "markers", color = z1$transect)
-z1plot
-z2plot <- plot_ly(data = z2, x = z2$x, y = z2$y, z = z2$z, type = 'scatter3d', mode = "markers", color = z2$transect)
-z2plot
+
 
 c1ggplot <- ggplot(data = c1, aes(x = point, y = z, color = transect))+
   geom_line()+
