@@ -275,11 +275,53 @@ Conducting a few normality tests to see whether or not the data violates the ass
 
 ```{r}
 
-vpiPerm <- adonis(formula = abundance ~ time*treatment*class, data = vpi, method = "euclidian", permutations = 9999)
+vpiPerm <- adonis(formula = abundance ~ class*time*treatment, data = vpi, method = "euclidian", permutations = 999)
 
-vpiPairwise <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 9999)
+vpiPairwise <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
 
 vpiPairwise <- vpiPairwise %>% filter(p.adjusted < 0.05)
+
+```
+
+
+```{r, PERMANOVAtable, include = TRUE, results = hide}
+
+vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
+
+
+mutate_if(is.numeric, round, digits = 3) %>%     
+mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+flextable() %>%
+set_header_labels(Data.set = "Data set") %>% 
+flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
+flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+autofit() %>%
+font(fontname = "Times New Roman", part = "all") %>%
+fontsize(size = 12, part = "all") %>%
+bold(part = "header") %>%
+colformat_num(j = 'df', digits = 2) %>% 
+colformat_num(j = "Pseudo.F", digits = 2) %>%
+colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+align(align = "center", j = "p.value")
+
+vpiDoc = read_docx()
+vpiDoc = body_add_flextable(vpiDoc, value = vpiPermTab)
+print(vpiDoc, target = "../tables/vpiTable.docx")
+vpiPermTab
+
+
+
+
 
 
 
@@ -289,7 +331,6 @@ vpiPairwise <- vpiPairwise %>% filter(p.adjusted < 0.05)
 
 
 ```
-
 
 
 

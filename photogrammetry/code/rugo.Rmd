@@ -308,15 +308,15 @@ by(rugoRMS$sd, rugoRMS$time, mean)
 
 
 set.seed(999)
-rugoPerm <- adonis(formula = sd ~ reef*time*treatment, data = rugoRMS, method = "euclidian", permutations = 9999)
+rugoPerm <- adonis(formula = sd ~ reef*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
 
 set.seed(999)
 rugoPairTime <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$time,
-                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 9999)
+                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
 
 set.seed(999)
 rugoPairTreatment <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$treatment,
-                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 9999)
+                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
 
 
 
@@ -332,7 +332,7 @@ We are taking our results from our PERMANOVA and creating a table using function
 
 ```{r, PERMANOVAtable, include = TRUE, results = hide}
 
-permTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Reef", "df" = rugoPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
+rugoPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Reef", "df" = rugoPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
   add_row("Test" = " ", "Comparison" = "Time", "df" = rugoPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
   add_row("Test" = " ", "Comparison" = "Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
   add_row("Test" = " ", "Comparison" = "Reef:Time", "df" = rugoPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
@@ -361,9 +361,9 @@ align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>%
 align(align = "center", j = "p.value")
 
 rugoDoc = read_docx()
-rugoDoc = body_add_flextable(rugoDoc, value = permTab)
+rugoDoc = body_add_flextable(rugoDoc, value = rugoPermTab)
 print(rugoDoc, target = "../tables/rugoTable.docx")
-permTab
+rugoPermTab
 
 
 
@@ -390,10 +390,26 @@ We are visualizing the standard deviation of elevation (what we tested above) us
 ```{r, plottingData, include = TRUE}
 myColors <- c("#4a83c4", "#badef5")
 
-rugoPlot <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
+rugoPlot1 <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
   geom_boxplot(aes(fill = time))+
   scale_fill_manual(values = myColors)+
-  facet_grid(.~reef, scales = 'free')
+  facet_grid(.~reef, scales = 'free')+
+  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
+
+rugoPlot <- rugoPlot1+theme(
+    axis.text.x = element_text(size = 20, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 30, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 30, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
+    legend.position = "right")
 
 rugoPlot
 ggsave("../figures/rugoSDboxplot.jpeg", plot = rugoPlot, width = 15, height = 10, units = "in", dpi = 600)

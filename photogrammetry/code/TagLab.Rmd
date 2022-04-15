@@ -217,7 +217,7 @@ tagStack1 <- ggplot(tag1, aes(x = treatment, y = abundance, fill = TagLab.Class.
                       ylim(0,100)+
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance")+
                       scale_fill_manual(values = myColors)+
-                      facet_grid(site ~ time)
+                      facet_grid(.~ time)
 
 tagStack <- tagStack1+theme(
     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
@@ -225,18 +225,18 @@ tagStack <- tagStack1+theme(
     axis.title.y = element_text(size = 40, face = "bold"), 
     axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
     legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    legend.text = element_text(size = 30, colour = "black"), 
     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
     panel.background = element_rect(fill = '#F5F5F5'), 
     plot.title = element_text(size = 40, face = "bold"), 
     axis.line = element_line(colour = "black"), 
     axis.ticks = element_line(color="black"), 
     text = element_text(size=40, color="black"), 
-    legend.position = "left")
+    legend.position = "right")
 tagStack
 
-ggsave("../figures/vpiStackBar.png", plot = vpiStack, width = 20, height = 15, units = 'in', dpi = 600)
-ggsave("../figures/noaaReportFig2.jpeg", plot = vpiStack, width = 20, height = 15, units = "in", dpi = 600)
+ggsave("../figures/tagStackBar.png", plot = tagStack, width = 20, height = 15, units = 'in', dpi = 600)
+ggsave("../figures/tagStackBar.jpeg", plot = tagStack, width = 20, height = 15, units = "in", dpi = 600)
 
 
 

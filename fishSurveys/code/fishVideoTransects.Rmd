@@ -50,7 +50,7 @@ Data generated from reviewing these videos and stills are stored in an excel spr
 
 ```{r, load and subset, include = TRUE, results = "hide"}
 
-fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE, na = c("", "N/A", "NA"))
+fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE, na = c("", "N/A", "NA", "NA NA"))
 fish1$date <- as.Date.factor(fish1$date)
 fish1$site <- as.factor(fish1$site)
 fish1$transect <- as.factor(fish1$transect)
@@ -62,15 +62,20 @@ fish1$reviewer1FullSciName <- as.factor(fish1$reviewer1FullSciName)
 fish1$phase <- as.factor(fish1$phase)
 
 
+
 fish <- fish1 %>% 
-  select(date, site, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count) %>%
-  filter(site == c("IC-C1", "IC-U1", "IC-Z1", "IC-C2", "IC-U2", "IC-Z2")) %>% 
+  select(date, site, transect, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count) %>%
+  # filter(site == c("IC-C1", "IC-U1", "IC-Z1", "IC-C2", "IC-U2", "IC-Z2")) %>% 
   droplevels() %>% 
-  group_by(date, site) %>% 
+  group_by(date, site, transect) %>% 
   add_count() %>% 
   ungroup() %>% 
   group_by(date, site, reviewer1FullSciName) %>% 
-  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)*100))
+fish$treatment = if_else(fish$site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted") 
+fish$reef = if_else(fish$site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
+                   if_else(fish$site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))
+fish$reef <- as.factor(fish$reef)
 
 levels(fish$site)
                       
@@ -94,11 +99,11 @@ vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
 
-vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = reef))+
+fishStack1 <- ggplot(fish, aes(x = site, y = abundance, fill = class, group = reef))+
                       geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
                       ylim(0,100)+
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
-                      scale_fill_manual(values = myColors)+
+                      #scale_fill_manual(values = myColors)+
                       facet_grid(treatment ~ time)
 
 vpiStack <- vpiStack1+theme(
@@ -127,7 +132,17 @@ vpiStack
 
 #subsetting for just one time point, and filtering outo anything lower than 2% abundance
 
-fishPlot <- subset(fish, date < "2021-07-20")
+
+fishPlot <- subset(fish, date == "2020-12-14")
+fishPlot <- subset(fish, site == "IC-C1")
+
+fishPlot <- fishPlot %>% 
+  group_by(site, date, transect, reviewer1FullSciName) %>% 
+  summarise(mean(reviewer1Count)) %>% 
+  ungroup() %>% 
+  group_by(site, date, reviewer1FullSciName) %>% 
+  summarise(mean(reviewer1Count))
+
 
 fishPlot <- fish %>% 
   filter(date <"2021-07-20") %>%
@@ -143,7 +158,7 @@ vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
 
-fishStack1 <- ggplot(fish, aes(x = site, y = abundance, fill = reviewer1FullSciName)) + 
+fishStack1 <- ggplot(fish, aes(x = site, y = reviewer1Count, fill = reviewer1FullSciName)) + 
     geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
     labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")+
     facet_wrap(date~. , scale = 'free')
