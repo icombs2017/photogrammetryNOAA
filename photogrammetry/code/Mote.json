@@ -177,6 +177,22 @@
         200
       ],
       "visible": true
+    },
+    {
+      "id": "Montastraea cavernosa",
+      "name": "Montastraea cavernosa",
+      "description": null,
+      "fill": [
+        255,
+        85,
+        0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
     }
   ]
 }
