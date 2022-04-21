@@ -193,6 +193,22 @@
         200
       ],
       "visible": true
+    },
+    {
+      "id": "Eusmilia fastigiata",
+      "name": "Eusmilia fastigiata",
+      "description": null,
+      "fill": [
+        255,
+        170,
+        255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
     }
   ]
 }
