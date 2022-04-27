@@ -318,6 +318,22 @@ set.seed(999)
 rugoPairTreatment <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$treatment,
                              sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
 
+#I WANT TO LOOK INTO THIS BELOW
+
+# testPerm <- adonis(formula = sd ~ site*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
+
+# test <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$site,
+#                              sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
+
+rugosdBaseline <- subset(rugoRMS, time == "Baseline")
+rugoSdOneYear <- subset(rugoRMS, time == "1 Year")
+rugoSdControl <- subset(rugoRMS, treatment == "Control")
+rugoSdOutplanted <- subset(rugoRMS, treatment == "Outplanted")
+
+mean(rugosdBaseline$sd)
+mean(rugoSdOneYear$sd)
+mean(rugoSdControl$sd)
+mean(rugoSdOutplanted$sd)
 
 
 
@@ -416,7 +432,11 @@ ggsave("../figures/rugoSDboxplot.jpeg", plot = rugoPlot, width = 15, height = 10
 ggsave("../figures/rugoSDboxplot.png", plot = rugoPlot, width = 15, height = 10, units = "in", dpi = 600)
 
 
-
+rugoPlot1 <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
+  geom_boxplot(aes(fill = time))+
+  scale_fill_manual(values = myColors)+
+  facet_grid(scales = 'free')+
+  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
 
 
 ```
