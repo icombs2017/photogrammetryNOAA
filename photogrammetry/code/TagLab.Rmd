@@ -198,21 +198,20 @@ We are visualizing the data we just tested for.
 
 ```{r}
 
-myColors <- paletteer_c("pals::ocean.balance", 11, direction = 1)
+myColors <- paletteer_c("pals::ocean.balance", 10, direction = 1)
+
+tag1 <- subset(tag, TagLab.Class.name != "Empty") %>% droplevels()
 
 
-# myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
+tag1$TagLab.Class.name = factor(tag1$TagLab.Class.name, levels(tag1$TagLab.Class.name)[c(6,4,1,3,7,2,8,9,5,10)])
 
-# # Using this just to plot the top 2% of species
-# vpi1 <- vpi %>% 
-#   filter(abundance > 2) %>% 
-#   droplevels()
-# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
-# 
 
-tag1 <- subset(tag, TagLab.Class.name != "Empty")
 
-tagStack1 <- ggplot(tag1, aes(x = treatment, y = abundance, fill = TagLab.Class.name, group = reef))+
+
+
+
+
+tagStack1 <- ggplot(tag1, aes(x = treatment, y = abundance, fill = TagLab.Class.name))+
                       geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE), alpha = 0.8)+
                       ylim(0,100)+
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance")+

@@ -225,20 +225,23 @@ To visualize the data and what our species composition looks like at our sites, 
 myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
 
 # Using this just to plot the top 2% of species
-vpi1 <- vpi %>% 
-  filter(abundance > 2) %>% 
+vpi1 <- vpi %>%
+  filter(abundance > 2) %>%
   droplevels()
 vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
 
 
-vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance, fill = class, group = reef))+
-                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE), alpha = 0.8)+
+vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance))+
+                      geom_bar(aes(fill = factor(class)), position = position_stack(reverse = TRUE), stat = 'identity', color = 'black', alpha = 0.8)+
                       ylim(0,100)+
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
                       scale_fill_manual(values = myColors)+
                       facet_grid(treatment ~ time)
+
+
+
 
 vpiStack <- vpiStack1+theme(
     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
@@ -274,12 +277,13 @@ ggsave("../figures/noaaReportFig2.jpeg", plot = vpiStack, width = 20, height = 1
 Conducting a few normality tests to see whether or not the data violates the assumptions of normality. And then running the appropriate statistical test. In this case we are running a single-factor Kruskal-Wallis (for non-normally distributed data) and then a multi-factor Permuational Analysis of Variance (PERMANOVA) using the function `adonis` in the package `vegan` looking at abundance across treatment (control vs outplanted) and functional groups (gorgonians, corals, etc). The factors and variables are likely to change as we add in variables from other data sets (potentially) and timepoints (definitely). 
 
 ```{r}
-
+set.seed(999)
 vpiPerm <- adonis(formula = abundance ~ class*time*treatment, data = vpi, method = "euclidian", permutations = 999)
 
-vpiPairwise <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
+set.seed(999)
+vpiPairwise1 <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
 
-vpiPairwise <- vpiPairwise %>% filter(p.adjusted < 0.05)
+vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
 
 ```
 

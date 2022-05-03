@@ -209,6 +209,22 @@
         200
       ],
       "visible": true
+    },
+    {
+      "id": "Colpophyllia natans",
+      "name": "Colpophyllia natans",
+      "description": null,
+      "fill": [
+        85,
+        255,
+        255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
     }
   ]
 }
