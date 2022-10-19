@@ -22,7 +22,7 @@ library(magrittr)
 ### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
 ###
 ***
-This is the analysis pipeline to analyze the community composition of herbivores predating upon the herbivory assays. Six experimental 10m x 10m plots were established. Two herbivory assays were deployed at each site. Each assay consisted for 5 blades of **Thalassia testudinum** set in clothespins threaded onto galvanized wire at 6in. intervals. The assays were deployed for 2 hours and filmed using a GoPro camera. The videos were analyzed to determine which species of herbivorous fish were predating upon the herbivory assays. Only fish that actually ate seagrass were noted, the blades that were predated upon were noted to hte best of the reviewers ability, and, if applicable, the phase of the herbivore was noted (terminal, initial, etc).
+This is the analysis pipeline to analyze the community composition of herbivores predating upon the herbivory assays. Six experimental 10m x 10m plots were established in Year 1 and 3 additional experimental plots were estabished in Y2. Two herbivory assays were deployed at each site. Each assay consisted for 5 blades of **Thalassia testudinum** set in clothespins threaded onto galvanized wire at 6in. intervals. The assays were deployed for 2 hours and filmed using a GoPro camera. The videos were analyzed to determine which species of herbivorous fish were predating upon the herbivory assays. Only fish that actually ate seagrass were noted, the blades that were predated upon were noted to the best of the reviewers ability, and, if applicable, the phase of the herbivore was noted (terminal, initial, etc).
 
 
 ***
@@ -37,7 +37,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata", "readxl", "EnvStats", "emmeans", "MuMIn", "sjstats", "lmerTest", "gnm")
 
 
 ```
@@ -49,36 +49,133 @@ pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patc
 Data generated from reviewing these videos are stored in an excel spreadsheet found in the ../data folder. And loaded in using the `read.xls()` from the package `gdata`.  
 
 ```{r, load and subset, include = TRUE, results = "hide"}
-# I WANT TO CHANGE THIS DATAFRAME NAME TO HERBIVORY OR SOMETHIGN LIKE THAT, KEEP FISH FOR THE FISH TRANSECTS
-fish1 <- read.xls("../data/herbivoryVideoDataSheet.xlsx", header =T)
-fish1 <- as.tibble(fish1)
-fish1$date <- as.Date.factor(fish1$date)
-fish1$site <- as.factor(fish1$site)
-fish1$assay <- as.factor(fish1$assay)
-fish1$reviewer1SpeciesCm <- as.factor(fish1$reviewer1SpeciesCm)
-fish1$reviewer1SpeciesGn <- as.factor(fish1$reviewer1SpeciesGn)
-fish1$reviewer1SpeciesSc <- as.factor(fish1$reviewer1SpeciesSc)
-fish1$reviewer1FullSciName <- as.factor(fish1$reviewer1FullSciName)
+herb1 <-read_excel("../data/herbivoryVideoDataSheet.xlsx", sheet = 1)
+herb1$date <- as.Date.factor(herb1$date)
+herb1$site <- as.factor(herb1$site)
+herb1$assay <- as.factor(herb1$assay)
+herb1$reviewer1SpeciesCm <- as.factor(herb1$reviewer1SpeciesCm)
+herb1$reviewer1SpeciesGn <- as.factor(herb1$reviewer1SpeciesGn)
+herb1$reviewer1SpeciesSc <- as.factor(herb1$reviewer1SpeciesSc)
+herb1$reviewer1FullSciName <- as.factor(herb1$reviewer1FullSciName)
+herb1$species <- herb1$reviewer1FullSciName
 
 
-fish <- fish1 %>% select(date, site, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count, reviewer1Blade) %>%
+
+herb <- herb1 %>% select(date, site, species, reviewer1Count, reviewer1Blade) %>%
 group_by(date, site) %>% 
   add_count() %>% 
   ungroup() %>% 
-  group_by(date, site, reviewer1FullSciName) %>% 
+  group_by(date, site, species) %>% 
   summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
-                        
-  
-
- 
-
-
-
 
 
 ```
 
 <br><br>
+
+# Normality Tests
+***
+Here we are exploring the distribution of the data, if the data is not normally distributed we will try to transform the data to meet a normal distribution.  
+
+```{r, normalityTest, include = TRUE}
+
+#Testing normality of abundance and count
+hist(herb$abundance)
+shapiro.test(herb$abundance)
+
+hist(herb$count)
+shapiro.test(herb$count)
+
+# Trying an arcsine transformation on the proportional abundance data
+
+hist(asin(sqrt(herb$abundance)))
+shapiro.test(asin(sqrt(herb$abundance)))
+
+# Trying a square root transformation on the count data
+
+hist(sqrt(herb$count+1/2))
+shapiro.test(sqrt(herb$count+1/2))
+
+# Trying a square transformation on the count data
+
+hist((herb$count)^2)
+shapiro.test((herb$count)^2)
+
+# Trying a square transformation on the count data
+
+hist(exp(herb$count))
+shapiro.test(exp(herb$count))
+
+# Trying a reciprocal transformation on the count data
+
+hist(1/(herb$count))
+shapiro.test(1/(herb$count))
+
+
+```
+# Split Data
+***
+Here we are going to split the data between Y1 and Y2 sites. 
+
+```{r, splitData, include = TRUE}
+herbY1 <- herb %>% 
+  dplyr::select(date, site, species, count, n, abundance) %>% 
+  dplyr::filter(site %in% c("IC-C1", "IC-C2", "IC-U1", "IC-U2", "IC-Z1", "IC-Z2"))
+
+herbY1$treatment <- if_else(herbY1$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
+year1 <- "Y1"
+herbY1$year == year1
+
+herbY1$timePoint= if_else(herbY1$date <= ("2020-10-15"), "T0",
+                       if_else(herbY1$date > ("2020-10-15") & herbY1$date <= ("2021-06-15"), "T6",
+                       if_else(herbY1$date > ("2021-06-15") & herbY1$date <= ("2022-01-28"), "T12", "T18")))
+
+
+#Doing the same for Y2 Note: the controls are the same throughout 
+
+herbY2 <- herb %>% 
+  dplyr::select(date, site, species, count, n, abundance) %>% 
+  dplyr::filter(site %in% c("IC-C2", "IC-U1", "IC-Z1", "IC-C3", "IC-Z3", "IC-U3")) %>% 
+  dplyr::filter(date > "2020-10-15")
+
+herbY2$treatment <- if_else(herbY2$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
+year2 <- "Y2"
+herbY1$year == year2
+
+herbY2$timePoint= if_else(herbY2$date <= ("2021-06-15"), "T0",
+                       if_else(herbY2$date > ("2021-06-15") & herbY2$date <= ("2022-01-28"), "T6", "T12"))
+
+
+```
+
+
+
+# Linear Model 
+***
+Here we are exploring the distribution of the data, if the data is not normally distributed we will try to transform the data to meet a normal distribution.  
+
+```{r, linearModel, include = TRUE}
+
+set.seed(999)
+adonis2(formula = herbY1$abundance ~ treatment*timePoint*species, data = herbY1, method = "euclidian", permutations = 9999)
+
+set.seed(999)
+adonis2(herbY2$abundance ~ species*treatment*timePoint*site, data = herbY2, method = "euclidian", permutations = 9999)
+
+mylogit <- glm(abundance ~ species + treatment + timePoint + site, data = herbY2, family = "binomial")
+
+
+abundGNM<- gnm(abundance ~ species*treatment*timePoint*site,  data = herbY2)
+abundGNManova <- anova(abundGNM)
+logTotalLManova
+
+
+```
+
+
+
+```
+
 # Plotting the data
 ***
 
