@@ -37,7 +37,9 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata", "readxl", "EnvStats", "emmeans", "MuMIn", "sjstats", "lmerTest", "gnm")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata", "readxl", "EnvStats", "emmeans", "MuMIn", "sjstats", "lmerTest", "gnm", "forcats")
+pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
+
 
 
 ```
@@ -124,11 +126,18 @@ herbY1 <- herb %>%
 
 herbY1$treatment <- if_else(herbY1$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
 year1 <- "Y1"
-herbY1$year == year1
+herbY1$year <- year1
+
 
 herbY1$timePoint= if_else(herbY1$date <= ("2020-10-15"), "T0",
                        if_else(herbY1$date > ("2020-10-15") & herbY1$date <= ("2021-06-15"), "T6",
                        if_else(herbY1$date > ("2021-06-15") & herbY1$date <= ("2022-01-28"), "T12", "T18")))
+herbY1$treatment <- as.factor(herbY1$treatment)
+herbY1$year <- as.factor(herbY1$year)
+herbY1$timePoint <- as.factor(herbY1$timePoint)
+levels(herbY1$timePoint)
+herbY1$timePoint = factor(herbY1$timePoint, levels(herbY1$timePoint)[c(1, 4, 2, 3)])
+levels(herbY1$timePoint)
 
 
 #Doing the same for Y2 Note: the controls are the same throughout 
@@ -140,10 +149,22 @@ herbY2 <- herb %>%
 
 herbY2$treatment <- if_else(herbY2$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
 year2 <- "Y2"
-herbY1$year == year2
+herbY2$year <- year2
 
 herbY2$timePoint= if_else(herbY2$date <= ("2021-06-15"), "T0",
                        if_else(herbY2$date > ("2021-06-15") & herbY2$date <= ("2022-01-28"), "T6", "T12"))
+
+herbY2$treatment <- as.factor(herbY2$treatment)
+herbY2$year <- as.factor(herbY2$year)
+herbY2$timePoint <- as.factor(herbY2$timePoint)
+levels(herbY2$timePoint)
+herbY2$timePoint = factor(herbY2$timePoint, levels(herbY2$timePoint)[c(1, 3, 2)])
+
+
+
+
+herbTotal <- bind_rows(herbY1, herbY2)
+
 
 
 ```
@@ -152,29 +173,80 @@ herbY2$timePoint= if_else(herbY2$date <= ("2021-06-15"), "T0",
 
 # Linear Model 
 ***
-Here we are exploring the distribution of the data, if the data is not normally distributed we will try to transform the data to meet a normal distribution.  
+Here we are going to build a linear model which we'll use to analyze the data. 
 
 ```{r, linearModel, include = TRUE}
 
 set.seed(999)
-adonis2(formula = herbY1$abundance ~ treatment*timePoint*species, data = herbY1, method = "euclidian", permutations = 9999)
+adonis2(formula = herbY1$abundance ~ treatment*species + timePoint + site, data = herbY1, method = "euclidian", permutations = 9999)
+
+pairwise.adonis2(herbY1[6]~species,data=herbY1)
+pairwise.adonis(herbY1[6],factors=herbY1$species,
+                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
+
 
 set.seed(999)
-adonis2(herbY2$abundance ~ species*treatment*timePoint*site, data = herbY2, method = "euclidian", permutations = 9999)
+adonis2(formula = herbY2$abundance ~ treatment*species + timePoint + site, data = herbY2, method = "euclidian", permutations = 9999)
 
-mylogit <- glm(abundance ~ species + treatment + timePoint + site, data = herbY2, family = "binomial")
-
-
-abundGNM<- gnm(abundance ~ species*treatment*timePoint*site,  data = herbY2)
-abundGNManova <- anova(abundGNM)
-logTotalLManova
+pairwise.adonis(herbY2[6],factors=herbY2$species,
+                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
 
 
-```
+set.seed(999)
+herbPerm <- adonis2(formula = herbTotal$abundance ~ treatment + species + timePoint + year + site, data = herbTotal, method = "euclidian", permutations = 9999)
 
 
 
 ```
+
+
+# PERMANOVA Table
+***
+
+Here we are using the package `officer` to create a publication ready table for our PERMANOVA results. 
+```{r, PERMANOVAtable, include = TRUE}
+
+herbPerm <- tibble::rownames_to_column(herbPerm)
+
+
+herbPermTab <- herbPerm %>% 
+  dplyr::rename("Factor" = "rowname") %>% 
+  dplyr::rename("Degrees of Freedom" = "Df") %>% 
+  dplyr::rename("Sum of Squares" = "SumOfSqs") %>% 
+  dplyr::rename("Pseudo.F" = "F") %>% 
+  dplyr::rename( "p.value"  = "Pr(>F)") %>%
+
+mutate_if(is.numeric, round, digits = 3) %>%     
+mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+flextable() %>%
+set_header_labels(Data.set = "Data set") %>% 
+flextable::compose(part = "header", j = "Degrees of Freedom", value = as_paragraph("Degrees of Freedom")) %>% 
+flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+autofit() %>%
+font(fontname = "Times New Roman", part = "all") %>%
+fontsize(size = 12, part = "all") %>%
+bold(part = "header") %>%
+colformat_num(j = 'Degrees of Freedom', digits = 2) %>% 
+colformat_num(j = "Pseudo.F", digits = 2) %>%
+colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+align(align = "center", j = "p.value")
+
+herbDoc = read_docx()
+herbDoc = body_add_flextable(herbDoc, value = herbPermTab)
+print(herbDoc, target = "../tables/herbivoryTable.docx")
+herbPermTab
+
+
+
+
+
+
+```
+
 
 # Plotting the data
 ***
@@ -185,26 +257,31 @@ To visualize the data and what our species composition looks like at our sites, 
 
 ```{r, graph, include = TRUE}
 
+myColors <- c("#006BFF", "#277B00", "#ff0000", "#97DE00", "#00ffff", "#6495ed" , '#843BFF', "#ffd700", "#BF5B9A", "#003E94", "#FF9200", "#60f542", '#F96D67', '#9067F9', '#F967C1')
+
+# 
+# levels(herbY2$species) <- levels(herbTotal$species)
+# levels(herbY1$species) <- levels(herbTotal$species)
 #subsetting for just one time point
 
-herbivoryPlot <- subset(fish, date == c("2020-10-14", "2020-10-15"))
+# herbivoryPlot <- subset(fish, date == c("2020-10-14", "2020-10-15"))
 
-herbStack1 <- ggplot(herbivoryPlot, aes(x = site, y = abundance, fill = reviewer1FullSciName)) + 
+# herbY1$species<- fct_reorder(herbY1$species, herbY1$abundance, .desc = FALSE)
+# herbY2$species<- fct_reorder(herbY2$species, herbY2$abundance, .desc = FALSE)
+
+y1HerbStack1 <- ggplot(herbY1, aes(x = site, y = abundance, fill = fct_reorder(species, abundance))) + 
     geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
-    #ylim(0,100) + 
-    labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")
-+
-    facet_wrap(~date)
-    #scale_fill_manual(values = myColors)+
-    #scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
+    labs(y = "Relative Abundance (%)", x = "Site", fill = "Species", title = "Relative Species Abundance")+
+scale_fill_manual(values=myColors)+
+    facet_wrap(~timePoint)
     
-herbStack <- herbStack1+theme(
-    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+y1HerbStack <- y1HerbStack1+theme(
+    axis.text.x = element_text(size = 20, colour = "black", angle = 45, vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_text(size = 40, color = "black", face = "bold"),
     axis.title.y = element_text(size = 40, face = "bold"), 
-    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    axis.text.y = element_text(colour = "black", size = 20, face = "bold"),
     legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    legend.text = element_text(size = 30, face = "bold", colour = "black"), 
     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
     panel.background = element_rect(fill = '#F5F5F5'), 
     plot.title = element_text(size = 40, face = "bold"), 
@@ -213,9 +290,42 @@ herbStack <- herbStack1+theme(
     text = element_text(size=40, color="black"), 
     legend.position = "right")
 
-herbStack
+y1HerbStack
+ggsave("../figures/year1HerbivoryPlot.png", plot = y1HerbStack, width = 30, height = 15, units = "in", dpi = 600)
 
-ggsave("../figures/knowledgeExchangeHerbivory.png", plot = herbStack1, width = 20, height = 15, units = "in", dpi = 600)
+
+y2HerbStack1 <- ggplot(herbY2, aes(x = site, y = abundance, fill = fct_reorder(species, abundance))) + 
+    geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
+    #ylim(0,100) + 
+    labs(y = "Relative Abundance (%)", x = "Site", fill = "Species", title = "Relative Species Abundance")+
+  scale_fill_manual(values=myColors)+
+    facet_wrap(~timePoint)
+    
+y2HerbStack <- y2HerbStack1+theme(
+    axis.text.x = element_text(size = 20, colour = "black", angle = 45, vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_text(size = 40, color = "black", face = "bold"),
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 20, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 30, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 40, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
+    legend.position = "right")
+
+y2HerbStack
+
+
+#Not Sure if I want to try and combine plots using patchwork for Y1 and Y2 sites.
+
+#stackCombo <- y1HerbStack + y2HerbStack
+
+
+
+ggsave("../figures/year2HerbivoryPlot.png", plot = y2HerbStack, width = 20, height = 15, units = "in", dpi = 600)
 
 
 
