@@ -52,7 +52,7 @@ Data generated from reviewing these videos and stills are stored in an excel spr
 
 fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE, na = c("", "N/A", "NA", "NA NA"))
 
-#turning a bunch of the columns into factors
+#turning a bunch of the columns into factors, and renaming reviewer1FullSCiName to species
 fish1$date <- as.Date.factor(fish1$date)
 fish1$site <- as.factor(fish1$site)
 fish1$transect <- as.factor(fish1$transect)
@@ -60,23 +60,34 @@ fish1$frame <- as.factor(fish1$frame)
 fish1$reviewer1SpeciesCm <- as.factor(fish1$reviewer1SpeciesCm)
 fish1$reviewer1SpeciesGn <- as.factor(fish1$reviewer1SpeciesGn)
 fish1$reviewer1SpeciesSc <- as.factor(fish1$reviewer1SpeciesSc)
-fish1$reviewer1FullSciName <- as.factor(fish1$reviewer1FullSciName)
+fish1$species <- as.factor(fish1$reviewer1FullSciName)
 fish1$phase <- as.factor(fish1$phase)
 
 #selecting for species and renaming one of the columns to make it easier to work with 
 fish1 <- fish1 %>% 
-  dplyr::filter(date < "2021-12-21") %>% 
-  rename("species" = "reviewer1FullSciName")
-
+  dplyr::filter(date < "2021-12-21") 
 
 # selecting only the columns we want to work with and calculating abundance as a proportion. If you want a percentage just multiply by 100 but that makes certain tests and transformations difficult. 
 
-fish <- fish1 %>% select(date, site, species, reviewer1Count) %>%
-group_by(date, site) %>% 
+fish2 <- fish1 %>% select(date, site, transect, frame, species, reviewer1Count) %>%
+group_by(date, site, transect, species) %>% 
   add_count() %>% 
-  ungroup() %>% 
+  rename(tally = 'reviewer1Count') %>% 
+  summarise(count = sum(tally), n = max(n), avgCount = ((count/n)))
+
+
+fish3 <- fish2 %>% 
   group_by(date, site, species) %>% 
-  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+  select(date, site, species, avgCount) %>% 
+  add_count() %>% 
+  summarise(count = sum(avgCount), n = max(n), avgCount = ((count/n))) 
+
+fish <- fish3 %>%
+  group_by(date, site, species) %>% 
+  group_by(date, site) %>% 
+  mutate(totalObservations = sum(avgCount, na.rm = TRUE)) %>%
+  group_by(date, site, species) %>% 
+  summarise(abundance = avgCount/totalObservations)
 
 
 # Adding a column of Treatment (control vs outplanted)
@@ -163,7 +174,7 @@ Here we are going to split the data between Y1 and Y2 sites.
 
 ```{r, splitData, include = TRUE}
 fishY1 <- fish %>% 
-  dplyr::select(date, timePoint, year, reef, site, species, count, n, abundance) %>% 
+  dplyr::select(date, timePoint, year, reef, site, species, abundance) %>% 
   dplyr::filter(site %in% c("IC-C1", "IC-C2", "IC-U1", "IC-U2", "IC-Z1", "IC-Z2"))
 fishY1 <- na.omit(fishY1)
 
@@ -186,7 +197,7 @@ fishY1 <- na.omit(fishY1)
 #Doing the same for Y2 Note: the controls are the same throughout 
 
 fishY2 <- fish %>% 
-  dplyr::select(date, timePoint, year, reef, site, species, count, n, abundance) %>% 
+  dplyr::select(date, timePoint, year, reef, site, species, abundance) %>% 
   dplyr::filter(site %in% c("IC-C2", "IC-U1", "IC-Z1", "IC-C3", "IC-Z3", "IC-U3")) %>% 
   dplyr::filter(date > "2020-10-15")
 fishY2 <- na.omit(fishY2)
@@ -209,20 +220,20 @@ fishY2 <- na.omit(fishY2)
 
 fishTotal <- bind_rows(fishY1, fishY2)
 fishTotal <- na.omit(fishTotal)
-fishTotal1 <- fishTotal %>% 
-  select(date, timePoint, year, reef, site, species, count) %>% 
-  group_by(date, timePoint, year, site) %>% 
-  add_count() %>% 
-  ungroup() %>% 
-  group_by(date, timePoint, year, site, species) %>% 
-  summarise(count = sum(count), n = max(sum(count)), abundance = ((count/n)))
+# fishTotal1 <- fishTotal %>% 
+#   select(date, timePoint, year, reef, site, species, count) %>% 
+#   group_by(date, timePoint, year, site) %>% 
+#   add_count() %>% 
+#   ungroup() %>% 
+#   group_by(date, timePoint, year, site, species) %>% 
+#   summarise(count = sum(count), n = max(sum(count)), abundance = ((count/n)))
 
   
-group_by(date, site) %>% 
-  add_count() %>% 
-  ungroup() %>% 
-  group_by(date, site, species) %>% 
-  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+# group_by(date, site) %>% 
+#   add_count() %>% 
+#   ungroup() %>% 
+#   group_by(date, site, species) %>% 
+#   summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
 
 
 ```
@@ -314,7 +325,7 @@ To visualize the data and what our species composition looks like at our sites, 
 myColors <- c("#006BFF", "#277B00", "#ff0000", "#97DE00", "#00ffff", "#6495ed" , '#843BFF', "#ffd700", "#BF5B9A", "#003E94", "#FF9200", "#60f542", '#F96D67', '#9067F9', '#F967C1')
 
 
-fishStack <- fishTotal %>%
+fishStack <- fish %>%
   filter(abundance > .02) %>%
   droplevels()
 # vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
