@@ -9,8 +9,11 @@ output:
     toc_depth: 3
     toc_float: yes
   pdf_doctument:
-      toc: yes
-      toc_depth: 3
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 ---
 
 ```{r, setup, include = FALSE}
@@ -41,17 +44,18 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "paletteer")
 ```
 
 
-<br><br>
+<br><br> 
+
 # Loading and Manipulating data
 ***
 
 We have loaded a lot of individual data into R and we want to combine the data and create one cohesive dataframe with which to work. In order to do that we have to add a few identifiers to our data frames to hwen combining we can differentiate between the two, but this is also a good time to add other columsn like **treatment** and **time** as well. The majority of this is done using various functions from the package `dplyr`. 
 
-```{r, loading, include = TRUE, results = hide}
+```{r, loading, include = TRUE, message = FALSE}
 sitec1 <- as.factor("c1")
 sitec2 <- as.factor("c2")
 siteu1 <- as.factor("u1")
@@ -119,7 +123,7 @@ tagU1Pre$abundance <- (tagU1Pre$count/sum(tagU1Pre$count)*100)
 tagU1Pre <- tagU1Pre %>% arrange(desc(abundance))
 
 
-tagU1Post <- read.csv("../data/TagLab/20201_12_08_IC-U1.csv", header = T)
+tagU1Post <- read.csv("../data/TagLab/2021_12_08_IC-U1.csv", header = T)
 tagU1Post$TagLab.Class.name <- as.factor(tagU1Post$TagLab.Class.name)
 tagU1Post$TagLab.Date <- as.Date.factor(tagU1Post$TagLab.Date) 
 
@@ -153,6 +157,7 @@ tag$reef <- as.factor(tag$reef)
 ```
 
 <br><br>
+
 # Checking for Normality
 ***
 
@@ -173,6 +178,7 @@ shapiro.test(tag$abundance)
 
 
 <br><br>
+
 # PERMANOVA
 ***
 
@@ -192,11 +198,12 @@ oneYear <- subset(tag, time = "1 Year")
 ```
 
 <br><br>
+
 # Visualizing Data
 ***
 We are visualizing the data we just tested for. 
 
-```{r}
+```{r, include = TRUE, eval = FALSE}
 
 myColors <- paletteer_c("pals::ocean.balance", 10, direction = 1)
 
@@ -243,5 +250,6 @@ ggsave("../figures/tagStackBar.jpeg", plot = tagStack, width = 20, height = 15, 
 
 
 ```
+![Figure](../figures/tagStackBar.png)
 
 

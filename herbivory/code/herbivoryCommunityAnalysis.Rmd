@@ -175,21 +175,21 @@ herbTotal <- bind_rows(herbY1, herbY2)
 ***
 Here we are going to build a linear model which we'll use to analyze the data. 
 
-```{r, linearModel, include = TRUE}
+```{r, linearModel, include = TRUE, results = "hide"}
 
-set.seed(999)
-adonis2(formula = herbY1$abundance ~ treatment*species + timePoint + site, data = herbY1, method = "euclidian", permutations = 9999)
-
-pairwise.adonis2(herbY1[6]~species,data=herbY1)
-pairwise.adonis(herbY1[6],factors=herbY1$species,
-                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
-
-
-set.seed(999)
-adonis2(formula = herbY2$abundance ~ treatment*species + timePoint + site, data = herbY2, method = "euclidian", permutations = 9999)
-
-pairwise.adonis(herbY2[6],factors=herbY2$species,
-                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
+# set.seed(999)
+# adonis2(formula = herbY1$abundance ~ treatment*species + timePoint + site, data = herbY1, method = "euclidian", permutations = 9999)
+# 
+# pairwise.adonis2(herbY1[6]~species,data=herbY1)
+# pairwise.adonis(herbY1[6],factors=herbY1$species,
+#                              sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
+# 
+# 
+# set.seed(999)
+# adonis2(formula = herbY2$abundance ~ treatment*species + timePoint + site, data = herbY2, method = "euclidian", permutations = 9999)
+# 
+# pairwise.adonis(herbY2[6],factors=herbY2$species,
+#                              sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
 
 
 set.seed(999)
@@ -198,6 +198,15 @@ herbPerm <- adonis2(formula = herbTotal$abundance ~ treatment + species + timePo
 
 
 ```
+```{r, include = TRUE}
+
+herbPerm
+
+
+
+```
+
+
 
 
 # PERMANOVA Table
@@ -255,7 +264,7 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 
-```{r, graph, include = TRUE}
+```{r, graph, include = TRUE, eval = FALSE}
 
 myColors <- c("#006BFF", "#277B00", "#ff0000", "#97DE00", "#00ffff", "#6495ed" , '#843BFF', "#ffd700", "#BF5B9A", "#003E94", "#FF9200", "#60f542", '#F96D67', '#9067F9', '#F967C1')
 
@@ -331,6 +340,8 @@ ggsave("../figures/year2HerbivoryPlot.png", plot = y2HerbStack, width = 20, heig
 
 ```
 
+![Figure](../figures/year1HerbivoryPlot.png)
+![Figure](../figures/year2HerbivoryPlot.png)
 
 
 

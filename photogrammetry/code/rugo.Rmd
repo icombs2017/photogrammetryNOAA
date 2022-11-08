@@ -258,7 +258,7 @@ z2Post<- z2Post %>%
 
 Now we want to merge datasets using the `bind_rows` function in `dplyr`.
 
-```{r, merge, include = TRUE, results = 'hide'}
+```{r, merge, include = TRUE}
 
 rugo <- bind_rows(c1Pre,c2Pre,u1Pre,u2Pre,z1Pre,z2Pre,c1Post,c2Post,u1Post,u2Post,z1Post,z2Post)
 rugo <- as_tibble(rugo)
@@ -284,7 +284,7 @@ summary(rugo)
 We have a very large dataset, however, what we are really concerned with is the **Root Mean Square of Heights**, rather, the **standard deviation** of our z coordinate (height) for each transect (and maybe, eventually, for each site). Using `dplyr` we are going to calculate our **standard deviation** as well as collapse our data set so it is easier to work with. We will end up with 1 variance value for each transect within each site. We are also calculating standard deviation and mean. 
 
 
-```{r, variance, include = TRUE}
+```{r, variance, include = TRUE , message = FALSE}
 
 rugoRMS <- rugo %>% 
   dplyr::select(site, time, treatment, reef, transect, z) %>%
@@ -341,12 +341,13 @@ mean(rugoSdOutplanted$sd)
 
 ```
 <br><br>
+
 # Making a Table
 ***
 We are taking our results from our PERMANOVA and creating a table using functions from the packages `flextable` and `officer`.
 
 
-```{r, PERMANOVAtable, include = TRUE, results = hide}
+```{r, PERMANOVAtable, include = TRUE}
 
 rugoPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Reef", "df" = rugoPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
   add_row("Test" = " ", "Comparison" = "Time", "df" = rugoPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
@@ -403,7 +404,7 @@ We are visualizing the standard deviation of elevation (what we tested above) us
 
 
 
-```{r, plottingData, include = TRUE}
+```{r, plottingData, include = TRUE, eval = FALSE}
 myColors <- c("#4a83c4", "#badef5")
 
 rugoPlot1 <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
@@ -441,7 +442,10 @@ rugoPlot1 <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
 
 ```
 
-```{r, plotting, include = TRUE}
+![Figure](../figures/rugoSDboxplot.png)
+
+
+```{r, plotting, include = FALSE, eval = FALSE}
 
 
 
@@ -513,7 +517,7 @@ siteProfile
 Now we are going to calculate the Root Mean Square Height as described in [Davidson et al. 2003](https://ieeexplore.ieee.org/document/1221829)
 
 
-```{r, Root Mean Square Height, include = FALSE}
+```{r, Root Mean Square Height, include = FALSE, eval = FALSE}
 
 # find and remove outliers
 rugo_cleaned <- find_Outliers(data = rugo$z,
@@ -542,7 +546,7 @@ str(RMS)
 # Root Mean Square
 ***
 We are calculating the root mean square
-```{r, rmsh, include = TRUE}
+```{r, rmsh, include = FALSE, eval = FALSE}
 
 
 RMSHc1 <- sqrt(mean((c1$z)^2))
@@ -600,7 +604,7 @@ rootMean
 
 ```
 
-```{r}
+```{r, include = FALSE}
 
 xk <- fft(rugo$z, inverse = FALSE)
 

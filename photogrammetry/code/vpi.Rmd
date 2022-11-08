@@ -51,8 +51,9 @@ pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 ***
 
 Data is exported from Viscore's VPI scriplet as a .csv file and named according to the file. 
-Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same. I am also adding **site** and **time** columns to each subset, combining all subsets into one large dataframe using `bind_rows()`, adding a **treatment** column and using the `gsub()` to rename some 
-```{r, load data, include = TRUE, results = 'hide'}
+Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same. I am also adding **site** and **time** columns to each subset, combining all subsets into one large dataframe using `bind_rows()`, adding a **treatment** column and using the `gsub()` to rename some.
+
+```{r, load data, include = TRUE, message = FALSE}
 
 
 
@@ -203,14 +204,84 @@ vpi$reef <- as.factor(vpi$reef)
 myColors <- gg_color_hue(length(vpi$class))
 
 
-
+head(vpi)
 
 
 
 ```
 
 <br><br>
+
+# PERMANOVA
+***
+
+Conducting a few normality tests to see whether or not the data violates the assumptions of normality. And then running the appropriate statistical test. In this case we are running a single-factor Kruskal-Wallis (for non-normally distributed data) and then a multi-factor Permuational Analysis of Variance (PERMANOVA) using the function `adonis` in the package `vegan` looking at abundance across treatment (control vs outplanted) and functional groups (gorgonians, corals, etc). The factors and variables are likely to change as we add in variables from other data sets (potentially) and timepoints (definitely). 
+
+```{r, PERMANOVA, include = TRUE, message = FALSE}
+set.seed(999)
+vpiPerm <- adonis(formula = abundance ~ class*time*treatment, data = vpi, method = "euclidian", permutations = 999)
+
+set.seed(999)
+vpiPairwise1 <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
+
+vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
+
+```
+
+
+```{r, PERMANOVAtable, include = TRUE}
+
+vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
+  add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
+
+
+mutate_if(is.numeric, round, digits = 3) %>%     
+mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+flextable() %>%
+set_header_labels(Data.set = "Data set") %>% 
+flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
+flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+autofit() %>%
+font(fontname = "Times New Roman", part = "all") %>%
+fontsize(size = 12, part = "all") %>%
+bold(part = "header") %>%
+colformat_num(j = 'df', digits = 2) %>% 
+colformat_num(j = "Pseudo.F", digits = 2) %>%
+colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+align(align = "center", j = "p.value")
+
+vpiDoc = read_docx()
+vpiDoc = body_add_flextable(vpiDoc, value = vpiPermTab)
+print(vpiDoc, target = "../tables/vpiTable.docx")
+vpiPermTab
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+<br><br>
+
 # Plotting the data
+
 ***
 
 To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways. First we are going to just plot those with >2% abundance at our sites.
@@ -218,7 +289,7 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 
-```{r}
+```{r, plotting, include = TRUE, eval = FALSE}
 # myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
 #myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
 #Color Palette using a selection of Mote's preferred colors
@@ -268,60 +339,7 @@ ggsave("../figures/noaaReportFig2.jpeg", plot = vpiStack, width = 20, height = 1
 
 ```
 
-
-<br><br>
-
-# Normality Test
-***
-
-Conducting a few normality tests to see whether or not the data violates the assumptions of normality. And then running the appropriate statistical test. In this case we are running a single-factor Kruskal-Wallis (for non-normally distributed data) and then a multi-factor Permuational Analysis of Variance (PERMANOVA) using the function `adonis` in the package `vegan` looking at abundance across treatment (control vs outplanted) and functional groups (gorgonians, corals, etc). The factors and variables are likely to change as we add in variables from other data sets (potentially) and timepoints (definitely). 
-
-```{r}
-set.seed(999)
-vpiPerm <- adonis(formula = abundance ~ class*time*treatment, data = vpi, method = "euclidian", permutations = 999)
-
-set.seed(999)
-vpiPairwise1 <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
-
-vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
-
-```
-
-
-```{r, PERMANOVAtable, include = TRUE, results = hide}
-
-vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
-
-
-mutate_if(is.numeric, round, digits = 3) %>%     
-mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
-mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
-mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
-flextable() %>%
-set_header_labels(Data.set = "Data set") %>% 
-flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
-flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
-flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
-autofit() %>%
-font(fontname = "Times New Roman", part = "all") %>%
-fontsize(size = 12, part = "all") %>%
-bold(part = "header") %>%
-colformat_num(j = 'df', digits = 2) %>% 
-colformat_num(j = "Pseudo.F", digits = 2) %>%
-colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
-align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
-align(align = "center", j = "p.value")
-
-vpiDoc = read_docx()
-vpiDoc = body_add_flextable(vpiDoc, value = vpiPermTab)
-print(vpiDoc, target = "../tables/vpiTable.docx")
-vpiPermTab
+![Figure](../figures/vpiStackBar.png)
 
 
 
@@ -330,17 +348,7 @@ vpiPermTab
 
 
 
-
-
-
-
-```
-
-
-
-
-
-```{r, subsetDate, include = TRUE, }
+```{r, subsetDate, include = FALSE }
 
 
 post <- vpi %>% filter(time == '1 Year')

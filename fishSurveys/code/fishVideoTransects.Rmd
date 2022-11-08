@@ -1,7 +1,7 @@
 ---
 title: "Fish Video Transect Survey Analysis"
 author: "Ian Combs -- icombs@mote.org"
-date created: "01/13/2022"
+date created: 01/13/2022
 output:
   html_document:
     theme: flatly
@@ -10,8 +10,11 @@ output:
     toc_depth: 3
     toc_float: yes
   pdf_doctument:
-      toc: yes
-      toc_depth: 3
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 ---
 
 
@@ -69,10 +72,10 @@ fish1 <- fish1 %>%
 
 # selecting only the columns we want to work with and calculating abundance as a proportion. If you want a percentage just multiply by 100 but that makes certain tests and transformations difficult. 
 
-fish2 <- fish1 %>% select(date, site, transect, frame, species, reviewer1Count) %>%
+fish2 <- fish1 %>% select(date, site, transect, frame, species, count) %>%
 group_by(date, site, transect, species) %>% 
   add_count() %>% 
-  rename(tally = 'reviewer1Count') %>% 
+  rename(tally = 'count') %>% 
   summarise(count = sum(tally), n = max(n), avgCount = ((count/n)))
 
 
@@ -138,8 +141,8 @@ Here we are exploring the distribution of the data, if the data is not normally 
 hist(fish$abundance)
 shapiro.test(fish$abundance)
 
-hist(fish$count)
-shapiro.test(fish$count)
+# hist(fish$count)
+# shapiro.test(fish$count)
 
 # Trying an arcsine transformation on the proportional abundance data
 
@@ -148,23 +151,23 @@ shapiro.test(asin(sqrt(fish$abundance)))
 
 # Trying a square root transformation on the count data
 
-hist(sqrt(fish$count+1/2))
-shapiro.test(sqrt(fish$count+1/2))
+# hist(sqrt(fish$count+1/2))
+# shapiro.test(sqrt(fish$count+1/2))
 
 # Trying a square transformation on the count data
 
-hist((fish$count)^2)
-shapiro.test((fish$count)^2)
+# hist((fish$count)^2)
+# shapiro.test((fish$count)^2)
 
 # Trying a square transformation on the count data
 
-hist(exp(fish$count))
-shapiro.test(exp(fish$count))
+# hist(exp(fish$count))
+# shapiro.test(exp(fish$count))
 
 # Trying a reciprocal transformation on the count data
-
-hist(1/(fish$count))
-shapiro.test(1/(fish$count))
+# 
+# hist(1/(fish$count))
+# shapiro.test(1/(fish$count))
 
 
 ```
@@ -244,8 +247,8 @@ Because the data is not normally distributed and transformations could not achie
 
 ```{r, linearModel, include = TRUE}
 
-set.seed(999)
-adonis2(formula = fishY1$abundance ~ site+reef+year, data = fishY1, method = "euclidian", permutations = 9999)
+# set.seed(999)
+# adonis2(formula = fishY1$abundance ~ site+reef+year, data = fishY1, method = "euclidian", permutations = 9999)
 
 # pairwise.adonis2(fishY1[6]~species,data=fishY1)
 # pairwise.adonis(fishY1[6],factors=fishY1$species,
@@ -320,7 +323,7 @@ fishPermTab
 
 To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways.
 
-```{r, graph, include = TRUE}
+```{r, graph, include = TRUE, results = FALSE}
 
 myColors <- c("#006BFF", "#277B00", "#ff0000", "#97DE00", "#00ffff", "#6495ed" , '#843BFF', "#ffd700", "#BF5B9A", "#003E94", "#FF9200", "#60f542", '#F96D67', '#9067F9', '#F967C1')
 
@@ -467,7 +470,7 @@ ggsave("../figures/baselineFishSurveyPlot.png", plot = y1FishStack, width = 20, 
 
 
 ```
-
+![Figure](../figures/baselineFishSurveyPlot.png)
 
 
 
