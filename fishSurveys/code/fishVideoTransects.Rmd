@@ -473,4 +473,16 @@ ggsave("../figures/baselineFishSurveyPlot.png", plot = y1FishStack, width = 20, 
 ![Figure](../figures/baselineFishSurveyPlot.png)
 
 
+```{r}
+
+
+
+
+
+
+
+
+
+
+```
 
