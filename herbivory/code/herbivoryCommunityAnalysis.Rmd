@@ -195,13 +195,20 @@ Here we are going to build a linear model which we'll use to analyze the data.
 set.seed(999)
 herbPerm <- adonis2(formula = herbTotal$abundance ~ treatment + species + timePoint + year + site, data = herbTotal, method = "euclidian", permutations = 9999)
 
+set.seed(999)
+herbPermY1 <- adonis2(formula = herbY1$abundance ~ treatment + species + timePoint + site, data = herbY1, method = "euclidian", permutations = 9999)
+
+set.seed(999)
+herbPermY2 <- adonis2(formula = herbY2$abundance ~ treatment + species + timePoint + site, data = herbY2, method = "euclidian", permutations = 9999)
+
 
 
 ```
 ```{r, include = TRUE}
 
 herbPerm
-
+herbPermY1
+herbPermY2
 
 
 ```
