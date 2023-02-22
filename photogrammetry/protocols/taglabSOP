@@ -1,0 +1,23 @@
+The site provided by developers (https://taglab.isti.cnr.it/docs#create) is a very good tool that lays out the basic steps, commands, and tools to navigate TagLab.
+Any confusion on program usage not addressed in this protocol may be resolved there.
+
+-Open TagLab using either the desktop shortcut or the TagLab.py file in the TagLab-main folder within the GitHub folder.
+-To load in an orthoprojection or orthomosaic, under Project, click on Add New Map. Proceed to fill out the name based on the date and site name of the given ortho
+(in the same naming convention as in the computer files). For the RGB image, click on the [...] next to the text box and navigate to the location of the ortho and
+simply select. Add the acquisition date in the format specified and leave Depth Image and Pixel size (mm) alone for the time being. Then click Apply.
+-Repeat the loading map for each ortho that needs to be included in the file.
+-Do not forget to save the project with the correct site nomenclature and within the correct files.
+-Use the measure tool on one of the scale bars within the ortho to correctly set scale. Each scale bar is the equivalent of 500mm, the pixel size will adjust accordingly.
+Click on Set new pixel size (mm) before hitting Ok to exit the GUI (graphical user interface) display. Repeat this step for each map in the file.
+-The maps then need to be co-registered. Under Project, select the Alignment Tool, which will bring you to a screen showing both maps side by side. Use unique points
+within the site in order to align them (such as sponges, coral, ledge points, settlement tiles, etc..). For points that are confidently the same, right click 2x to
+lay a red X, for points with less confidence right click once for a yellow X. Right click and hold in order to move points once they have already been laid. In order
+to delete a point, hover the mouse over it so a white box appears around it, then hit delete.
+-Proceed again under Projects to Set Working Area, and select an area that best fits the boundaries of the sites dictated either by scale bars, depth markers, or natural
+ledge contours.
+-You can then use the Create Grid tool to make a grid to place over the working area. This breaks the whole ortho down into more manageable pieces for more thorough
+segmentation. In addition, Active/Deactivate Grid Operations allows for boxes of the grid to be marked as complete, incomplete, or empty to help track segmentation
+progress through the whole ortho.
+-The best zoom percentage to see some of the smaller corals and fragments is between 115% and 132%, so the recommendation is to remain at this percentage while an 
+entire box is scanned in both the north and south as well as the east and west directions to ensure nothing has been missed (similar to a lawnmower pattern). When corals
+are picked up, segment using the preferred tools (all of the tools, including their function and directions for use, are extensively explained on the website linked above).
