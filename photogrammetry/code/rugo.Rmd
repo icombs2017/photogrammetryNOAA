@@ -44,7 +44,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", "plotly")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", "plotly", "car", "lme4", 'PMCRMplus', "EnvStats", "emmeans", "MuMIn", "sjstats", "lmerTest")
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis", "tzerk/roughness")
 
 
@@ -340,11 +340,145 @@ mean(rugoSdOutplanted$sd)
 
 
 ```
+```{r, meanVar, include = TRUE}
+
+
+sumRugoRMS <- rugoRMS %>% 
+  group_by(site, time, treatment, reef) %>% 
+  summarise(meanVar = mean(variance))
+
+rugoPlot1 <- ggplot(sumRugoRMS, aes(x = treatment, y = meanVar))+
+  geom_bar(position = 'dodge', stat = 'identity', aes(fill = time))+
+  scale_fill_manual(values = myColors)+
+  facet_grid(.~reef, scales = 'free')+
+  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
+
+ggsave("../figures/rugoMeanVarBoxplot.png", plot = rugoPlot1, width = 15, height = 10, units = "in", dpi = 600)
+
+
+# rugoPerm <- adonis2(formula = variance ~ class*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
+
+changeLM <- lmer(meanVar ~ treatment*time + (1 | site), sumRugoRMS)
+changeLManova <- anova(changeLM)
+changeLManova
+
+
+
+```
+
+
 <br><br>
 
 # Making a Table
 ***
 We are taking our results from our PERMANOVA and creating a table using functions from the packages `flextable` and `officer`.
+
+```{r, linearModelTable, include = TRUE}
+
+changeLManova1 <- tibble::rownames_to_column(changeLManova, "variable")
+
+rugoAnovaTab <- changeLManova1 %>% 
+  rename(p.value = `Pr(>F)`) %>% 
+
+
+mutate_if(is.numeric, round, digits = 3) %>%     
+mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+flextable() %>%
+# set_header_labels(Data.set = "Data set") %>% 
+flextable::compose(part = "header", j = "variable", value = as_paragraph("variable")) %>% 
+# flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+autofit() %>%
+font(fontname = "Times New Roman", part = "all") %>%
+fontsize(size = 12, part = "all") %>%
+bold(part = "header") %>%
+# colformat_num(j = 'df', digits = 2) %>% 
+# colformat_num(j = "Pseudo.F", digits = 2) %>%
+colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+align(align = "center", j = "p.value")
+
+rugoDoc = read_docx()
+rugoDoc = body_add_flextable(rugoDoc, value = rugoAnovaTab)
+print(rugoDoc, target = "../tables/rugoAnovaTable.docx")
+rugoAnovaTab
+
+
+
+```
+
+
+
+
+```{r, meanSD, include = TRUE}
+
+
+sumRugoRMS <- rugoRMS %>% 
+  group_by(site, time, treatment, reef) %>% 
+  summarise(meanSD = mean(sd))
+
+rugoPlot1 <- ggplot(sumRugoRMS, aes(x = treatment, y = meanSD))+
+  geom_bar(position = 'dodge', stat = 'identity', aes(fill = time))+
+  scale_fill_manual(values = myColors)+
+  facet_grid(.~reef, scales = 'free')+
+  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
+
+ggsave("../figures/rugoMeanSDboxplot.png", plot = rugoPlot1, width = 15, height = 10, units = "in", dpi = 600)
+
+
+# rugoPerm <- adonis2(formula = variance ~ class*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
+
+changeLM <- lmer(meanSD ~ treatment*time + (1 | site), sumRugoRMS)
+changeLManova <- anova(changeLM)
+changeLManova
+
+
+
+```
+
+
+<br><br>
+
+# Making a Table
+***
+We are taking our results from our PERMANOVA and creating a table using functions from the packages `flextable` and `officer`.
+
+```{r, linearModelTable, include = TRUE}
+
+changeLManova1 <- tibble::rownames_to_column(changeLManova, "variable")
+
+rugoAnovaTabSD <- changeLManova1 %>% 
+  rename(p.value = `Pr(>F)`) %>% 
+
+
+mutate_if(is.numeric, round, digits = 4) %>%     
+mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+flextable() %>%
+# set_header_labels(Data.set = "Data set") %>% 
+flextable::compose(part = "header", j = "variable", value = as_paragraph("variable")) %>% 
+# flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+autofit() %>%
+font(fontname = "Times New Roman", part = "all") %>%
+fontsize(size = 12, part = "all") %>%
+bold(part = "header") %>%
+# colformat_num(j = 'df', digits = 2) %>% 
+# colformat_num(j = "Pseudo.F", digits = 2) %>%
+colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+align(align = "center", j = "p.value")
+
+rugoDoc = read_docx()
+rugoDoc = body_add_flextable(rugoDoc, value = rugoAnovaTabSD)
+print(rugoDoc, target = "../tables/rugoAnovaTableSD.docx")
+rugoAnovaTabSD
+
+
+```
 
 
 ```{r, PERMANOVAtable, include = TRUE}

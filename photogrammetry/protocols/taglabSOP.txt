@@ -1,0 +1,59 @@
+TagLab Analysis Protocol
+Written By: Gabrielle D'Alonzo (gdalonzo@mote.org)
+Last Updated: Ian Combs 02/28/2023
+
+------------------------------
+
+The documentation on the TagLab website(https://taglab.isti.cnr.it) and GitHub (https://github.com/cnr-isti-vclab/TagLab) provided by developers are great resources that lay out the basic steps, commands, and tools to navigate TagLab. 
+These resources also include some potentially relevant troubleshooting tips and tricks. 
+Any confusion on program usage not addressed in this protocol may be resolved there.
+
+
+------------------------------
+Project Set-Up
+
+
+1.	Open TagLab using either the desktop shortcut or the TagLab.py file located in your local GitHub/TagLab folder.
+
+2.	To load an image, select Project>Add New Map.
+
+3. Fill out the relevant fields
+	a. Map Name: What you want to call that specific image
+		i. Mote uses the following naming convention YYYY_MM_DD_Site-Name.fileFormat ex: 2022_09_21_Q-9.tiff
+	b. RGB Image: either type in the file path to your image or click the symbol to the right "..." and navigate via your file browswer
+	c. Depth Image: do the same thing if you have a Digital Elevation Model (DEM) coregistered to your image
+	d. Acquisiton Date: Fill in the date for when the imagery was captured format: YYYY-MM-DD
+	e. Pixel size (mm): How long one pixel is (mm), this can also be done post-hoc using the measure tool
+
+	Note: Steps a, b, and d are necessary in order to start your project. 
+
+4. Click Apply.
+
+5. Repeat this for every image you wish to analyze in your particular project
+
+	Note: Our projects tend to include a single site over multiple timepoints and we add subsequent timepoints to the project as they enter the analysis pipelines. 
+
+6. Save the project by navigating to File>Save As and then save the project within the "TagLab" folder of whatever project you are working on
+
+	Note: This is Mote specific, but it is wise to save your TagLab Project in the same folder as whatever images are associated with it, if there are multiple images within multiple folders, make sure the TagLab Project is a level above all of the folders that contain images for that specific project.
+
+7. You should now be able to see your imported image on screen and are ready to begin analyzing your image. 
+
+
+------------------------------
+Image Analysis
+
+-Use the measure tool on one of the scale bars within the ortho to correctly set scale. Each scale bar is the equivalent of 500mm, the pixel size will adjust accordingly.
+Click on Set new pixel size (mm) before hitting Ok to exit the GUI (graphical user interface) display. Repeat this step for each map in the file.
+-The maps then need to be co-registered. Under Project, select the Alignment Tool, which will bring you to a screen showing both maps side by side. Use unique points
+within the site in order to align them (such as sponges, coral, ledge points, settlement tiles, etc..). For points that are confidently the same, right click 2x to
+lay a red X, for points with less confidence right click once for a yellow X. Right click and hold in order to move points once they have already been laid. In order
+to delete a point, hover the mouse over it so a white box appears around it, then hit delete.
+-Proceed again under Projects to Set Working Area, and select an area that best fits the boundaries of the sites dictated either by scale bars, depth markers, or natural
+ledge contours.
+-You can then use the Create Grid tool to make a grid to place over the working area. This breaks the whole ortho down into more manageable pieces for more thorough
+segmentation. In addition, Active/Deactivate Grid Operations allows for boxes of the grid to be marked as complete, incomplete, or empty to help track segmentation
+progress through the whole ortho.
+-The best zoom percentage to see some of the smaller corals and fragments is between 115% and 132%, so the recommendation is to remain at this percentage while an 
+entire box is scanned in both the north and south as well as the east and west directions to ensure nothing has been missed (similar to a lawnmower pattern). When corals
+are picked up, segment using the preferred tools (all of the tools, including their function and directions for use, are extensively explained on the website linked above).
