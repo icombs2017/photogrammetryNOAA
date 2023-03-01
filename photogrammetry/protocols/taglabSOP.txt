@@ -43,8 +43,22 @@ Project Set-Up
 ------------------------------
 Image Analysis
 
--Use the measure tool on one of the scale bars within the ortho to correctly set scale. Each scale bar is the equivalent of 500mm, the pixel size will adjust accordingly.
-Click on Set new pixel size (mm) before hitting Ok to exit the GUI (graphical user interface) display. Repeat this step for each map in the file.
+1. To set the dictionary, navigate to Project>Labels Dictionary Editor... and select Load.
+	a. Navigate to where you are storing your dictionary
+	b. Alternatively, you can build your own
+		i. Select an RGB color
+		ii. Add the label name
+		iii. select "Add"
+		iv. Repeat this for as many entires as you need, alternatively, this can be done piecemeal while you segment
+
+2. Since scale was not set at the inception of the project, before we begin segmenting we must set scale. Navigate to the Measure Tool, ninth on the list in the left hand tool bar (Shortcut: 9)
+	a. If you know your mm/pixel measurements you can input that manually
+	b. If not, select "Set new pixel size"
+	c. Use your cursor to select two ends of a known distance
+		Note: We use scale bars with their centers spaced 50cm apart
+	d. Enter your known distance (in mm) and select OK
+	e. Measure that known distance, or another known distance using the same tool to double check that your scale was set correctly
+
 -The maps then need to be co-registered. Under Project, select the Alignment Tool, which will bring you to a screen showing both maps side by side. Use unique points
 within the site in order to align them (such as sponges, coral, ledge points, settlement tiles, etc..). For points that are confidently the same, right click 2x to
 lay a red X, for points with less confidence right click once for a yellow X. Right click and hold in order to move points once they have already been laid. In order
