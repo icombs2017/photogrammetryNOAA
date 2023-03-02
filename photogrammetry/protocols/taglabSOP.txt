@@ -51,7 +51,7 @@ Image Analysis
 		iii. select "Add"
 		iv. Repeat this for as many entires as you need, alternatively, this can be done piecemeal while you segment
 
-2. Since scale was not set at the inception of the project, before we begin segmenting we must set scale. Navigate to the Measure Tool, ninth on the list in the left hand tool bar (Shortcut: 9)
+2. Since scale was not set at the inception of the project, before we begin segmenting we must set the scale. Navigate to the Measure Tool, ninth on the list in the left hand tool bar (Shortcut: 9)
 	a. If you know your mm/pixel measurements you can input that manually
 	b. If not, select "Set new pixel size"
 	c. Use your cursor to select two ends of a known distance
@@ -59,15 +59,19 @@ Image Analysis
 	d. Enter your known distance (in mm) and select OK
 	e. Measure that known distance, or another known distance using the same tool to double check that your scale was set correctly
 
--The maps then need to be co-registered. Under Project, select the Alignment Tool, which will bring you to a screen showing both maps side by side. Use unique points
-within the site in order to align them (such as sponges, coral, ledge points, settlement tiles, etc..). For points that are confidently the same, right click 2x to
-lay a red X, for points with less confidence right click once for a yellow X. Right click and hold in order to move points once they have already been laid. In order
-to delete a point, hover the mouse over it so a white box appears around it, then hit delete.
--Proceed again under Projects to Set Working Area, and select an area that best fits the boundaries of the sites dictated either by scale bars, depth markers, or natural
-ledge contours.
--You can then use the Create Grid tool to make a grid to place over the working area. This breaks the whole ortho down into more manageable pieces for more thorough
-segmentation. In addition, Active/Deactivate Grid Operations allows for boxes of the grid to be marked as complete, incomplete, or empty to help track segmentation
-progress through the whole ortho.
--The best zoom percentage to see some of the smaller corals and fragments is between 115% and 132%, so the recommendation is to remain at this percentage while an 
-entire box is scanned in both the north and south as well as the east and west directions to ensure nothing has been missed (similar to a lawnmower pattern). When corals
-are picked up, segment using the preferred tools (all of the tools, including their function and directions for use, are extensively explained on the website linked above).
+3. To set your working area navigate to Project>Set Working Area
+	a. Select the square with a cursor (to the left of the "Set" button)
+	b. Drag the square to encompass your working area
+	Note: We delineate our working areas using markers/pins
+	Note: You can enter your working area manually using local coordinates, but this is not recommended.
+
+
+4. You can then use the Create Grid tool to make a grid to place over the working area. This breaks the whole ortho down into more manageable pieces for more thorough segmentation. 
+	a. In addition, Active/Deactivate Grid Operations allows for boxes of the grid to be marked as complete, incomplete, or empty to help track segmentation progress through the whole ortho.
+
+5. Begin segmenting your image
+	a. A list of the tools and functions can be found here (https://taglab.isti.cnr.it/docs)
+	b. We tend to use the Positive/negative clicks segmentation tool, the 4-clicks segmentation tool, and the Edit Border tool the most (in that order)
+
+6. Once the image is segmented, navigate to File>Export and export your data in your preferred format
+	Note: We normally export as a Data Table for downstream statistical analysis and data visualization in R. However, you might find other formats more or less useful depending on your research questions. 
