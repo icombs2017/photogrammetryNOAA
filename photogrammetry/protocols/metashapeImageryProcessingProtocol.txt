@@ -1,6 +1,6 @@
 Large Area Image Processing Protocol
 Written By: Ian Combs (icombs@mote.org)
-Last Updated: Ian Combs 03/09/2026
+Last Updated: Ian Combs 03/09/2023
 
 
 
@@ -32,4 +32,16 @@ Creating a dense point cloud in Metashape occurs in three steps with some, but m
   c. Reuse Depth Maps: No
   d. Calculate point confidence: Yes
 
-4. *Cleaning Dense Point Cloud* Navigate to Tools>Dense Cloud>Filter by Confidence
+4. *Cleaning Dense Point Cloud* An quick and simple way to clean up your point clouds is by removing the lowest confidence points, to do this navigate to Tools>Dense Cloud>Filter by Confidence
+  a. Set Confidence Range
+    i. Min: 0
+    ii. Max: 1
+  b. This will show only the points that have the LOWEST confidence values, navigate to Model>Rectangle Selection/Circle Selection/Free-Form Selection
+  Note: We find that Free-Form Selection is the most flexible and useful
+  c. Highlight your entire dense cloud
+  d. Press 'Delete'
+  e. Navigate to Tools>Dense Cloud>Reset Filter
+  f. Your dense clouds should be far less noisy, however you may wish to continue to edit your dense clouds, removing erroneous points. If so, re-select your preferred selection tool (Rectangle, Circle, or Free-form)
+  g. Select points you wish to remove
+  h. Press 'Delete'
+  i. Repeat steps f-h until you are satisfied with your model
