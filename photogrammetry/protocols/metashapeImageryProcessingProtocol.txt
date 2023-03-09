@@ -1,4 +1,7 @@
-Image Processing Pipeline For Large-Area Imagery
+Large Area Image Processing Protocol
+Written By: Ian Combs (icombs@mote.org)
+Last Updated: Ian Combs 03/09/2026
+
 
 
 ------------------------------
@@ -6,13 +9,15 @@ Organize and Filter Imagery
 
 Once cameras are returned from the field, dried, and removed from their housings place images in the proper folder corresponding to the date, site, and camera.
 
-Creating a 3D model in Metashape occurs in three steps with some, but minimal QA/QC steps between.
+Creating a dense point cloud in Metashape occurs in three steps with some, but minimal, QA/QC steps along the way.
 
 1. *Filter Photos*
   a. Load images into Metashape by dragging and dropping images from your folder.
-    i. If your photos are using different cameras, load the first camera, right click on the cameras >add camera group> rename to the name of your camera. These camera groups can be renamed
+    i. If your photos are using different cameras, load the first camera, right click on the cameras>add camera group>rename to the name of your camera 
+    ii. Repeat this for your remaining cameras
+  Note: We use 2 cameras for the majority of our projects
 
-2. *Align Images* Go to Workflow -> Align Photos
+2. *Align Images* Navigate to Workflow>Align Photos
   a. Accuracy: High
   b. Generic Preselection: No
   c. Reference Preselection: No
@@ -21,11 +26,10 @@ Creating a 3D model in Metashape occurs in three steps with some, but minimal QA
   f. Constrain Features by Mask: No
   g. Adaptive Camera Model Fitting: Yes
 
-
-
-3. *Build Dense Cloud* Go to Workflow -> Build Dense Cloud
+3. *Build Dense Cloud* Navigate to Workflow>Build Dense Cloud
   a. Quality: High
   b. Depth Filtering: Mild
   c. Reuse Depth Maps: No
+  d. Calculate point confidence: Yes
 
-4. *Cleaning Dense Point Cloud* Go to
+4. *Cleaning Dense Point Cloud* Navigate to Tools>Dense Cloud>Filter by Confidence

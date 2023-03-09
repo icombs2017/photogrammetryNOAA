@@ -1,7 +1,7 @@
 ---
 title: "Fish Video Transect Survey Analysis"
 author: "Ian Combs -- icombs@mote.org"
-date created: "01/13/2022"
+date created: 01/13/2022
 output:
   html_document:
     theme: flatly
@@ -10,8 +10,11 @@ output:
     toc_depth: 3
     toc_float: yes
   pdf_doctument:
-      toc: yes
-      toc_depth: 3
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 ---
 
 
@@ -37,7 +40,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata", "forcats")
 
 
 ```
@@ -51,6 +54,8 @@ Data generated from reviewing these videos and stills are stored in an excel spr
 ```{r, load and subset, include = TRUE, results = "hide"}
 
 fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE, na = c("", "N/A", "NA", "NA NA"))
+
+#turning a bunch of the columns into factors, and renaming reviewer1FullSCiName to species
 fish1$date <- as.Date.factor(fish1$date)
 fish1$site <- as.factor(fish1$site)
 fish1$transect <- as.factor(fish1$transect)
@@ -58,120 +63,291 @@ fish1$frame <- as.factor(fish1$frame)
 fish1$reviewer1SpeciesCm <- as.factor(fish1$reviewer1SpeciesCm)
 fish1$reviewer1SpeciesGn <- as.factor(fish1$reviewer1SpeciesGn)
 fish1$reviewer1SpeciesSc <- as.factor(fish1$reviewer1SpeciesSc)
-fish1$reviewer1FullSciName <- as.factor(fish1$reviewer1FullSciName)
+fish1$species <- as.factor(fish1$reviewer1FullSciName)
 fish1$phase <- as.factor(fish1$phase)
 
+#selecting for species and renaming one of the columns to make it easier to work with 
+fish1 <- fish1 %>% 
+  dplyr::filter(date < "2021-12-21") 
 
+# selecting only the columns we want to work with and calculating abundance as a proportion. If you want a percentage just multiply by 100 but that makes certain tests and transformations difficult. 
 
-fish <- fish1 %>% 
-  select(date, site, transect, reviewer1SpeciesCm,reviewer1SpeciesSc,reviewer1FullSciName, reviewer1Count) %>%
-  # filter(site == c("IC-C1", "IC-U1", "IC-Z1", "IC-C2", "IC-U2", "IC-Z2")) %>% 
-  droplevels() %>% 
-  group_by(date, site, transect) %>% 
+fish2 <- fish1 %>% select(date, site, transect, frame, species, count) %>%
+group_by(date, site, transect, species) %>% 
   add_count() %>% 
-  ungroup() %>% 
-  group_by(date, site, reviewer1FullSciName) %>% 
-  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)*100))
+  rename(tally = 'count') %>% 
+  summarise(count = sum(tally), n = max(n), avgCount = ((count/n)))
+
+
+fish3 <- fish2 %>% 
+  group_by(date, site, species) %>% 
+  select(date, site, species, avgCount) %>% 
+  add_count() %>% 
+  summarise(count = sum(avgCount), n = max(n), avgCount = ((count/n))) 
+
+fish <- fish3 %>%
+  group_by(date, site, species) %>% 
+  group_by(date, site) %>% 
+  mutate(totalObservations = sum(avgCount, na.rm = TRUE)) %>%
+  group_by(date, site, species) %>% 
+  summarise(abundance = avgCount/totalObservations)
+
+
+# Adding a column of Treatment (control vs outplanted)
 fish$treatment = if_else(fish$site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted") 
+
+# The nine sites were spread across 3 reefs, so adding a column of reef
 fish$reef = if_else(fish$site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
                    if_else(fish$site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))
-fish$reef <- as.factor(fish$reef)
 
-levels(fish$site)
+
+# Adding a column of timepoint 
+
+# ****************** THIS WILL BE CHANGED SEE BELOW ************************
+t0 <- "T0"
+fish$timePoint <- t0
+
+
+
+#need to remove above and change to below when more dates are completed
+
+# fish$timePoint= if_else(fish$date <= ("2021-01-05"), "T0",
+#                        if_else(fishY1$date > ("2020-10-15") & fishY1$date <= ("2021-06-15"), "T6",
+#                        if_else(fishY1$date > ("2021-06-15") & fishY1$date <= ("2022-01-28"), "T12", "T18")))
+
+
+#Adding a column of year to delineate which year these plots came from (year1 or year2)
+fish$year= if_else(fish$date <= ("2021-01-05"), "Y1", "Y2")#need to remove Y2 and add other contingency's when  time comes
+                       # if_else(fish$date > ("2021-01-05") & fishY1$date <= ("2021"), "T6",
+                       # if_else(fishY1$date > ("2021-06-15") & fishY1$date <= ("2022-01-28"), "T12", "T18")))
+
+
+
+# Taking all of the new columns we just made and turning them all into factors
+fish$reef <- as.factor(fish$reef)
+fish$year <- as.factor(fish$year)
+fish$treatment <- as.factor(fish$treatment)
+fish$timePoint <- as.factor(fish$timePoint)
+
                       
-#filter(Date > "2015-09-04" & Date <"2015-09-18")
+```
+# Normality Tests
+***
+Here we are exploring the distribution of the data, if the data is not normally distributed we will try to transform the data to meet a normal distribution.  
+
+```{r, normalityTest, include = TRUE}
+
+#Testing normality of abundance and count
+hist(fish$abundance)
+shapiro.test(fish$abundance)
+
+# hist(fish$count)
+# shapiro.test(fish$count)
+
+# Trying an arcsine transformation on the proportional abundance data
+
+hist(asin(sqrt(fish$abundance)))
+shapiro.test(asin(sqrt(fish$abundance)))
+
+# Trying a square root transformation on the count data
+
+# hist(sqrt(fish$count+1/2))
+# shapiro.test(sqrt(fish$count+1/2))
+
+# Trying a square transformation on the count data
+
+# hist((fish$count)^2)
+# shapiro.test((fish$count)^2)
+
+# Trying a square transformation on the count data
+
+# hist(exp(fish$count))
+# shapiro.test(exp(fish$count))
+
+# Trying a reciprocal transformation on the count data
+# 
+# hist(1/(fish$count))
+# shapiro.test(1/(fish$count))
+
+
+```
+# Split Data
+***
+Here we are going to split the data between Y1 and Y2 sites. 
+
+```{r, splitData, include = TRUE}
+fishY1 <- fish %>% 
+  dplyr::select(date, timePoint, year, reef, site, species, abundance) %>% 
+  dplyr::filter(site %in% c("IC-C1", "IC-C2", "IC-U1", "IC-U2", "IC-Z1", "IC-Z2"))
+fishY1 <- na.omit(fishY1)
+
+# fishY1$treatment <- if_else(fishY1$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
+# year1 <- "Y1"
+# fishY1$year <- year1
+# 
+# 
+# fishY1$timePoint= if_else(fishY1$date <= ("2020-10-15"), "T0",
+#                        if_else(fishY1$date > ("2020-10-15") & fishY1$date <= ("2021-06-15"), "T6",
+#                        if_else(fishY1$date > ("2021-06-15") & fishY1$date <= ("2022-01-28"), "T12", "T18")))
+# fishY1$treatment <- as.factor(fishY1$treatment)
+# fishY1$year <- as.factor(fishY1$year)
+# fishY1$timePoint <- as.factor(fishY1$timePoint)
+# levels(fishY1$timePoint)
+# fishY1$timePoint = factor(fishY1$timePoint, levels(fishY1$timePoint)[c(1, 4, 2, 3)])
+# levels(fishY1$timePoint)
+
+
+#Doing the same for Y2 Note: the controls are the same throughout 
+
+fishY2 <- fish %>% 
+  dplyr::select(date, timePoint, year, reef, site, species, abundance) %>% 
+  dplyr::filter(site %in% c("IC-C2", "IC-U1", "IC-Z1", "IC-C3", "IC-Z3", "IC-U3")) %>% 
+  dplyr::filter(date > "2020-10-15")
+fishY2 <- na.omit(fishY2)
+
+# fishY2$treatment <- if_else(fishY2$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
+# year2 <- "Y2"
+# fishY2$year <- year2
+# 
+# fishY2$timePoint= if_else(fishY2$date <= ("2021-06-15"), "T0",
+#                        if_else(fishY2$date > ("2021-06-15") & fishY2$date <= ("2022-01-28"), "T6", "T12"))
+# 
+# fishY2$treatment <- as.factor(fishY2$treatment)
+# fishY2$year <- as.factor(fishY2$year)
+# fishY2$timePoint <- as.factor(fishY2$timePoint)
+# levels(fishY2$timePoint)
+# fishY2$timePoint = factor(fishY2$timePoint, levels(fishY2$timePoint)[c(1, 3, 2)])
+# 
+
+
+
+fishTotal <- bind_rows(fishY1, fishY2)
+fishTotal <- na.omit(fishTotal)
+# fishTotal1 <- fishTotal %>% 
+#   select(date, timePoint, year, reef, site, species, count) %>% 
+#   group_by(date, timePoint, year, site) %>% 
+#   add_count() %>% 
+#   ungroup() %>% 
+#   group_by(date, timePoint, year, site, species) %>% 
+#   summarise(count = sum(count), n = max(sum(count)), abundance = ((count/n)))
+
+  
+# group_by(date, site) %>% 
+#   add_count() %>% 
+#   ungroup() %>% 
+#   group_by(date, site, species) %>% 
+#   summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+
+
 ```
 
-```{r}
+# PERMANOVA 
+***
+Because the data is not normally distributed and transformations could not achieve normality, we are conducting a PERMANOVA using the package `vegan` to look for any differences in abundance between treatments. 
+
+```{r, linearModel, include = TRUE}
+
+# set.seed(999)
+# adonis2(formula = fishY1$abundance ~ site+reef+year, data = fishY1, method = "euclidian", permutations = 9999)
+
+# pairwise.adonis2(fishY1[6]~species,data=fishY1)
+# pairwise.adonis(fishY1[6],factors=fishY1$species,
+#                              sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
+# 
+# 
+# set.seed(999)
+# adonis2(formula = fishY2$abundance ~ treatment*species + timePoint + site, data = fishY2, method = "euclidian", permutations = 9999)
+# 
+# pairwise.adonis(fishY2[6],factors=fishY2$species,
+#                              sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
 
 
-# myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
-#myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
-#Color Palette using a selection of Mote's preferred colors
-myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
+set.seed(999)
+fishPerm <- adonis2(formula = fishTotal$abundance ~ reef + site*year, data = fishTotal, method = "euclidian", permutations = 9999)
 
-# Using this just to plot the top 2% of species
-vpi1 <- vpi %>% 
-  filter(abundance > 2) %>% 
+
+
+```
+
+
+# PERMANOVA Table
+***
+
+Here we are using the package `officer` to create a publication ready table for our PERMANOVA results. 
+
+```{r, PERMANOVAtable, include = TRUE}
+
+fishPerm <- tibble::rownames_to_column(fishPerm)
+
+
+fishPermTab <- fishPerm %>% 
+  dplyr::rename("Factor" = "rowname") %>% 
+  dplyr::rename("Degrees of Freedom" = "Df") %>% 
+  dplyr::rename("Sum of Squares" = "SumOfSqs") %>% 
+  dplyr::rename("Pseudo.F" = "F") %>% 
+  dplyr::rename( "p.value"  = "Pr(>F)") %>%
+
+mutate_if(is.numeric, round, digits = 3) %>%     
+mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+flextable() %>%
+set_header_labels(Data.set = "Data set") %>% 
+flextable::compose(part = "header", j = "Degrees of Freedom", value = as_paragraph("Degrees of Freedom")) %>% 
+flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+autofit() %>%
+font(fontname = "Times New Roman", part = "all") %>%
+fontsize(size = 12, part = "all") %>%
+bold(part = "header") %>%
+colformat_num(j = 'Degrees of Freedom', digits = 2) %>% 
+colformat_num(j = "Pseudo.F", digits = 2) %>%
+colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+align(align = "center", j = "p.value")
+
+fishDoc = read_docx()
+fishDoc = body_add_flextable(fishDoc, value = fishPermTab)
+print(fishDoc, target = "../tables/fishSurveyPERMANOVATable.docx")
+fishPermTab
+
+
+
+
+
+
+```
+
+# Plotting the data
+***
+
+To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways.
+
+```{r, graph, include = TRUE, results = FALSE}
+
+myColors <- c("#006BFF", "#277B00", "#ff0000", "#97DE00", "#00ffff", "#6495ed" , '#843BFF', "#ffd700", "#BF5B9A", "#003E94", "#FF9200", "#60f542", '#F96D67', '#9067F9', '#F967C1')
+
+
+fishStack <- fish %>%
+  filter(abundance > .02) %>%
   droplevels()
-vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
 
-
-fishStack1 <- ggplot(fish, aes(x = site, y = abundance, fill = class, group = reef))+
-                      geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
-                      ylim(0,100)+
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
-                      #scale_fill_manual(values = myColors)+
-                      facet_grid(treatment ~ time)
-
-vpiStack <- vpiStack1+theme(
-    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
-    axis.title.x = element_blank(),
-    axis.title.y = element_text(size = 40, face = "bold"), 
-    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
-    legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
-    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-    panel.background = element_rect(fill = '#F5F5F5'), 
-    plot.title = element_text(size = 40, face = "bold"), 
-    axis.line = element_line(colour = "black"), 
-    axis.ticks = element_line(color="black"), 
-    text = element_text(size=40, color="black"), 
-    legend.position = "bottom")
-vpiStack
-
-
-
-
-
-
-
-
-
-#subsetting for just one time point, and filtering outo anything lower than 2% abundance
-
-
-fishPlot <- subset(fish, date == "2020-12-14")
-fishPlot <- subset(fish, site == "IC-C1")
-
-fishPlot <- fishPlot %>% 
-  group_by(site, date, transect, reviewer1FullSciName) %>% 
-  summarise(mean(reviewer1Count)) %>% 
-  ungroup() %>% 
-  group_by(site, date, reviewer1FullSciName) %>% 
-  summarise(mean(reviewer1Count))
-
-
-fishPlot <- fish %>% 
-  filter(date <"2021-07-20") %>%
-  filter(abundance > 2) %>%
-  droplevels()
-levels(fishPlot$reviewer1FullSciName)
-
-
-vpi1 <- vpi %>% 
-  filter(abundance > 2) %>% 
-  droplevels()
-vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
-
-
-
-fishStack1 <- ggplot(fish, aes(x = site, y = reviewer1Count, fill = reviewer1FullSciName)) + 
+y1FishStack1 <- ggplot(fishStack, aes(x = site, y = abundance, fill = fct_reorder(species, abundance))) + 
     geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
-    labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")+
-    facet_wrap(date~. , scale = 'free')
-    #scale_fill_manual(values = myColors)+
-    #scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
+    labs(y = "Relative Abundance > 2%", x = "Site", fill = "Species", title = "Relative Species Abundance")+
+# scale_fill_manual(values=myColors)+
+    facet_wrap(~year)
     
-herbStack <- herbStack1+theme(
-    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+y1FishStack <- y1FishStack1+theme(
+    axis.text.x = element_text(size = 20, colour = "black", angle = 45, vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_text(size = 40, color = "black", face = "bold"),
     axis.title.y = element_text(size = 40, face = "bold"), 
-    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    axis.text.y = element_text(colour = "black", size = 20, face = "bold"),
     legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    legend.text = element_text(size = 12, face = "bold", colour = "black"), 
     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
     panel.background = element_rect(fill = '#F5F5F5'), 
     plot.title = element_text(size = 40, face = "bold"), 
@@ -180,14 +356,133 @@ herbStack <- herbStack1+theme(
     text = element_text(size=40, color="black"), 
     legend.position = "right")
 
-herbStack
+y1FishStack
+ggsave("../figures/baselineFishSurveyPlot.png", plot = y1FishStack, width = 20, height = 15, units = "in", dpi = 600)
+
+
+
+
+
+
+
+
+
+
+# 
+# # myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
+# #myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
+# #Color Palette using a selection of Mote's preferred colors
+# myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
+# 
+# # Using this just to plot the top 2% of species
+# vpi1 <- vpi %>% 
+#   filter(abundance > 2) %>% 
+#   droplevels()
+# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+# 
+# 
+# 
+# 
+# fishStack1 <- ggplot(fish, aes(x = site, y = abundance, fill = species, group = reef))+
+#                       geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE))+
+#                       ylim(0,100)+
+#                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
+#                       #scale_fill_manual(values = myColors)+
+#                       facet_grid(treatment ~ time)
+# 
+# vpiStack <- vpiStack1+theme(
+#     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+#     axis.title.x = element_blank(),
+#     axis.title.y = element_text(size = 40, face = "bold"), 
+#     axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+#     legend.title = element_text(size = 40, face = "bold"), 
+#     legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+#     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+#     panel.background = element_rect(fill = '#F5F5F5'), 
+#     plot.title = element_text(size = 40, face = "bold"), 
+#     axis.line = element_line(colour = "black"), 
+#     axis.ticks = element_line(color="black"), 
+#     text = element_text(size=40, color="black"), 
+#     legend.position = "bottom")
+# vpiStack
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# #subsetting for just one time point, and filtering outo anything lower than 2% abundance
+# 
+# 
+# fishPlot <- subset(fish, date == "2020-12-14")
+# fishPlot <- subset(fish, site == "IC-C1")
+# 
+# fishPlot <- fishPlot %>% 
+#   group_by(site, date, transect, reviewer1FullSciName) %>% 
+#   summarise(mean(reviewer1Count)) %>% 
+#   ungroup() %>% 
+#   group_by(site, date, reviewer1FullSciName) %>% 
+#   summarise(mean(reviewer1Count))
+# 
+# 
+# fishPlot <- fish %>% 
+#   filter(date <"2021-07-20") %>%
+#   filter(abundance > 2) %>%
+#   droplevels()
+# levels(fishPlot$reviewer1FullSciName)
+# 
+# 
+# vpi1 <- vpi %>% 
+#   filter(abundance > 2) %>% 
+#   droplevels()
+# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+# 
+# 
+# 
+# fishStack1 <- ggplot(fish, aes(x = site, y = abundnace, fill = reviewer1FullSciName)) + 
+#     geom_bar(stat = "identity", colour = "black", position = position_stack(reverse = FALSE))+
+#     labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")+
+#     facet_wrap(date~. , scale = 'free')
+#     #scale_fill_manual(values = myColors)+
+#     #scale_x_discrete(name = "Site", limits = c("c1", "c2", "u1", "u2", "z1", "z2"), labels = c("C1", "C2", "U1", "U2", "Z1", "Z2"))
+#     
+# vpiStack <- vpiStack1+theme(
+#     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+#     axis.title.x = element_blank(),
+#     axis.title.y = element_text(size = 40, face = "bold"), 
+#     axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+#     legend.title = element_text(size = 40, face = "bold"), 
+#     legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+#     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+#     panel.background = element_rect(fill = '#F5F5F5'), 
+#     plot.title = element_text(size = 40, face = "bold"), 
+#     axis.line = element_line(colour = "black"), 
+#     axis.ticks = element_line(color="black"), 
+#     text = element_text(size=40, color="black"), 
+#     legend.position = "bottom")
+# vpiStack
 
 
 
 
 
 ```
+![Figure](../figures/baselineFishSurveyPlot.png)
+
+
+```{r}
 
 
 
+
+
+
+
+
+
+
+```
 
