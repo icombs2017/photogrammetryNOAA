@@ -9,7 +9,7 @@ However, many of these functions and features are available in the Standard Edit
 Steps and functions within this protocol that are ONLY available in the Professional Edition will be denoted using astrisks on either side of the step. 
 
 ------------------------------
-Generate a Dense Point Cloud 
+Generate Dense Point Cloud 
 
 Creating a dense point cloud in Metashape occurs in two main steps: Image Alignment and Dense Point Cloud Generation with a few, but minimal, QA/QC steps along the way.
 
@@ -22,7 +22,9 @@ Creating a dense point cloud in Metashape occurs in two main steps: Image Alignm
 2. *Detect Markers*
   a. Metashape provides coded targets, or printed markers that can be placed in the scene before photos are taken and could be used as reference points for coordinate system and scale definition, or as a valid matches between images to help camera alignment procedure during image alignment
   b. Navigate to Tools>Markers>Detect Markers
-  c. Sometimes markers are incorrectly detected, check your  
+  c. Sometimes markers are incorrectly detected, check your markers in your Workspace pane
+    i. Right click on each marker
+    ii. 
 
 3. Align Images 
   a. Navigate to Workflow>Align Photos
@@ -55,3 +57,9 @@ Creating a dense point cloud in Metashape occurs in two main steps: Image Alignm
   g. Select points you wish to remove
   h. Press 'Delete'
   i. Repeat steps f-h until you are satisfied with your model
+
+
+------------------------------
+Generate Orthomosaic 
+
+
