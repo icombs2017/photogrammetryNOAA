@@ -20,7 +20,9 @@ Creating a dense point cloud in Metashape occurs in two main steps: Image Alignm
   Note: We use 2 cameras for the majority of our projects
 
 2. *Detect Markers*
-  a. 
+  a. Metashape provides coded targets, or printed markers that can be placed in the scene before photos are taken and could be used as reference points for coordinate system and scale definition, or as a valid matches between images to help camera alignment procedure during image alignment
+  b. Navigate to Tools>Markers>Detect Markers
+  c. Sometimes markers are incorrectly detected, check your  
 
 3. Align Images 
   a. Navigate to Workflow>Align Photos
