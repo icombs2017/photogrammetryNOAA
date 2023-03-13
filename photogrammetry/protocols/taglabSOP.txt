@@ -35,7 +35,7 @@ Project Set-Up
 
 6. Save the project by navigating to File>Save As and then save the project within the "TagLab" folder of whatever project you are working on
 
-	Note: This is Mote specific, but it is wise to save your TagLab Project in the same folder as whatever images are associated with it, if there are multiple images within multiple folders, make sure the TagLab Project is a level above all of the folders that contain images for that specific project.
+	Note: This is program specific, but it is wise to save your TagLab Project in the same folder as whatever images are associated with it, if there are multiple images within multiple folders, make sure the TagLab Project is a level above all of the folders that contain images for that specific project.
 
 7. You should now be able to see your imported image on screen and are ready to begin analyzing your image. 
 

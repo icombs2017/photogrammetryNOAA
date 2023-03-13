@@ -1,4 +1,6 @@
-Mote Viscore Guide:
+Mote Viscore SOP
+Written By: Ian Combs (icombs@mote.org)
+Last Updated: Ian Combs 03/10/2023
 
 Below is the workflow for the analysis of 3D dense point clouds using Viscore.
 
@@ -41,6 +43,7 @@ Loading Viscore File:
 
 For A review of other files and folders please see the Guide To Viscore
 
+
 ------------------------------
 Model setup
 
@@ -74,6 +77,7 @@ Scaling the Model
 5. Repeat until all scale inputs have been added
 
 6. Alternatively, once all scale bars have been added, scale table can be used (see Appendix B, Web Applets for the link) to input scale bar values
+
 
 ------------------------------
 Orient the Model
