@@ -4,7 +4,7 @@ Last Updated: Ian Combs 02/28/2023
 
 ------------------------------
 
-The documentation on the TagLab website(https://taglab.isti.cnr.it) and GitHub (https://github.com/cnr-isti-vclab/TagLab) provided by developers are great resources that lay out the basic steps, commands, and tools to navigate TagLab. 
+The documentation on the TagLab website (https://taglab.isti.cnr.it) and GitHub (https://github.com/cnr-isti-vclab/TagLab) provided by developers are great resources that lay out the basic steps, commands, and tools to navigate TagLab. 
 These resources also include some potentially relevant troubleshooting tips and tricks. 
 Any confusion on program usage not addressed in this protocol may be resolved there.
 
@@ -42,6 +42,7 @@ Project Set-Up
 
 ------------------------------
 Image Analysis
+
 
 1. To set the dictionary, navigate to Project>Labels Dictionary Editor... and select Load.
 	a. Navigate to where you are storing your dictionary
