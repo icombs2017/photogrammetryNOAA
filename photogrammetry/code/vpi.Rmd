@@ -41,7 +41,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA","viridis", "paletteer")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA","viridis", "paletteer", 'tidyverse')
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 ```
 
@@ -52,6 +52,65 @@ pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 
 Data is exported from Viscore's VPI scriplet as a .csv file and named according to the file. 
 Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same. I am also adding **site** and **time** columns to each subset, combining all subsets into one large dataframe using `bind_rows()`, adding a **treatment** column and using the `gsub()` to rename some.
+
+
+```{r, loadData, include = TRUE, message = FALSE}
+
+
+read_plus <- function(flnm) {
+    read_csv(flnm) %>% 
+        mutate(filename = flnm)
+}
+
+vpiData1 <-
+    list.files(path = "../data/vpi", pattern = "*.csv", 
+               full.names = T) %>% 
+    map_df(~read_plus(.))
+
+
+#Sort out data to have proper columns for all the info i want, this might need to be changed to figure out the Marks vs Plot thing
+
+vpiData <- vpiData1 %>% 
+      tidyr::separate(filename, into=c("Date", "Site"),extra = 'merge',sep = 23) %>%
+      tidyr::separate(Date, into=c("remove", "Date"),sep = "../data/vpi/") %>% 
+      tidyr::separate(Date, into=c("Date", "remove"),sep = 10) %>% 
+      tidyr::separate(Site, into = c("Site", "delete"),sep = 5) %>% 
+      dplyr::select(-c(remove, delete)) %>% 
+      mutate_if(is.character, str_replace_all, pattern = "_", replacement = "-") %>%
+      tidyr::separate(Date, into = c("Date", "remove"), sep = 10) %>% 
+      dplyr::select(-remove) %>% 
+      tidyr::separate(Site, into = c("Site", "Plot"), sep = "(?=plot)", extra = "merge") %>% 
+      tidyr::separate(Site, into = c("Site", "Mark"), sep = "(?=mark)", extra = "merge") %>% 
+      tidyr::separate(Plot, into = c("Plot", "Mark"), sep = "(?=mark)", extra = "merge" ) %>% 
+      dplyr::rename(abundance = `%`) %>%
+      tidyr::drop_na(abundance) %>% 
+      arrange(desc(abundance))
+
+#Changing the Date to factors
+vpiData$Date<-as.factor(vpiData$Date)
+vpiData$Date<-strptime(vpiData$Date,format="%Y-%m-%d") #defining what is the original format of your date
+vpiData$Date<-as.Date(vpiData$Date,format="%Y-%m-%d")
+
+vpiData$Site <- as.factor(vpiData$Site)
+
+#Making some corrections in the naming
+vpiData$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiData$class)
+vpiData$class <- gsub("Rubble", "Bare Substrate", vpiData$class)
+vpiData$class <- as.factor(vpiData$class)
+vpiData$Site <- as.factor(vpiData$Site)
+vpiData$timePoint <- as.factor(vpiData$timePoint)
+
+vpiData$timePoint = factor(vpiData$timePoint, levels(vpiData$timePoint)[c(2,1)])
+vpiData
+
+
+
+
+
+```
+
+
+
 
 ```{r, load data, include = TRUE, message = FALSE}
 
