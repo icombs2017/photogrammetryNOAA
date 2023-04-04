@@ -50,8 +50,8 @@ pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 # Loading Data
 ***
 
-Data is exported from Viscore's VPI scriplet as a .csv file and named according to the file. 
-Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same. I am also adding **site** and **time** columns to each subset, combining all subsets into one large dataframe using `bind_rows()`, adding a **treatment** column and using the `gsub()` to rename some.
+Data is exported from Viscore's VPI scriplet as a .csv file and named according to the file. We have multiple .csv's that we wish to compile so we created a function called `read_plus` that will read all the .csv's into one data frame witht he file name as a column. We will then parse out various pieces of the file name to provide us use ful columns e.g. date, site, etc. 
+Since Viscore puts the "percent" column as a percentage sign (**%**) R cannot read it in  we are using `dplyr`'s `rename` function to change it to something R can read and that is easier to call and read when we are handling the data. I am also adding **site** and **time** columns to each subset, combining all subsets into one large dataframe using `bind_rows()`, adding a **treatment** column and using the `gsub()` to rename some.
 
 
 ```{r, loadData, include = TRUE, message = FALSE}
@@ -68,7 +68,7 @@ vpiData1 <-
     map_df(~read_plus(.))
 
 
-#Sort out data to have proper columns for all the info i want, this might need to be changed to figure out the Marks vs Plot thing
+# Sort out data to have proper columns for all the info i want e.g. site, date etc
 
 vpiData <- vpiData1 %>% 
       tidyr::separate(filename, into=c("Date", "Site"),extra = 'merge',sep = 23) %>%
@@ -77,197 +77,47 @@ vpiData <- vpiData1 %>%
       tidyr::separate(Site, into = c("Site", "delete"),sep = 5) %>% 
       dplyr::select(-c(remove, delete)) %>% 
       mutate_if(is.character, str_replace_all, pattern = "_", replacement = "-") %>%
-      tidyr::separate(Date, into = c("Date", "remove"), sep = 10) %>% 
-      dplyr::select(-remove) %>% 
-      tidyr::separate(Site, into = c("Site", "Plot"), sep = "(?=plot)", extra = "merge") %>% 
-      tidyr::separate(Site, into = c("Site", "Mark"), sep = "(?=mark)", extra = "merge") %>% 
-      tidyr::separate(Plot, into = c("Plot", "Mark"), sep = "(?=mark)", extra = "merge" ) %>% 
       dplyr::rename(abundance = `%`) %>%
       tidyr::drop_na(abundance) %>% 
-      arrange(desc(abundance))
-
-#Changing the Date to factors
-vpiData$Date<-as.factor(vpiData$Date)
-vpiData$Date<-strptime(vpiData$Date,format="%Y-%m-%d") #defining what is the original format of your date
-vpiData$Date<-as.Date(vpiData$Date,format="%Y-%m-%d")
-
-vpiData$Site <- as.factor(vpiData$Site)
+      # arrange(desc(abundance)) %>% 
+      mutate(Date = factor(Date), Site = factor(Site), timePoint = factor(timePoint), year = factor(year))
 
 #Making some corrections in the naming
 vpiData$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiData$class)
 vpiData$class <- gsub("Rubble", "Bare Substrate", vpiData$class)
+vpiData$class <- gsub("Review", NA, vpiData$class)
+vpiData$class <- gsub("None", NA, vpiData$class)
+
+vpiData<- na.omit(vpiData)
 vpiData$class <- as.factor(vpiData$class)
-vpiData$Site <- as.factor(vpiData$Site)
-vpiData$timePoint <- as.factor(vpiData$timePoint)
 
-vpiData$timePoint = factor(vpiData$timePoint, levels(vpiData$timePoint)[c(2,1)])
-vpiData
+vpiData$class <-  droplevels.factor(vpiData$class)
+
+vpiData$treatment = if_else(vpiData$Site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted") 
+vpiData$reef = if_else(vpiData$Site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
+                   if_else(vpiData$Site %in% c("IC-U1", "IC-U2", ""), "Site U", "Site Z"))
+vpiData$reef <- as.factor(vpiData$reef)
+
+vpiData <- vpiData %>% 
+      select(Date, timePoint, year, Site, treatment, reef, class, count, abundance) 
 
 
+head(vpiData)
+
+```
+```{r, dissimilarityMatrix, include = TRUE}
+
+vpiMat <- vpiData %>% select(-c(abundance)) %>% spread(class,count) %>% replace(is.na(.), 0)
 
 
+ 
 
 ```
 
 
 
 
-```{r, load data, include = TRUE, message = FALSE}
 
-
-
-sitec1 <- as.factor("c1")
-sitec2 <- as.factor("c2")
-siteu1 <- as.factor("u1")
-siteu2 <- as.factor("u2")
-sitez1 <- as.factor("z1")
-sitez2 <- as.factor("z2")
-pre <- as.factor("Baseline")
-post <- as.factor("1 Year")
-
-
-vpiC1Pre <- read_csv("../data/vpi/2020_08_18_IC-C1pq.csv")
-vpiC1Pre <- vpiC1Pre %>% 
-  add_column(sitec1) %>% 
-  rename(site = sitec1) %>%
-  add_column(pre) %>% 
-  rename(time = pre) %>% 
-  dplyr::rename(abundance = `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiC2Pre <- read_csv("../data/vpi/2020_08_18_IC-C2pq.csv")
-vpiC2Pre <- vpiC2Pre %>%
-  add_column(sitec2) %>%
-  rename(site = sitec2) %>% 
-  add_column(pre) %>% 
-  rename(time = pre) %>% 
-  dplyr::rename(abundance = `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-
-vpiU1Pre <- read_csv("../data/vpi/2020_08_19_IC-U1pq.csv")
-vpiU1Pre <- vpiU1Pre %>%
-  add_column(siteu1) %>%
-  rename(site = siteu1) %>%
-  add_column(pre) %>% 
-  rename(time = pre) %>% 
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiU2Pre <- read_csv("../data/vpi/2020_08_19_IC-U2pq.csv")
-vpiU2Pre <- vpiU2Pre %>%
-  add_column(siteu2) %>% 
-  rename(site = siteu2) %>%
-  add_column(pre) %>% 
-  rename(time = pre) %>% 
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiZ1Pre <- read_csv("../data/vpi/2020_08_18_IC-Z1pq.csv")
-vpiZ1Pre <- vpiZ1Pre %>%
-  add_column(sitez1) %>%
-  rename(site = sitez1) %>%
-  add_column(pre) %>% 
-  rename(time = pre) %>% 
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiZ2Pre <- read_csv("../data/vpi/2020_08_18_IC-Z2pq.csv")
-vpiZ2Pre <- vpiZ2Pre %>% 
-  add_column(sitez2) %>% 
-  rename(site = sitez2) %>%
-  add_column(pre) %>% 
-  rename(time = pre) %>% 
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiC1Post <- read_csv("../data/vpi/2021_12_08_IC-C1pq.csv")
-vpiC1Post <- vpiC1Post %>%
-  add_column(sitec1) %>%
-  rename(site = sitec1) %>%
-  add_column(post) %>% 
-  rename(time = post) %>% 
-  dplyr::rename(abundance = `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiC2Post <- read_csv("../data/vpi/2021_12_07_IC-C2pq.csv")
-vpiC2Post <- vpiC2Post %>% 
-  add_column(sitec2) %>% 
-  rename(site = sitec2) %>%
-  add_column(post) %>% 
-  rename(time = post) %>%
-  dplyr::rename(abundance = `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiU1Post <- read_csv("../data/vpi/2021_12_08_IC-U1pq.csv")
-vpiU1Post <- vpiU1Post %>%
-  add_column(siteu1) %>%
-  rename(site = siteu1) %>%
-  add_column(post) %>% 
-  rename(time = post) %>%
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiU2Post <- read_csv("../data/vpi/2021_12_08_IC-U2pq.csv")
-vpiU2Post <- vpiU2Post %>%
-  add_column(siteu2) %>% 
-  rename(site = siteu2) %>%
-  add_column(post) %>% 
-  rename(time = post) %>%
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiZ1Post <- read_csv("../data/vpi/2021_12_07_IC-Z1pq.csv")
-vpiZ1Post <- vpiZ1Post %>%
-  add_column(sitez1) %>%
-  rename(site = sitez1) %>%
-  add_column(post) %>% 
-  rename(time = post) %>%
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpiZ2Post <- read_csv("../data/vpi/2021_12_07_IC-Z2pq.csv")
-vpiZ2Post <- vpiZ2Post %>%
-  add_column(sitez2) %>%
-  rename(site = sitez2) %>%
-  add_column(post) %>% 
-  rename(time = post) %>%
-  dplyr::rename(abundance =  `%`) %>% 
-  na.omit() %>% 
-  arrange(desc(abundance))
-
-vpi <- bind_rows(vpiC1Pre, vpiC1Post, vpiC2Pre, vpiC2Post, vpiU1Pre, vpiU1Post, vpiU2Pre, vpiU2Post, vpiZ1Pre, vpiZ1Post, vpiZ2Pre, vpiZ2Post)
-vpi <- as_tibble(vpi)
-
-
-vpi$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpi$class)
-vpi$class <- gsub("Rubble", "Bare Substrate", vpi$class)
-vpi$class <- as.factor(vpi$class)
-
-vpi$treatment = if_else(vpi$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
-vpi$reef = if_else(vpi$site %in% c("c1", "c2"), "Site C",
-                   if_else(vpi$site %in% c("u1", "u2"), "Site U", "Site Z"))
-vpi$reef <- as.factor(vpi$reef)
-
-myColors <- gg_color_hue(length(vpi$class))
-
-
-head(vpi)
-
-
-
-```
 
 <br><br>
 
@@ -345,7 +195,7 @@ vpiPermTab
 
 To visualize the data and what our species composition looks like at our sites, we are going to plot the data in a few different ways. First we are going to just plot those with >2% abundance at our sites.
 
-
+ Before we manipulate the data I am first making a vector called **myColors** using the function `gg_color_hue()` from the package `metafolio` that will save a vector of colors to the number of factors I have, this is so in our later plots, all the color palettes will be the same.
 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
