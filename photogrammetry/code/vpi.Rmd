@@ -1,5 +1,5 @@
 ---
-title: "VPI"
+title: "noaaVPI"
 author: "Ian Combs -- icombs@mote.org"
 output:
   html_document:
@@ -41,7 +41,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA","viridis", "paletteer", 'tidyverse')
+pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist")
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 ```
 
@@ -94,8 +94,8 @@ vpiData$class <- as.factor(vpiData$class)
 vpiData$class <-  droplevels.factor(vpiData$class)
 
 vpiData$treatment = if_else(vpiData$Site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted") 
-vpiData$reef = if_else(vpiData$Site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
-                   if_else(vpiData$Site %in% c("IC-U1", "IC-U2", ""), "Site U", "Site Z"))
+vpiData$reef = if_else(vpiData$Site %in% c("IC-C1", "IC-C2", "IC-C3"), "SiteC",
+                   if_else(vpiData$Site %in% c("IC-U1", "IC-U2", ""), "SiteU", "SiteZ"))
 vpiData$reef <- as.factor(vpiData$reef)
 
 vpiData <- vpiData %>% 
@@ -105,15 +105,70 @@ vpiData <- vpiData %>%
 head(vpiData)
 
 ```
+
+Going from long to wide format (matrix) and 
+
 ```{r, dissimilarityMatrix, include = TRUE}
 
-vpiMat <- vpiData %>% select(-c(abundance)) %>% spread(class,count) %>% replace(is.na(.), 0)
 
+vpiMat <- vpiData %>% 
+  select(-c(abundance)) %>%
+  tidyr::unite(sample, 1:6) %>% 
+  spread(class,count) %>%
+  replace(is.na(.), 0) %>%
+  # mutate_at(c('sample'), as.character) %>% 
+  column_to_rownames(var = 'sample')
+
+dist_matrix <- as.matrix(bcdist(vpiMat), byrow = TRUE)
+
+
+dist_tbl <- dist_matrix %>% 
+        as_tibble(rownames = 'samples')
+
+samples <- dist_tbl %>% 
+  select(samples)
+
+
+ samples_lookup <- dist_tbl %>% 
+   select(samples) %>% 
+   separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE)
+ 
+
+
+  
+
+dist_tbl %>% 
+  pivot_longer(cols = -samples, names_to = "b", values_to = "distances") %>% 
+  pivot_wider(names_from = "b", values_from = "distances")
+ 
+ 
+
+
+
+ 
+dist_matrix <- dist_tbl %>%
+  pivot_longer(cols=-samples, names_to="b", values_to="distances") %>%
+  inner_join(., sample_lookup, by="samples") %>%
+  inner_join(., sample_lookup, by=c("b" = "samples")) %>%
+  filter(day.x %in% days_wanted & day.y %in% days_wanted) %>%
+  select(samples, b, distances) %>%
+  pivot_wider(names_from="b", values_from="distances") %>%
+  select(-samples) %>%
+  as.dist()
 
  
 
 ```
 
+```{r, PCoA, include = TRUE}
+
+
+
+
+
+
+
+```
 
 
 
