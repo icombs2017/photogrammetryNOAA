@@ -41,7 +41,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist")
+pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist", "glue")
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 ```
 
@@ -119,7 +119,7 @@ vpiMat <- vpiData %>%
   # mutate_at(c('sample'), as.character) %>% 
   column_to_rownames(var = 'sample')
 
-dist_matrix <- as.matrix(bcdist(vpiMat), byrow = TRUE)
+dist_matrix <- matrix(bcdist(vpiMat), byrow = TRUE)
 
 
 dist_tbl <- dist_matrix %>% 
@@ -148,28 +148,131 @@ dist_tbl %>%
  
 dist_matrix <- dist_tbl %>%
   pivot_longer(cols=-samples, names_to="b", values_to="distances") %>%
-  inner_join(., sample_lookup, by="samples") %>%
-  inner_join(., sample_lookup, by=c("b" = "samples")) %>%
-  filter(day.x %in% days_wanted & day.y %in% days_wanted) %>%
+  inner_join(., samples_lookup, by="samples") %>%
+  inner_join(., samples_lookup, by=c("b" = "samples")) %>%
+  # filter(day.x %in% days_wanted & day.y %in% days_wanted) %>%
   select(samples, b, distances) %>%
   pivot_wider(names_from="b", values_from="distances") %>%
   select(-samples) %>%
   as.dist()
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```
 
 ```{r, PCoA, include = TRUE}
 
 
+pcoa <- cmdscale(dist_matrix, k = 2, eig = TRUE, add = TRUE) # add k = 3, k = 5 to add columns, default is k=2
+positions <- pcoa$points
+colnames(positions) <- c("pcoa1", 'pcoa2')
+# calculating the amount of variation explained by each dimension
+percentExplained <- 100 * (pcoa$eig / sum(pcoa$eig))
 
+#rounding and trimming to add to labels
+RoundPercentExplained <- format(round(percentExplained[1:2], digits = 1), nsmall = 1, trim = TRUE)
+
+# creating label vector
+labs <- c(glue("PCo 1 ({RoundPercentExplained[1]}%)"),
+          glue("PCo 2 ({RoundPercentExplained[2]}%)"))
+
+
+
+treatmentCentroid <- positions %>% as_tibble(rownames='samples') %>%
+  inner_join(., samples_lookup, by = 'samples') %>% 
+  group_by(treatment) %>% 
+  summarize(axis1 = mean(pcoa1),
+            axis2 = mean(pcoa2))
+
+
+
+#
+pcoaTbl <- positions %>% as_tibble(rownames='samples') %>%
+  inner_join(., samples_lookup, by = 'samples') 
+
+pcoaPlot <- ggplot() +
+  geom_point(data = pcoaTbl, mapping = aes(x = pcoa1, y = pcoa2, color = treatment, shape = timePoint), size = 3) +
+  geom_point(data = treatmentCentroid, mapping = aes(x = axis1, y = axis2, color = treatment), shape = 15, size = 5) +
+  labs(x = labs[1], y = labs[2])
+
+
+pcoaPlot <- ggplot(pcoaTbl, aes(x = pcoa1, y = pcoa2, color = treatment, fill = treatment)) +
+  stat_ellipse(geom = 'polygon', alpha = 0.2, level = 0.75, show.legend = FALSE) +
+  geom_point(aes(x = pcoa1, y = pcoa2, shape = timePoint), alpha = 1, size = 3) +
+  # geom_point(data = treatmentCentroid, mapping = aes(x = axis1, y = axis2, color = treatment), shape = 15, size = 5) +
+  labs(x = labs[1], y = labs[2])
+
+
+
+
+
+
+
+
+tibble(pe = cumsum(percentExplained),
+       axis = 1:length(percentExplained)) %>%
+  ggplot(aes(x = axis, y = pe))+
+  geom_line()+
+  coord_cartesian(xlim = c(1,10))
 
 
 
 
 ```
 
+```{r, NMDS, include = TRUE}
+
+set.seed(3008)
+nmds <- metaMDS(dist_matrix)
+
+scores(nmds) %>% 
+  as_tibble(rownames='samples') %>% 
+  inner_join(., samples_lookup, by = 'samples') %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = treatment))+
+  geom_point()
+  
+
+
+
+
+```
+```{r, ecologicalDistances, include = TRUE}
+
+ecoMat <- as.matrix(vpiMat)
+samples_lookup <- vpiMat %>%
+  rownames_to_column(var = 'samples') %>% 
+   select(samples) %>% 
+   separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE)
+
+
+set.seed(3008)
+dist <- vegdist(ecoMat, method = 'bray')
+nmds <- metaMDS(dist)
+
+scores(nmds) %>% 
+  as_tibble(rownames = 'samples') %>%
+  inner_join(., samples_lookup, by = 'samples') %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, shape = treatment, color = reef))+
+  geom_point()
+
+
+
+
+
+
+
+```
 
 
 
@@ -182,58 +285,114 @@ dist_matrix <- dist_tbl %>%
 Conducting a few normality tests to see whether or not the data violates the assumptions of normality. And then running the appropriate statistical test. In this case we are running a single-factor Kruskal-Wallis (for non-normally distributed data) and then a multi-factor Permuational Analysis of Variance (PERMANOVA) using the function `adonis` in the package `vegan` looking at abundance across treatment (control vs outplanted) and functional groups (gorgonians, corals, etc). The factors and variables are likely to change as we add in variables from other data sets (potentially) and timepoints (definitely). 
 
 ```{r, PERMANOVA, include = TRUE, message = FALSE}
-set.seed(999)
-vpiPerm <- adonis(formula = abundance ~ class*time*treatment, data = vpi, method = "euclidian", permutations = 999)
+# doing PERMANOVA on a dissimilarity matrix, 'old' code is commented below. 
 
-set.seed(999)
-vpiPairwise1 <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
+set.seed(9999)
 
-vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
+vpiMat1 <- vpiMat %>% 
+  select(-c(`Bare Substrate`))
+
+
+
+ samplesLookupPerm <- vpiMat1 %>% 
+   rownames_to_column(var = "samples") %>% 
+   select(samples) %>% 
+   separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>% 
+   column_to_rownames(var = "samples")
+ 
+vpiDist <- vegdist(vpiMat1, method = 'bray')
+
+distPerm <- adonis2(vpiDist ~ treatment*year*reef*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+distPerm
+
+# vpiPerm <- adonis2(count ~ treatment*reef*timePoint, data = vpiData, method = "bray", permutations = 9999)
+# 
+# set.seed(999)
+# vpiPairwise1 <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
+# 
+# vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
+
+```
+```{r, distPermTab, include = TRUE}
+
+
+
+
+distPermTab <- distPerm %>%
+  # add_column("Test",)
+  as_tibble(rownames = "Comparison") %>%
+  # mutate(Comparison, gsub(pattern = "timePoint", replacement = "Time Point", pattern = "year", replacement = "Year", pattern = "reef", replacement = "Reef")) %>% 
+  rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
+  select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
+  mutate_if(is.numeric, round, digits = 3) %>%
+    mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+  mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+  mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+  flextable() %>%
+  set_header_labels(Data.set = "Data set") %>% 
+  flextable::compose(part = "header", j = "Df", value = as_paragraph("Df")) %>% 
+  flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+  flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+  autofit() %>%
+  font(fontname = "Times New Roman", part = "all") %>%
+  fontsize(size = 12, part = "all") %>%
+  bold(part = "header") %>%
+  colformat_num(j = 'Df', digits = 2) %>% 
+  colformat_num(j = "Pseudo.F", digits = 2) %>%
+  colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+  align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+  align(align = "center", j = "p.value")
+
+distDoc = read_docx()
+distDoc = body_add_flextable(distDoc, value = distPermTab)
+print(distDoc, target = "../tables/distTable.docx")
+distPermTab
+
+
 
 ```
 
 
 ```{r, PERMANOVAtable, include = TRUE}
 
-vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
-
-
-mutate_if(is.numeric, round, digits = 3) %>%     
-mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
-mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
-mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
-flextable() %>%
-set_header_labels(Data.set = "Data set") %>% 
-flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
-flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
-flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
-autofit() %>%
-font(fontname = "Times New Roman", part = "all") %>%
-fontsize(size = 12, part = "all") %>%
-bold(part = "header") %>%
-colformat_num(j = 'df', digits = 2) %>% 
-colformat_num(j = "Pseudo.F", digits = 2) %>%
-colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
-align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
-align(align = "center", j = "p.value")
-
-vpiDoc = read_docx()
-vpiDoc = body_add_flextable(vpiDoc, value = vpiPermTab)
-print(vpiDoc, target = "../tables/vpiTable.docx")
-vpiPermTab
-
-
-
-
-
-
-
+# vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
+#   add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
+#   add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
+#   add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
+#   add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
+#   add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
+#   add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
+#   
+# mutate_if(is.numeric, round, digits = 3) %>%     
+# mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+# mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+# mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+# flextable() %>%
+# set_header_labels(Data.set = "Data set") %>% 
+# flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
+# flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+# flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+# autofit() %>%
+# font(fontname = "Times New Roman", part = "all") %>%
+# fontsize(size = 12, part = "all") %>%
+# bold(part = "header") %>%
+# colformat_num(j = 'df', digits = 2) %>% 
+# colformat_num(j = "Pseudo.F", digits = 2) %>%
+# colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+# align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+# align(align = "center", j = "p.value")
+# 
+# vpiDoc = read_docx()
+# vpiDoc = body_add_flextable(vpiDoc, value = vpiPermTab)
+# print(vpiDoc, target = "../tables/vpiTable.docx")
+# vpiPermTab
+# 
+# 
+# 
+# 
+# 
+# 
+# 
 
 
 
@@ -254,31 +413,53 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
-# myColors <- paletteer_c("harrypotter::gryffindor", 6, direction = 1 )
+myColors <- paletteer_c("harrypotter::gryffindor", 10, direction = 1 )
 #myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
 #Color Palette using a selection of Mote's preferred colors
-myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
+# myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
 
 # Using this just to plot the top 2% of species
-vpi1 <- vpi %>%
-  filter(abundance > 2) %>%
-  droplevels()
-vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+# vpi1 <- vpi %>%
+#   filter(abundance > 2) %>%
+#   droplevels()
+# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
+vpiMat1 <- vpiMat %>% 
+  select(-c(`Bare Substrate`, Other))
+
+# Making a box plot for all Y1 data
+
+boxPlotDataY1 <- vpiMat1 %>% 
+   rownames_to_column(var = "samples") %>% 
+    separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
+  select(-c(samples)) %>% 
+  gather(class, count, 7:32, factor_key = TRUE) %>% 
+  as_tibble() %>% 
+  mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
+  filter(count > 0, year == "Y1") %>% 
+  group_by(timePoint, reef, site, treatment, class) %>% 
+  summarise(sumCount = sum(count)) %>% 
+  arrange(desc(sumCount)) %>% 
+  group_by(timePoint, reef, site, treatment) %>% 
+  mutate(totalObservations = sum(sumCount)) %>% 
+  group_by(timePoint, reef, site, treatment, class) %>% 
+  mutate(abundance = (sumCount/totalObservations)*100) %>% 
+  filter(abundance > 1) %>% 
+  arrange(desc(abundance))
 
 
-vpiStack1 <- ggplot(vpi1, aes(x = reef, y = abundance))+
-                      geom_bar(aes(fill = factor(class)), position = position_stack(reverse = TRUE), stat = 'identity', color = 'black', alpha = 0.8)+
-                      ylim(0,100)+
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2%")+
+vpiStack1Y1 <- ggplot(boxPlotDataY1, aes(x = timePoint, y = abundance)) +
+                      geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+                      ylim(0,100) +
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2% for Year 1 NOAA Sites")+
                       scale_fill_manual(values = myColors)+
-                      facet_grid(treatment ~ time)
+                      facet_wrap(treatment ~ site, scales = 'free')
 
 
 
 
-vpiStack <- vpiStack1+theme(
+vpiStackY1 <- vpiStack1Y1+theme(
     axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_blank(),
     axis.title.y = element_text(size = 40, face = "bold"), 
@@ -291,14 +472,67 @@ vpiStack <- vpiStack1+theme(
     axis.line = element_line(colour = "black"), 
     axis.ticks = element_line(color="black"), 
     text = element_text(size=40, color="black"), 
-    legend.position = "bottom")
-vpiStack
-
-ggsave("../figures/vpiStackBar.png", plot = vpiStack, width = 20, height = 15, units = 'in', dpi = 600)
-ggsave("../figures/noaaReportFig2.jpeg", plot = vpiStack, width = 20, height = 15, units = "in", dpi = 600)
+    legend.position = "right")
+vpiStackY1
 
 
+# Making a boxplot for all Y2 data
 
+boxPlotDataY2 <- vpiMat1 %>% 
+   rownames_to_column(var = "samples") %>% 
+    separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
+  select(-c(samples)) %>% 
+  gather(class, count, 7:32, factor_key = TRUE) %>% 
+  as_tibble() %>% 
+  mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
+  filter(count > 0, year == "Y2") %>% 
+  group_by(timePoint, reef, site, treatment, class) %>% 
+  summarise(sumCount = sum(count)) %>% 
+  arrange(desc(sumCount)) %>% 
+  group_by(timePoint, reef, site, treatment) %>% 
+  mutate(totalObservations = sum(sumCount)) %>% 
+  group_by(timePoint, reef, site, treatment, class) %>% 
+  mutate(abundance = (sumCount/totalObservations)*100) %>% 
+  filter(abundance > 1) %>% 
+    arrange(desc(abundance))
+
+
+
+vpiStack1Y2 <- ggplot(boxPlotDataY1, aes(x = timePoint, y = abundance)) +
+                      geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+                      ylim(0,100) +
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2% for Year 2 NOAA Sites")+
+                      scale_fill_manual(values = myColors)+
+                      facet_wrap(treatment ~ site, scales = "free_x")
+
+
+
+
+vpiStackY2 <- vpiStack1Y2+theme(
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    plot.title = element_text(size = 40, face = "bold"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
+    legend.position = "right")
+vpiStackY2
+
+vpiTotal <- vpiStackY1 / vpiStackY2
+
+
+
+ggsave("../figures/vpiStackY1.png", plot = vpiStackY1, width = 20, height = 15, units = 'in', dpi = 600)
+ggsave("../figures/vpiStackY2.png", plot = vpiStackY2, width = 20, height = 15, units = "in", dpi = 600)
+
+
+ggsave("../figures/vpiStackTotal.png", plot = vpiTotal, width = 20, height = 15, units = 'in', dpi = 600)
 
 
 ```
@@ -323,6 +557,32 @@ adonis(count ~ time*treatment*class, data = coolStuff, method = 'euclidian', per
 
 
 
+
+
+```
+
+
+```{r, ACERmean, include = TRUE}
+
+
+ACER<- vpiMat %>% 
+   rownames_to_column(var = "samples") %>% 
+    separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
+  select(-c(samples)) %>% 
+  gather(class, count, 7:32, factor_key = TRUE) %>% 
+  as_tibble() %>% 
+  mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
+  filter(count > 0) %>% 
+  group_by(timePoint, reef, site, treatment, class) %>%
+  summarise(sumCount = sum(count)) %>% 
+  arrange(desc(sumCount)) %>% 
+  group_by(timePoint, reef, site, treatment) %>% 
+  mutate(totalObservations = sum(sumCount)) %>% 
+  group_by(timePoint, reef, site, treatment, class) %>%
+  mutate(abundance = (sumCount/totalObservations)*100) %>% 
+  filter(class == "Acropora cervicornis")
+
+mean(ACER$abundance)
 
 
 ```
