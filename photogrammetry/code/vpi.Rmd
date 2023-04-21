@@ -119,7 +119,7 @@ vpiMat <- vpiData %>%
   # mutate_at(c('sample'), as.character) %>% 
   column_to_rownames(var = 'sample')
 
-dist_matrix <- matrix(bcdist(vpiMat), byrow = TRUE)
+dist_matrix <- as.matrix(bcdist(vpiMat),byrow = TRUE)
 
 
 dist_tbl <- dist_matrix %>% 
@@ -345,7 +345,7 @@ distPermTab <- distPerm %>%
 
 distDoc = read_docx()
 distDoc = body_add_flextable(distDoc, value = distPermTab)
-print(distDoc, target = "../tables/distTable.docx")
+print(distDoc, target = "../tables/distTableVpi.docx")
 distPermTab
 
 
