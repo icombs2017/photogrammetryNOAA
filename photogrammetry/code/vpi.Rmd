@@ -32,7 +32,7 @@ This is the analysis pipeline for data generated from TagLab annotations of our 
 
 
 ***
-### All analyses performe with R verion `r getRversion()`
+### All analyses performed with R verion `r getRversion()`
 # Basic setup of R environment
 ***
 ## Loading required packages
@@ -79,7 +79,6 @@ vpiData <- vpiData1 %>%
       mutate_if(is.character, str_replace_all, pattern = "_", replacement = "-") %>%
       dplyr::rename(abundance = `%`) %>%
       tidyr::drop_na(abundance) %>% 
-      # arrange(desc(abundance)) %>% 
       mutate(Date = factor(Date), Site = factor(Site), timePoint = factor(timePoint), year = factor(year))
 
 #Making some corrections in the naming
@@ -106,7 +105,7 @@ head(vpiData)
 
 ```
 
-Going from long to wide format (matrix) and 
+Going from long to wide format (matrix) and also creating a separate dataframe with just the samples metadata. 
 
 ```{r, dissimilarityMatrix, include = TRUE}
 
@@ -143,9 +142,6 @@ dist_tbl %>%
  
  
 
-
-
- 
 dist_matrix <- dist_tbl %>%
   pivot_longer(cols=-samples, names_to="b", values_to="distances") %>%
   inner_join(., samples_lookup, by="samples") %>%
@@ -157,19 +153,10 @@ dist_matrix <- dist_tbl %>%
   as.dist()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 ```
+
+Creating a PCoA using a distance matrix using curtis-bray distances
+
 
 ```{r, PCoA, include = TRUE}
 
@@ -201,15 +188,15 @@ treatmentCentroid <- positions %>% as_tibble(rownames='samples') %>%
 pcoaTbl <- positions %>% as_tibble(rownames='samples') %>%
   inner_join(., samples_lookup, by = 'samples') 
 
-pcoaPlot <- ggplot() +
+pcoaPlot1 <- ggplot() +
   geom_point(data = pcoaTbl, mapping = aes(x = pcoa1, y = pcoa2, color = treatment, shape = timePoint), size = 3) +
   geom_point(data = treatmentCentroid, mapping = aes(x = axis1, y = axis2, color = treatment), shape = 15, size = 5) +
   labs(x = labs[1], y = labs[2])
 
 
-pcoaPlot <- ggplot(pcoaTbl, aes(x = pcoa1, y = pcoa2, color = treatment, fill = treatment)) +
+pcoaPlot2 <- ggplot(pcoaTbl, aes(x = pcoa1, y = pcoa2, color = treatment, fill = treatment)) +
   stat_ellipse(geom = 'polygon', alpha = 0.2, level = 0.75, show.legend = FALSE) +
-  geom_point(aes(x = pcoa1, y = pcoa2, shape = timePoint), alpha = 1, size = 3) +
+  geom_point(aes(x = pcoa1, y = pcoa2, shape = year), alpha = 1, size = 3) +
   # geom_point(data = treatmentCentroid, mapping = aes(x = axis1, y = axis2, color = treatment), shape = 15, size = 5) +
   labs(x = labs[1], y = labs[2])
 
@@ -231,6 +218,9 @@ tibble(pe = cumsum(percentExplained),
 
 ```
 
+Creating an NMDS using that same distance matrix
+
+
 ```{r, NMDS, include = TRUE}
 
 set.seed(3008)
@@ -247,6 +237,11 @@ scores(nmds) %>%
 
 
 ```
+
+
+
+
+
 ```{r, ecologicalDistances, include = TRUE}
 
 ecoMat <- as.matrix(vpiMat)
@@ -282,7 +277,7 @@ scores(nmds) %>%
 # PERMANOVA
 ***
 
-Conducting a few normality tests to see whether or not the data violates the assumptions of normality. And then running the appropriate statistical test. In this case we are running a single-factor Kruskal-Wallis (for non-normally distributed data) and then a multi-factor Permuational Analysis of Variance (PERMANOVA) using the function `adonis` in the package `vegan` looking at abundance across treatment (control vs outplanted) and functional groups (gorgonians, corals, etc). The factors and variables are likely to change as we add in variables from other data sets (potentially) and timepoints (definitely). 
+Running a PERMANOVA since the data does not meet the assumptions of normality. We are running the PERMANOVA on the dissimilarity matrix we created above but we are running it by removing Bare Substrate from our matrix.  
 
 ```{r, PERMANOVA, include = TRUE, message = FALSE}
 # doing PERMANOVA on a dissimilarity matrix, 'old' code is commented below. 
@@ -303,6 +298,8 @@ vpiMat1 <- vpiMat %>%
 vpiDist <- vegdist(vpiMat1, method = 'bray')
 
 distPerm <- adonis2(vpiDist ~ treatment*year*reef*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+
+# strata = $Site
 distPerm
 
 # vpiPerm <- adonis2(count ~ treatment*reef*timePoint, data = vpiData, method = "bray", permutations = 9999)
@@ -313,6 +310,15 @@ distPerm
 # vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
 
 ```
+<br><br>
+# Output Table
+***
+
+Creating a publication-ready table from the output of our PERMANOVA above. This is mainly using the package `flextable`.  
+
+
+
+
 ```{r, distPermTab, include = TRUE}
 
 
@@ -351,7 +357,6 @@ distPermTab
 
 
 ```
-
 
 ```{r, PERMANOVAtable, include = TRUE}
 
