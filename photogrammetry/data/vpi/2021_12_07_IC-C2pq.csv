@@ -1,80 +1,80 @@
-id,class,count,%
--1,None,1,0.040048057669203045
-,Review,,
-1,Unknown,,
-2,Acropora spp.,,
-3,Acropora cervicornis,,
-4,Acropora palmata,,
-5,Porites spp.,,
-6,Porites porites,1,0.040048057669203045
-7,Porites furcata,,
-8,Porites divaricata,,
-9,Porites astreoides,1,0.040048057669203045
-10,Oculina spp.,,
-11,Oculina robusta,,
-12,Oculina varicosa,,
-13,Oculina diffusa,,
-14,Madracis spp.,,
-15,Madracis auretenra,,
-16,Madracis formosa,,
-17,Madracis decactis,,
-18,Dendrogyra cylindrus,,
-19,Siderastrea spp.,,
-20,Siderastrea siderea,26,1.0412494993992791
-21,Siderastrea radians,,
-22,Stephanocoenia intersepta,4,0.16019223067681218
-23,Montastraea cavernosa,,
-24,Orbicella spp.,,
-25,Orbicella annularis,,
-26,Orbicella faveolata,9,0.3604325190228274
-27,Orbicella franksi,,
-28,Favia fragum,,
-29,Dichocoenia stokesii,,
-30,Solenastraea bournoni,,
-31,Solenastraea hyades,,
-32,Colpophyllia natans,,
-33,Pseudodiploria spp.,,
-34,Pseudodiploria strigosa,1,0.040048057669203045
-35,Pseudodiploria clivosa,,
-36,Diploria labyrinthiformis,,
-37,Manicina areolata,,
-38,Meandrina spp.,,
-39,Meandrina meandrites,,
-40,Meandrina danae,,
-41,Meandrina jacksoni,,
-42,Helioseris cucullata,,
-43,Agaricia spp.,,
-44,Agaricia fragilis,,
-45,Agaricia lamarcki,,
-46, Agaricia agaricites,2,0.08009611533840609
-47,Mycetophyllia spp.,,
-48,Mycetophyllia lamarckiana,,
-49,Mycetophyllia aliciae,,
-50,Mycetophyllia ferox,,
-51,Mycetophyllia reesi,,
-52,Isophyllia spp.,,
-53,Isophyllia sinuosa,,
-54,Isophyllia rigida,,
-55,Scolymia spp.,,
-56,Scolymia cubensis,,
-57,Scolymia wellsi,,
-58,Mussa angulosa,,
-59,Eusmilia fastigiata,,
-60,Octocorallia,82,3.28394072887465
-61,Gorgonia ventalina,,
-62,Xestospongia muta,,
-63,Thalassia testudinum,,
-64,Halimeda,,
-65,Dictyota spp.,,
-66,Crustose coralline algae,,
-67,Porifera,99,3.9647577092511015
-68,Cnidaria,,
-69,Red algae,,
-70,Green algae,,
-71,Brown algae,,
-72,Palythoa,142,5.686824189026832
-73,Rubble,1849,74.04885863035643
-74,Turf algae,247,9.891870244293152
-75,Other,12,0.4805766920304365
-76,Millepora spp.,7,0.2803364036844213
-77,Chordata,14,0.5606728073688426
+id,class,count,%,timePoint,year
+-1,None,1,0.040048058,T12,Y1
+,Review,,,T12,Y1
+1,Unknown,,,T12,Y1
+2,Acropora spp.,,,T12,Y1
+3,Acropora cervicornis,,,T12,Y1
+4,Acropora palmata,,,T12,Y1
+5,Porites spp.,,,T12,Y1
+6,Porites porites,1,0.040048058,T12,Y1
+7,Porites furcata,,,T12,Y1
+8,Porites divaricata,,,T12,Y1
+9,Porites astreoides,1,0.040048058,T12,Y1
+10,Oculina spp.,,,T12,Y1
+11,Oculina robusta,,,T12,Y1
+12,Oculina varicosa,,,T12,Y1
+13,Oculina diffusa,,,T12,Y1
+14,Madracis spp.,,,T12,Y1
+15,Madracis auretenra,,,T12,Y1
+16,Madracis formosa,,,T12,Y1
+17,Madracis decactis,,,T12,Y1
+18,Dendrogyra cylindrus,,,T12,Y1
+19,Siderastrea spp.,,,T12,Y1
+20,Siderastrea siderea,26,1.041249499,T12,Y1
+21,Siderastrea radians,,,T12,Y1
+22,Stephanocoenia intersepta,4,0.160192231,T12,Y1
+23,Montastraea cavernosa,,,T12,Y1
+24,Orbicella spp.,,,T12,Y1
+25,Orbicella annularis,,,T12,Y1
+26,Orbicella faveolata,9,0.360432519,T12,Y1
+27,Orbicella franksi,,,T12,Y1
+28,Favia fragum,,,T12,Y1
+29,Dichocoenia stokesii,,,T12,Y1
+30,Solenastraea bournoni,,,T12,Y1
+31,Solenastraea hyades,,,T12,Y1
+32,Colpophyllia natans,,,T12,Y1
+33,Pseudodiploria spp.,,,T12,Y1
+34,Pseudodiploria strigosa,1,0.040048058,T12,Y1
+35,Pseudodiploria clivosa,,,T12,Y1
+36,Diploria labyrinthiformis,,,T12,Y1
+37,Manicina areolata,,,T12,Y1
+38,Meandrina spp.,,,T12,Y1
+39,Meandrina meandrites,,,T12,Y1
+40,Meandrina danae,,,T12,Y1
+41,Meandrina jacksoni,,,T12,Y1
+42,Helioseris cucullata,,,T12,Y1
+43,Agaricia spp.,,,T12,Y1
+44,Agaricia fragilis,,,T12,Y1
+45,Agaricia lamarcki,,,T12,Y1
+46, Agaricia agaricites,2,0.080096115,T12,Y1
+47,Mycetophyllia spp.,,,T12,Y1
+48,Mycetophyllia lamarckiana,,,T12,Y1
+49,Mycetophyllia aliciae,,,T12,Y1
+50,Mycetophyllia ferox,,,T12,Y1
+51,Mycetophyllia reesi,,,T12,Y1
+52,Isophyllia spp.,,,T12,Y1
+53,Isophyllia sinuosa,,,T12,Y1
+54,Isophyllia rigida,,,T12,Y1
+55,Scolymia spp.,,,T12,Y1
+56,Scolymia cubensis,,,T12,Y1
+57,Scolymia wellsi,,,T12,Y1
+58,Mussa angulosa,,,T12,Y1
+59,Eusmilia fastigiata,,,T12,Y1
+60,Octocorallia,82,3.283940729,T12,Y1
+61,Gorgonia ventalina,,,T12,Y1
+62,Xestospongia muta,,,T12,Y1
+63,Thalassia testudinum,,,T12,Y1
+64,Halimeda,,,T12,Y1
+65,Dictyota spp.,,,T12,Y1
+66,Crustose coralline algae,,,T12,Y1
+67,Porifera,99,3.964757709,T12,Y1
+68,Cnidaria,,,T12,Y1
+69,Red algae,,,T12,Y1
+70,Green algae,,,T12,Y1
+71,Brown algae,,,T12,Y1
+72,Palythoa,142,5.686824189,T12,Y1
+73,Rubble,1849,74.04885863,T12,Y1
+74,Turf algae,247,9.891870244,T12,Y1
+75,Other,12,0.480576692,T12,Y1
+76,Millepora spp.,7,0.280336404,T12,Y1
+77,Chordata,14,0.560672807,,
