@@ -41,7 +41,7 @@ For the following analyses we will require the use of a number of different R pa
 setwd("../data")
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("cowplot", "flextable", "ggrepel", "ggspatial", "lubridate", "officer", "paletteer", "patchwork", "rgdal", "rnaturalearth", "sf", "tidyverse", "gdata", "rgeos")
+pacman::p_load("cowplot", "flextable", "ggrepel", "ggspatial", "lubridate", "officer", "paletteer", "patchwork", "rgdal", "rnaturalearth", "sf", "tidyverse", "gdata", "rgeos", "readxl")
 pacman::p_load_gh("eliocamp/ggnewscale")
 pacman::p_load_gh("ropensci/rnaturalearthhires")
 ```
@@ -52,7 +52,7 @@ pacman::p_load_gh("ropensci/rnaturalearthhires")
 <br>
 
 ```{r, map data}
-sites = read.xls("../data/metadata/siteCoordinates.xlsx", header =T)
+sites = readxl::read_xlsx("../data/metadata/siteCoordinates.xlsx")
 sites$Reef <- as.factor(sites$Reef)
 sites$Site_ID <- as.factor(sites$Site_ID)
 studySites <- sites %>% filter(Site_ID != c("C", "U", "Z"))
@@ -116,11 +116,11 @@ mainKeys <- ggplot() +
   scale_y_continuous(breaks = c(seq(24, 25, by = .2))) +
 theme_bw() +
   theme(panel.background = element_rect(fill = "aliceblue"),
-        panel.border = element_rect(color = "black", size = 0.75, fill = NA),
+        panel.border = element_rect(color = "white", size = 0.75, fill = NA),
         plot.background = element_blank(),
         axis.title = element_blank(),
-        axis.ticks = element_line(color = "black"),
-        axis.text = element_text(color = "black"),
+        axis.ticks = element_line(color = "white"),
+        axis.text = element_text(color = "white"),
         legend.position = "bottom",
         legend.direction = "vertical",
         legend.box = "horizontal")
@@ -152,14 +152,48 @@ fknmsMap = ggdraw() +
   draw_plot(floridaMap, x = .74, y = 0.72, width = 0.25, height = 0.25) +
   draw_plot(noaaSites, x =.28, y = .27, width = 0.4, height = 0.4)
   
-ggsave("../figures/figure1.png", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
-ggsave("../figures/figure1.tiff", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
+ggsave("../figures/NOAAmap.png", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
+ggsave("../figures/NOAAmap.tiff", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
 
 
-ggsave("../figures/figure1.eps", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
+ggsave("../figures/NOAAmap.eps", plot = fknmsMap, width = 16, height = 16, units = "cm", dpi = 600)
+
+ggsave("../figures/SiteMap.png", plot = noaaSites, width = 16, height = 16, units = 'cm', dpi = 600)
+
+```
+
+Adding a more zoomed in map of just the NOAA sites because they're tightly clustered in the larger map above
+
+```{r}
+
+  
+noaaSites <- ggplot() +
+  geom_sf(data = flKeys$geometry, fill = "white", color = "gray30") +
+  geom_sf(data = fknmsBounds, fill = "black", alpha = 0.2) +
+  geom_sf(data = bathy$geometry, color = "grey30", size = 0.25) +
+  geom_point(data = studySites, aes(x = Long_X, y = Lat_Y, fill = Site_ID, shape = Reef, color = Site_ID), size = 2, alpha = 1) +
+  scale_fill_manual(values = c("#5A6F80FF", "#278B9AFF", "#27576B", "#E75B64FF", "#DE7862FF","#F09784", "#D8AF39FF", "#E8C4A2FF", "#BF650F"), name = "Site", labels = c("C1", "C2", "C3", "U1", "U2", "U3", "Z1", "Z2", "Z3")) +
+  scale_color_manual(values = c("black", "black", "black", "black", "black", "black", "black","black","black"), name = NULL, label = NULL) +
+  scale_shape_manual(values = c(21,22,23), name = NULL, labels = NULL) +
+  guides(fill = guide_legend(override.aes = list(shape = 22, color = NA, size = 4), ncol = 2, order = 1), shape = guide_legend(override.aes = list(size = 3), order = 2), color = guide_legend(override.aes = list(fill = "black", alpha = 0.1), order = 3)) +
+  coord_sf(xlim = c(-81.509995, -81.438055), ylim = c(24.525567,  24.545)) +
+  annotation_scale(location = "br") +
+  annotation_north_arrow(location = "br", which_north = "true", style = north_arrow_minimal()) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "aliceblue"),
+        panel.border = element_rect(color = "white", size = 0.75, fill = NA),
+        plot.background = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_line(color = "white"),
+        axis.text = element_text(color = "white"),
+        legend.position = "none")
+
+ggsave("../figures/sitesBig.png", plot = noaaSites, width = 16, height = 16, units = "cm", dpi = 600)
+
 
 
 
 ```
+
 ![](../figures/figure1.png)
 <br>
