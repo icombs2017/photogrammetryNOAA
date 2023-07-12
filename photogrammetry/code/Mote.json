@@ -1,14 +1,14 @@
 {
-  "Name": "scripps",
-  "Description": "These color codes are the ones typically used by the Scripps Institution of Oceanography (UCSD)",
+  "Name": "Mote",
+  "Description": "These are the color codes used for the segmentation of orthoprojections/mosaics from Mote Marine Laboratory",
   "Labels": [
     {
-      "id": "Orbicella faveolata",
-      "name": "Orbicella faveolata",
+      "id": "Siderastrea siderea",
+      "name": "Siderastrea siderea",
       "description": null,
       "fill": [
-        0,
         170,
+        0,
         0
       ],
       "border": [
@@ -19,13 +19,13 @@
       "visible": true
     },
     {
-      "id": "Siderastrea siderea",
-      "name": "Siderastrea siderea",
+      "id": "Empty",
+      "name": "Empty",
       "description": null,
       "fill": [
-        170,
-        0,
-        0
+        127,
+        127,
+        127
       ],
       "border": [
         200,
@@ -57,6 +57,22 @@
       "fill": [
         170,
         85,
+        0
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Orbicella faveolata",
+      "name": "Orbicella faveolata",
+      "description": null,
+      "fill": [
+        0,
+        170,
         0
       ],
       "border": [
@@ -227,60 +243,12 @@
       "visible": true
     },
     {
-      "id": "Dead ACER",
-      "name": "Dead ACER",
+      "id": "Acropora palmata",
+      "name": "Acropora palmata",
       "description": null,
       "fill": [
-        244,
-        244,
-        244
-      ],
-      "border": [
-        200,
-        200,
-        200
-      ],
-      "visible": true
-    },
-    {
-      "id": "Live ACER Cluster",
-      "name": "Live ACER Cluster",
-      "description": null,
-      "fill": [
-        0,
-        84,
-        166
-      ],
-      "border": [
-        200,
-        200,
-        200
-      ],
-      "visible": true
-    },
-    {
-      "id": "Live ACER rubble",
-      "name": "Live ACER rubble",
-      "description": null,
-      "fill": [
-        186,
-        222,
-        245
-      ],
-      "border": [
-        200,
-        200,
-        200
-      ],
-      "visible": true
-    },
-    {
-      "id": "Pseudodiploria clivosa",
-      "name": "Pseudodiploria clivosa",
-      "description": null,
-      "fill": [
-        255,
         170,
+        0,
         255
       ],
       "border": [
