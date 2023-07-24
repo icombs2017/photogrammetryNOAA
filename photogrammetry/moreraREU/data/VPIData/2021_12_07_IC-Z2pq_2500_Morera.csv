@@ -1,0 +1,80 @@
+id,class,count,%,timePoint,year,pointCount
+-1,None,,,1yr,Y1,2500
+,Review,,,1yr,Y1,2500
+1,Unknown,,,1yr,Y1,2500
+2,Acropora spp.,,,1yr,Y1,2500
+3,Acropora cervicornis,60,2.40288346,1yr,Y1,2500
+4,Acropora palmata,,,1yr,Y1,2500
+5,Porites spp.,,,1yr,Y1,2500
+6,Porites porites,,,1yr,Y1,2500
+7,Porites furcata,,,1yr,Y1,2500
+8,Porites divaricata,,,1yr,Y1,2500
+9,Porites astreoides,1,0.040048058,1yr,Y1,2500
+10,Oculina spp.,,,1yr,Y1,2500
+11,Oculina robusta,,,1yr,Y1,2500
+12,Oculina varicosa,,,1yr,Y1,2500
+13,Oculina diffusa,,,1yr,Y1,2500
+14,Madracis spp.,,,1yr,Y1,2500
+15,Madracis auretenra,,,1yr,Y1,2500
+16,Madracis formosa,,,1yr,Y1,2500
+17,Madracis decactis,,,1yr,Y1,2500
+18,Dendrogyra cylindrus,,,1yr,Y1,2500
+19,Siderastrea spp.,,,1yr,Y1,2500
+20,Siderastrea siderea,2,0.080096115,1yr,Y1,2500
+21,Siderastrea radians,,,1yr,Y1,2500
+22,Stephanocoenia intersepta,1,0.040048058,1yr,Y1,2500
+23,Montastraea cavernosa,,,1yr,Y1,2500
+24,Orbicella spp.,,,1yr,Y1,2500
+25,Orbicella annularis,,,1yr,Y1,2500
+26,Orbicella faveolata,4,0.160192231,1yr,Y1,2500
+27,Orbicella franksi,,,1yr,Y1,2500
+28,Favia fragum,,,1yr,Y1,2500
+29,Dichocoenia stokesii,,,1yr,Y1,2500
+30,Solenastraea bournoni,,,1yr,Y1,2500
+31,Solenastraea hyades,,,1yr,Y1,2500
+32,Colpophyllia natans,,,1yr,Y1,2500
+33,Pseudodiploria spp.,,,1yr,Y1,2500
+34,Pseudodiploria strigosa,,,1yr,Y1,2500
+35,Pseudodiploria clivosa,,,1yr,Y1,2500
+36,Diploria labyrinthiformis,,,1yr,Y1,2500
+37,Manicina areolata,,,1yr,Y1,2500
+38,Meandrina spp.,,,1yr,Y1,2500
+39,Meandrina meandrites,,,1yr,Y1,2500
+40,Meandrina danae,,,1yr,Y1,2500
+41,Meandrina jacksoni,,,1yr,Y1,2500
+42,Helioseris cucullata,,,1yr,Y1,2500
+43,Agaricia spp.,,,1yr,Y1,2500
+44,Agaricia fragilis,,,1yr,Y1,2500
+45,Agaricia lamarcki,,,1yr,Y1,2500
+46, Agaricia agaricites,,,1yr,Y1,2500
+47,Mycetophyllia spp.,,,1yr,Y1,2500
+48,Mycetophyllia lamarckiana,,,1yr,Y1,2500
+49,Mycetophyllia aliciae,,,1yr,Y1,2500
+50,Mycetophyllia ferox,,,1yr,Y1,2500
+51,Mycetophyllia reesi,,,1yr,Y1,2500
+52,Isophyllia spp.,,,1yr,Y1,2500
+53,Isophyllia sinuosa,,,1yr,Y1,2500
+54,Isophyllia rigida,,,1yr,Y1,2500
+55,Scolymia spp.,,,1yr,Y1,2500
+56,Scolymia cubensis,,,1yr,Y1,2500
+57,Scolymia wellsi,,,1yr,Y1,2500
+58,Mussa angulosa,,,1yr,Y1,2500
+59,Eusmilia fastigiata,,,1yr,Y1,2500
+60,Octocorallia,115,4.605526632,1yr,Y1,2500
+61,Gorgonia ventalina,,,1yr,Y1,2500
+62,Xestospongia muta,,,1yr,Y1,2500
+63,Thalassia testudinum,,,1yr,Y1,2500
+64,Halimeda,,,1yr,Y1,2500
+65,Dictyota spp.,,,1yr,Y1,2500
+66,Crustose coralline algae natans,,,1yr,Y1,2500
+67,Porifera,95,3.804565479,1yr,Y1,2500
+68,Cnidaria,,,1yr,Y1,2500
+69,Red algae,,,1yr,Y1,2500
+70,Green algae,,,1yr,Y1,2500
+71,Brown algae,,,1yr,Y1,2500
+72,Palythoa,138,5.526631958,1yr,Y1,2500
+73,Rubble,1726,69.12294754,1yr,Y1,2500
+74,Turf algae,333,13.3360032,1yr,Y1,2500
+75,Other,9,0.360432519,1yr,Y1,2500
+76,Millepora spp.,12,0.480576692,1yr,Y1,2500
+77,Chordata,1,0.040048058,1yr,Y1,2500

@@ -1,6 +1,6 @@
 ---
-title: "noaaVPI"
-author: "Ian Combs -- icombs@mote.org"
+title: "reuMoreraVPI"
+author: "Amber Morera"
 output:
   html_document:
     theme: flatly
@@ -63,7 +63,7 @@ read_plus <- function(flnm) {
 }
 
 vpiData1 <-
-    list.files(path = "../data/vpi", pattern = "*.csv", 
+    list.files(path = "../data/VPIData", pattern = "*.csv", 
                full.names = T) %>% 
     map_df(~read_plus(.))
 
@@ -71,8 +71,8 @@ vpiData1 <-
 # Sort out data to have proper columns for all the info i want e.g. site, date etc
 
 vpiData <- vpiData1 %>% 
-      tidyr::separate(filename, into=c("Date", "Site"),extra = 'merge',sep = 23) %>%
-      tidyr::separate(Date, into=c("remove", "Date"),sep = "../data/vpi/") %>% 
+      tidyr::separate(filename, into=c("Date", "Site"),extra = 'merge',sep = 27) %>%
+      tidyr::separate(Date, into=c("remove", "Date"),sep = "../data/VPIData/") %>% 
       tidyr::separate(Date, into=c("Date", "remove"),sep = 10) %>% 
       tidyr::separate(Site, into = c("Site", "delete"),sep = 5) %>% 
       dplyr::select(-c(remove, delete)) %>% 
@@ -81,13 +81,31 @@ vpiData <- vpiData1 %>%
       tidyr::drop_na(abundance) %>% 
       mutate(Date = factor(Date), Site = factor(Site), timePoint = factor(timePoint), year = factor(year))
 
+
 #Making some corrections in the naming
 vpiData$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiData$class)
 vpiData$class <- gsub("Rubble", "Bare Substrate", vpiData$class)
 vpiData$class <- gsub("Review", NA, vpiData$class)
 vpiData$class <- gsub("None", NA, vpiData$class)
 
+#had to go in and add 2 colomns in csv file for timePoint and year
+
+
+#Focusing on Z2 sites only 
+vpiData <- subset(vpiData, Site != "IC-Z3")
+vpiData <- subset(vpiData, Site != "IC-Z1")
+
+#If focusing on 2022 and 2021 dates for 3 point density comparisons run below if not then ignore
+vpiData <- subset(vpiData, Date != "2020-08-18")
+
+#If focusing on year 0,1 and 2 comparison then run below if not then ignore
+vpiData <- subset(vpiData, pointCount != "1750")
+vpiData <- subset(vpiData, pointCount != "1000")
+
+#Back to name correction
 vpiData<- na.omit(vpiData)
+
+
 vpiData$class <- as.factor(vpiData$class)
 
 vpiData$class <-  droplevels.factor(vpiData$class)
@@ -296,6 +314,10 @@ vpiMat1 <- vpiMat %>%
    column_to_rownames(var = "samples")
  
 vpiDist <- vegdist(vpiMat1, method = 'bray')
+
+#checking which variables we can include, if unique occurs more an than once
+sapply(lapply(vpiDist, unique), length)
+lapply(vpiDist[c('treatment', 'year', 'reef', 'timePoint')], unique)
 
 distPerm <- adonis2(vpiDist ~ treatment*year*reef*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
 
