@@ -1,0 +1,79 @@
+id,class,count,%
+-1,None,,
+,Review,,
+1,Unknown,,
+2,Acropora spp.,,
+3,Acropora cervicornis,50,1.881821603312006
+4,Acropora palmata,,
+5,Porites spp.,,
+6,Porites porites,,
+7,Porites furcata,,
+8,Porites divaricata,,
+9,Porites astreoides,1,0.03763643206624012
+10,Oculina spp.,,
+11,Oculina robusta,,
+12,Oculina varicosa,,
+13,Oculina diffusa,,
+14,Madracis spp.,,
+15,Madracis auretenra,,
+16,Madracis formosa,,
+17,Madracis decactis,,
+18,Dendrogyra cylindrus,,
+19,Siderastrea spp.,,
+20,Siderastrea siderea,5,0.1881821603312006
+21,Siderastrea radians,,
+22,Stephanocoenia intersepta,3,0.11290929619872037
+23,Montastraea cavernosa,2,0.07527286413248024
+24,Orbicella spp.,,
+25,Orbicella annularis,,
+26,Orbicella faveolata,1,0.03763643206624012
+27,Orbicella franksi,,
+28,Favia fragum,,
+29,Dichocoenia stokesii,,
+30,Solenastraea bournoni,,
+31,Solenastraea hyades,,
+32,Colpophyllia natans,,
+33,Pseudodiploria spp.,5,0.1881821603312006
+34,Pseudodiploria strigosa,,
+35,Pseudodiploria clivosa,,
+36,Diploria labyrinthiformis,,
+37,Manicina areolata,,
+38,Meandrina spp.,,
+39,Meandrina meandrites,,
+40,Meandrina danae,,
+41,Meandrina jacksoni,,
+42,Helioseris cucullata,,
+43,Agaricia spp.,,
+44,Agaricia fragilis,,
+45,Agaricia lamarcki,,
+46, Agaricia agaricites,,
+47,Mycetophyllia spp.,,
+48,Mycetophyllia lamarckiana,,
+49,Mycetophyllia aliciae,,
+50,Mycetophyllia ferox,,
+51,Mycetophyllia reesi,,
+52,Isophyllia spp.,,
+53,Isophyllia sinuosa,,
+54,Isophyllia rigida,,
+55,Scolymia spp.,,
+56,Scolymia cubensis,,
+57,Scolymia wellsi,,
+58,Mussa angulosa,,
+59,Eusmilia fastigiata,,
+60,Octocorallia,127,4.779826872412496
+61,Gorgonia ventalina,,
+62,Xestospongia muta,,
+63,Thalassia testudinum,,
+64,Halimeda,,
+65,Dictyota spp.,,
+66,Crustose coralline algae,,
+67,Porifera,101,3.8012796386902523
+68,Cnidaria,,
+69,Red algae,,
+70,Green algae,,
+71,Brown algae,,
+72,Palythoa,140,5.269100489273617
+73,Rubble,1138,42.83025969138126
+74,Turf algae,1053,39.631162965750846
+75,Other,9,0.3387278885961611
+76,Millepora spp.,22,0.8280015054572827

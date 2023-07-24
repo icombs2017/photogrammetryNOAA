@@ -1,0 +1,80 @@
+id,class,count,%,timePoint,year
+-1,None,,,T0,Y2
+,Review,,,T0,Y2
+1,Unknown,,,T0,Y2
+2,Acropora spp.,,,T0,Y2
+3,Acropora cervicornis,,,T0,Y2
+4,Acropora palmata,,,T0,Y2
+5,Porites spp.,,,T0,Y2
+6,Porites porites,,,T0,Y2
+7,Porites furcata,,,T0,Y2
+8,Porites divaricata,,,T0,Y2
+9,Porites astreoides,1,0.051150895,T0,Y2
+10,Oculina spp.,,,T0,Y2
+11,Oculina robusta,,,T0,Y2
+12,Oculina varicosa,,,T0,Y2
+13,Oculina diffusa,,,T0,Y2
+14,Madracis spp.,,,T0,Y2
+15,Madracis auretenra,,,T0,Y2
+16,Madracis formosa,,,T0,Y2
+17,Madracis decactis,,,T0,Y2
+18,Dendrogyra cylindrus,,,T0,Y2
+19,Siderastrea spp.,,,T0,Y2
+20,Siderastrea siderea,1,0.051150895,T0,Y2
+21,Siderastrea radians,,,T0,Y2
+22,Stephanocoenia intersepta,,,T0,Y2
+23,Montastraea cavernosa,,,T0,Y2
+24,Orbicella spp.,,,T0,Y2
+25,Orbicella annularis,,,T0,Y2
+26,Orbicella faveolata,1,0.051150895,T0,Y2
+27,Orbicella franksi,,,T0,Y2
+28,Favia fragum,,,T0,Y2
+29,Dichocoenia stokesii,,,T0,Y2
+30,Solenastraea bournoni,,,T0,Y2
+31,Solenastraea hyades,,,T0,Y2
+32,Colpophyllia natans,,,T0,Y2
+33,Pseudodiploria spp.,,,T0,Y2
+34,Pseudodiploria strigosa,,,T0,Y2
+35,Pseudodiploria clivosa,,,T0,Y2
+36,Diploria labyrinthiformis,,,T0,Y2
+37,Manicina areolata,,,T0,Y2
+38,Meandrina spp.,,,T0,Y2
+39,Meandrina meandrites,,,T0,Y2
+40,Meandrina danae,,,T0,Y2
+41,Meandrina jacksoni,,,T0,Y2
+42,Helioseris cucullata,,,T0,Y2
+43,Agaricia spp.,,,T0,Y2
+44,Agaricia fragilis,,,T0,Y2
+45,Agaricia lamarcki,,,T0,Y2
+46, Agaricia agaricites,,,T0,Y2
+47,Mycetophyllia spp.,,,T0,Y2
+48,Mycetophyllia lamarckiana,,,T0,Y2
+49,Mycetophyllia aliciae,,,T0,Y2
+50,Mycetophyllia ferox,,,T0,Y2
+51,Mycetophyllia reesi,,,T0,Y2
+52,Isophyllia spp.,,,T0,Y2
+53,Isophyllia sinuosa,,,T0,Y2
+54,Isophyllia rigida,,,T0,Y2
+55,Scolymia spp.,,,T0,Y2
+56,Scolymia cubensis,,,T0,Y2
+57,Scolymia wellsi,,,T0,Y2
+58,Mussa angulosa,,,T0,Y2
+59,Eusmilia fastigiata,,,T0,Y2
+60,Octocorallia,101,5.166240409,T0,Y2
+61,Gorgonia ventalina,,,T0,Y2
+62,Xestospongia muta,,,T0,Y2
+63,Thalassia testudinum,,,T0,Y2
+64,Halimeda,,,T0,Y2
+65,Dictyota spp.,,,T0,Y2
+66,Crustose coralline algae,,,T0,Y2
+67,Porifera,84,4.296675192,T0,Y2
+68,Cnidaria,,,T0,Y2
+69,Red algae,,,T0,Y2
+70,Green algae,,,T0,Y2
+71,Brown algae,,,T0,Y2
+72,Palythoa,40,2.046035806,T0,Y2
+73,Rubble,949,48.54219949,T0,Y2
+74,Turf algae,753,38.51662404,T0,Y2
+75,Other,9,0.460358056,T0,Y2
+76,Millepora spp.,16,0.818414322,T0,Y2
+77,Chordata,,,T0,Y2
