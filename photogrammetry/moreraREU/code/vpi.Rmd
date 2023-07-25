@@ -41,7 +41,8 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist", "glue")
+pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist", "glue", "paletteer")
+
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 ```
 
@@ -121,6 +122,9 @@ vpiData <- vpiData %>%
 
 
 head(vpiData)
+
+
+vpiData$timePoint <- factor(vpiData$timePoint, levels(vpiData$timePoint)[c(3,1,2)])
 
 ```
 
@@ -397,14 +401,14 @@ distPermTab
 
 ```{r, PERMANOVAtable, include = TRUE}
 
-# vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
-#   
+# vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>%
+#   add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>%
+#   add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>%
+#   add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>%
+#   add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>%
+#   add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>%
+#   add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>%
+# #   
 # mutate_if(is.numeric, round, digits = 3) %>%     
 # mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
 # mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
@@ -455,8 +459,12 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
-install.packages("paletteer")
+
+
 myColors <- paletteer_c("PRGn", 10, direction = 1 )
+
+myColors <- check_palette("PRGn", 10, direction = 1 )
+
 myColors <- brewer.pal(n = 10, name = "RdBu")
 myColors
 myColors <- paletteer_c("ggthemes::Green", 10)
@@ -464,38 +472,44 @@ myColors <- paletteer_c("ggthemes::Green", 10)
 
 #myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
 #Color Palette using a selection of Mote's preferred colors
-# myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
+myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e","#FFC95C", "#007b41", "#0054a6", "#352f6d", "#34900a", "#48000a", "#a90aaa","#cad345","#dac111","#100aaa")
 
 # Using this just to plot the top 2% of species
-# vpi1 <- vpi %>%
-#   filter(abundance > 2) %>%
-#   droplevels()
-# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
+vpi1 <- vpiData %>%
+filter(abundance > 1) %>%
+filter(class != "Bare Substrate") %>% 
+droplevels()
+vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
 
 
-vpiStack1Y1 <- ggplot(boxPlotDataY1, aes(x = timePoint, y = abundance)) +
-                      geom_bar(aes(fill = class), position = position_stack(reverse = TRUE), stat = 'identity', color = 'black', alpha = 0.8) +
+
+
+
+
+vpiStack1Y1 <- ggplot(vpi1, aes(x = timePoint, y = abundance)) +
+                      geom_bar(aes(fill = class), position = position_stack(reverse = FALSE), stat = 'identity', color = 'black', alpha = 0.8) +
                       ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 1% for Year 1 NOAA Sites")+
-                      scale_fill_manual(values = myColors)+
-                      facet_wrap(treatment ~ site, scales = 'free')
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance >1% Over 3 Years", x = "Time Point" )+
+  scale_x_discrete(labels=c("baseline", "12 Month","24 Month"))
+                      # scale_fill_manual(values = myColors)+
+                     
 
 
 
 
 vpiStackY1 <- vpiStack1Y1+theme(
-    axis.text.x = element_text(size = 40, colour = "white", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.text.x = element_text(size = 15, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_blank(),
     axis.title.y = element_text(size = 40, face = "bold"), 
-    axis.text.y = element_text(colour = "white", size = 40, face = "bold"),
+    axis.text.y = element_text(colour = "black", size = 30, face = "bold"),
     legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "white"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-    panel.background = element_rect(fill = '#D3D3D3'), 
+    panel.background = element_rect(fill = '#F5F5F5'), 
     plot.title = element_text(size = 40, face = "bold"), 
-    axis.line = element_line(colour = "white"), 
-    axis.ticks = element_line(color="white"), 
-    text = element_text(size=40, color="white"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
     legend.position = "right",
     rect = element_rect(fill = "transparent"))
 
@@ -508,7 +522,7 @@ boxPlotDataY2 <- vpiMat1 %>%
    rownames_to_column(var = "samples") %>% 
     separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
   select(-c(samples)) %>% 
-  gather(class, count, 7:32, factor_key = TRUE) %>% 
+  gather(class, count, 7:21, factor_key = TRUE) %>% 
   as_tibble() %>% 
   mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
   filter(count > 0, year == "Y2", reef != "SiteZ") %>% 
@@ -529,7 +543,7 @@ boxPlotDataY2 <- vpiMat1 %>%
 vpiStack1Y2 <- ggplot(boxPlotDataY2, aes(x = timePoint, y = abundance)) +
                       geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
                       ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 1% for Year 2 NOAA Sites")+
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2% for Year 2 NOAA Sites")+
                       scale_fill_manual(values = myColors)+
                       facet_wrap(treatment ~ site, scales = "free")
 
@@ -537,18 +551,18 @@ vpiStack1Y2 <- ggplot(boxPlotDataY2, aes(x = timePoint, y = abundance)) +
 
 
 vpiStackY2 <- vpiStack1Y2+theme(
-    axis.text.x = element_text(size = 40, colour = "white", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_blank(),
     axis.title.y = element_text(size = 40, face = "bold"), 
-    axis.text.y = element_text(colour = "white", size = 40, face = "bold"),
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
     legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "white"), 
-    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "black"),
     panel.background = element_rect(fill = '#D3D3D3'), 
     plot.title = element_text(size = 40, face = "bold"), 
-    axis.line = element_line(colour = "white"), 
-    axis.ticks = element_line(color="white"), 
-    text = element_text(size=40, color="white"), 
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    text = element_text(size=40, color="black"), 
     legend.position = "right",
     rect = element_rect(fill = "transparent"))
 vpiStackY2
