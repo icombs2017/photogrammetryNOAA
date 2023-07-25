@@ -96,7 +96,7 @@ vpiData <- subset(vpiData, Site != "IC-Z3")
 vpiData <- subset(vpiData, Site != "IC-Z1")
 
 #If focusing on 2022 and 2021 dates for 3 point density comparisons run below if not then ignore
-vpiData <- subset(vpiData, Date != "2020-08-18")
+# vpiData <- subset(vpiData, Date != "2020-08-18")
 
 #If focusing on year 0,1 and 2 comparison then run below if not then ignore
 vpiData <- subset(vpiData, pointCount != "1750")
@@ -116,12 +116,28 @@ vpiData$reef = if_else(vpiData$Site %in% c("IC-C1", "IC-C2", "IC-C3"), "SiteC",
 vpiData$reef <- as.factor(vpiData$reef)
 
 vpiData <- vpiData %>% 
-      select(Date, timePoint, year, Site, treatment, reef, class, count, abundance) 
+      select(Date, timePoint, year, Site, treatment, reef, class, count, abundance) %>% 
+      droplevels()
 
 
 head(vpiData)
 
 ```
+
+
+```{r, normalityTest, include = TRUE}
+
+hist(vpiData$count)
+
+shapiro.test(vpiData$abundance)
+
+qqnorm(vpiData$abundance)
+
+vpiKW <- kruskal.test(abundance ~ timePoint, data = vpiData)
+
+
+```
+
 
 Going from long to wide format (matrix) and also creating a separate dataframe with just the samples metadata. 
 
@@ -174,7 +190,7 @@ dist_matrix <- dist_tbl %>%
 ```
 
 Creating a PCoA using a distance matrix using curtis-bray distances
-
+#Dont need PcoA for this analysis bc only 1 variable 
 
 ```{r, PCoA, include = TRUE}
 
@@ -297,6 +313,8 @@ scores(nmds) %>%
 
 Running a PERMANOVA since the data does not meet the assumptions of normality. We are running the PERMANOVA on the dissimilarity matrix we created above but we are running it by removing Bare Substrate from our matrix.  
 
+#Permanova isnt what we are gonna use for this analysis bc only 1 variable and nonparametric and univariate
+
 ```{r, PERMANOVA, include = TRUE, message = FALSE}
 # doing PERMANOVA on a dissimilarity matrix, 'old' code is commented below. 
 
@@ -315,21 +333,18 @@ vpiMat1 <- vpiMat %>%
  
 vpiDist <- vegdist(vpiMat1, method = 'bray')
 
-#checking which variables we can include, if unique occurs more an than once
-sapply(lapply(vpiDist, unique), length)
-lapply(vpiDist[c('treatment', 'year', 'reef', 'timePoint')], unique)
+# #checking which variables we can include, if unique occurs more an than once
+# sapply(lapply(vpiDist, unique), length)
+# lapply(vpiDist[c('treatment', 'year', 'reef', 'timePoint')], unique)
 
-distPerm <- adonis2(vpiDist ~ treatment*year*reef*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+# distPerm <- adonis2(vpiDist ~ timePoint*reef*site, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+
+
 
 # strata = $Site
 distPerm
 
-# vpiPerm <- adonis2(count ~ treatment*reef*timePoint, data = vpiData, method = "bray", permutations = 9999)
-# 
-# set.seed(999)
-# vpiPairwise1 <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
-# 
-# vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
+
 
 ```
 <br><br>
@@ -440,6 +455,7 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
+install.packages("paletteer")
 myColors <- paletteer_c("PRGn", 10, direction = 1 )
 myColors <- brewer.pal(n = 10, name = "RdBu")
 myColors
@@ -455,33 +471,6 @@ myColors <- paletteer_c("ggthemes::Green", 10)
 #   filter(abundance > 2) %>%
 #   droplevels()
 # vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
-
-
-vpiMat1 <- vpiMat %>% 
-  select(-c(Other))
-
-# Making a box plot for all Y1 data
-
-boxPlotDataY1 <- vpiMat1 %>% 
-   rownames_to_column(var = "samples") %>% 
-    separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
-  select(-c(samples)) %>% 
-  gather(class, count, 7:32, factor_key = TRUE) %>% 
-  as_tibble() %>% 
-  mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
-  filter(count > 0, year == "Y1") %>% 
-  group_by(timePoint, reef, site, treatment, class) %>% 
-  summarise(sumCount = sum(count)) %>% 
-  arrange(desc(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment) %>% 
-  mutate(totalObservations = sum(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>% 
-  mutate(abundance = (sumCount/totalObservations)*100) %>% 
-  filter(abundance > 1) %>% 
-  arrange(desc(abundance)) %>% 
-  droplevels() %>% 
-  mutate(class = factor(class, unique(class)))
-
 
 
 vpiStack1Y1 <- ggplot(boxPlotDataY1, aes(x = timePoint, y = abundance)) +
@@ -606,45 +595,4 @@ vpiStack1Y2 <- ggplot(boxPlotDataY2, aes(x = timePoint, y = abundance)) +
 
 
 
-
-```{r, subsetDate, include = FALSE }
-
-
-post <- vpi %>% filter(time == '1 Year')
-coolStuff <- vpi %>% filter(class != "Bare Substrate") %>% filter(class != "Turf algae")
-
-
-adonis(count ~ time*treatment*class, data = coolStuff, method = 'euclidian', permutation = 9999)
-
-
-
-
-
-```
-
-
-```{r, ACERmean, include = TRUE}
-
-
-ACER<- vpiMat %>% 
-   rownames_to_column(var = "samples") %>% 
-    separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
-  select(-c(samples)) %>% 
-  gather(class, count, 7:32, factor_key = TRUE) %>% 
-  as_tibble() %>% 
-  mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
-  filter(count > 0) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>%
-  summarise(sumCount = sum(count)) %>% 
-  arrange(desc(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment) %>% 
-  mutate(totalObservations = sum(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>%
-  mutate(abundance = (sumCount/totalObservations)*100) %>% 
-  filter(class == "Acropora cervicornis")
-
-mean(ACER$abundance)
-
-
-```
 
