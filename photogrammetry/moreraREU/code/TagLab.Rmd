@@ -91,19 +91,31 @@ tagData$reef <- as.factor(tagData$reef)
 
 
 tagData2 <- tagData %>% 
-  add_count() %>% 
-  group_by(Date, Species, Area) %>% 
+  add_count(Area, Date, Species) %>% 
+  group_by(Species,Date) %>% 
   mutate(sumCount = sum(n)) %>% 
   arrange(desc(sumCount)) %>% 
-  group_by( Area,reef, Site, treatment) %>% 
-  mutate(totalObservations = sum(sumCount)) %>% 
-  group_by( Area,reef, Site, treatment) %>% 
+  group_by(Date) %>% 
+  mutate(totalObservations = sum(n)) %>% 
+  group_by(Species, Date) %>% 
   mutate(abundance = (sumCount/totalObservations)*100) %>% 
   filter(abundance > 1) %>% 
   arrange(desc(abundance)) %>% 
-  droplevels()
+  droplevels() %>%
+  distinct(Date, abundance)
 
-
+tagData3 <- tagData
+  add_count(Area, Date, Species) %>% 
+  group_by(Species,Date) %>% 
+  mutate(sumCount = sum(n)) %>% 
+  arrange(desc(sumCount)) %>% 
+  group_by(Date) %>% 
+  mutate(totalObservations = sum(n)) %>% 
+  group_by(Species, Date) %>% 
+  mutate(abundance = (sumCount/totalObservations)*100) %>% 
+  filter(abundance > 1) %>% 
+  arrange(desc(abundance)) %>% 
+  droplevels() 
 
 
 
@@ -124,9 +136,9 @@ Now that we have the data all in one place with the appropriate columns added, w
 
 ```{r, normality, include = TRUE}
 
-hist(tag$abundance)
-qqnorm(tag$abundance)
-shapiro.test(tag$abundance)
+hist(tagData2$abundance)
+qqnorm(tagData2$abundance)
+shapiro.test(tagData2$abundance)
 
 
 
@@ -143,7 +155,7 @@ Since our data violates the assumptions of normality and is not normally distrib
 
 ```{r, permanova, include = TRUE}
 
-tagPerm <- adonis(formula = count ~ time*treatment, data = tag, method = "euclidian", permutations = 9999)
+tagPerm <- adonis(formula = count ~ time*Area, data = tagData3, method = "euclidian", permutations = 9999)
 
 
 kruskal.test(abundance ~ treatment, data = tag)
