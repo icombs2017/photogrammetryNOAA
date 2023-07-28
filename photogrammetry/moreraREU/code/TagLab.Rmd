@@ -176,7 +176,8 @@ We are visualizing the data we just tested for.
 
 ```{r, include = TRUE, eval = FALSE}
 
-myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
+myColors <- paletteer_c("ggthemes::Blue-Teal", 7, direction = 1)
+
 #tag1 <- subset(tagData, Species != "Empty") %>% droplevels()
 
 
@@ -187,11 +188,10 @@ myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
 
 
 
-
 tagStack1 <- ggplot(tagData2, aes(x = Date, y = abundance, fill = Species))+
                       geom_bar(stat = 'identity', color = 'black', position = position_stack(reverse = TRUE), alpha = 0.8)+
                       ylim(0,100)+
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance Changes Over 3 Years")+
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance (>1%) Changes Over 3 Years")+
                       scale_fill_manual(values = myColors)
                       
 tagStack <- tagStack1+theme(
@@ -203,7 +203,7 @@ tagStack <- tagStack1+theme(
     legend.text = element_text(size = 30, colour = "black"), 
     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
     panel.background = element_rect(fill = '#F5F5F5'), 
-    plot.title = element_text(size = 40, face = "bold"), 
+    plot.title = element_text(size = 30, face = "bold"), 
     axis.line = element_line(colour = "black"), 
     axis.ticks = element_line(color="black"), 
     text = element_text(size=40, color="black"), 
