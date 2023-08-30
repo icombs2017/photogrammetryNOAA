@@ -1,0 +1,924 @@
+{
+ "filename": "E:/herbivory/surfaceAreaAnalysis/herbivoryT1.json",
+ "working_area": null,
+ "dictionary_name": "Mote",
+ "dictionary_description": "These are the color codes used for the segmentation of orthoprojections/mosaics from Mote Marine Laboratory",
+ "labels": {
+  "Siderastrea siderea": {
+   "id": "Siderastrea siderea",
+   "name": "Siderastrea siderea",
+   "description": null,
+   "fill": [
+    170,
+    0,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Empty": {
+   "id": "Empty",
+   "name": "Empty",
+   "description": null,
+   "fill": [
+    127,
+    127,
+    127
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Porites astreoides": {
+   "id": "Porites astreoides",
+   "name": "Porites astreoides",
+   "description": null,
+   "fill": [
+    0,
+    85,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Stephanocoenia intersepta": {
+   "id": "Stephanocoenia intersepta",
+   "name": "Stephanocoenia intersepta",
+   "description": null,
+   "fill": [
+    170,
+    85,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Orbicella faveolata": {
+   "id": "Orbicella faveolata",
+   "name": "Orbicella faveolata",
+   "description": null,
+   "fill": [
+    0,
+    170,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Pseudodiploria strigosa": {
+   "id": "Pseudodiploria strigosa",
+   "name": "Pseudodiploria strigosa",
+   "description": null,
+   "fill": [
+    170,
+    170,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Agaricia agaricites": {
+   "id": "Agaricia agaricites",
+   "name": "Agaricia agaricites",
+   "description": null,
+   "fill": [
+    170,
+    170,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Acropora cervicornis": {
+   "id": "Acropora cervicornis",
+   "name": "Acropora cervicornis",
+   "description": null,
+   "fill": [
+    0,
+    255,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Dichocoenia stokesi": {
+   "id": "Dichocoenia stokesi",
+   "name": "Dichocoenia stokesi",
+   "description": null,
+   "fill": [
+    0,
+    0,
+    127
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Diploria labyrinthiformis": {
+   "id": "Diploria labyrinthiformis",
+   "name": "Diploria labyrinthiformis",
+   "description": null,
+   "fill": [
+    85,
+    85,
+    255
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Porites porites": {
+   "id": "Porites porites",
+   "name": "Porites porites",
+   "description": null,
+   "fill": [
+    255,
+    170,
+    255
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Montastraea cavernosa": {
+   "id": "Montastraea cavernosa",
+   "name": "Montastraea cavernosa",
+   "description": null,
+   "fill": [
+    255,
+    85,
+    0
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Eusmilia fastigiata": {
+   "id": "Eusmilia fastigiata",
+   "name": "Eusmilia fastigiata",
+   "description": null,
+   "fill": [
+    255,
+    170,
+    255
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Colpophyllia natans": {
+   "id": "Colpophyllia natans",
+   "name": "Colpophyllia natans",
+   "description": null,
+   "fill": [
+    85,
+    255,
+    255
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Favia fragum": {
+   "id": "Favia fragum",
+   "name": "Favia fragum",
+   "description": null,
+   "fill": [
+    58,
+    157,
+    200
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  },
+  "Acropora palmata": {
+   "id": "Acropora palmata",
+   "name": "Acropora palmata",
+   "description": null,
+   "fill": [
+    170,
+    0,
+    255
+   ],
+   "border": [
+    200,
+    200,
+    200
+   ],
+   "visible": true
+  }
+ },
+ "images": [
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U1/2020.10.14/IC-U1-1/EB140072.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U1-1initial",
+   "name": "2020_10_14_IC-U1-1initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U1/2020.10.14/IC-U1-1/EB140079.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U1-1final",
+   "name": "2020_10_14_IC-U1-1final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U1/2020.10.14/IC-U1-2/EB140070.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U1-2initial",
+   "name": "2020_10_14_IC-U1-2initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U1/2020.10.14/IC-U1-2/EB140081.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U1-2final",
+   "name": "2020_10_14_IC-U1-2final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U2/2020.10.14/IC-U2-1/EB140066.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U2-1initial",
+   "name": "2020_10_14_IC-U2-1initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U2/2020.10.14/IC-U2-1/EB140083.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U2-1final",
+   "name": "2020_10_14_IC-U2-1final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U2/2020.10.14/IC-U2-2/EB140064.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U2-2initial",
+   "name": "2020_10_14_IC-U2-2initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-U2/2020.10.14/IC-U2-2/EB140086.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_14_IC-U2-2final",
+   "name": "2020_10_14_IC-U2-2final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-14",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C1/2020.10.15/IC-C1-1/EB150091.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C1-1initial",
+   "name": "2020_10_15_IC-C1-1initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C1/2020.10.15/IC-C1-1/EB150113.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C1-1final",
+   "name": "2020_10_15_IC-C1-1final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C1/2020.10.15/IC-C1-2/EB150094.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C1-2initial",
+   "name": "2020_10_15_IC-C1-2initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C1/2020.10.15/IC-C1-2/EB150115.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C1-2final",
+   "name": "2020_10_15_IC-C1-2final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C2/2020.10.15/IC-C2-1/EB150096.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C2-1initial",
+   "name": "2020_10_15_IC-C2-1initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C2/2020.10.15/IC-C2-1/EB150117.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C2-1final",
+   "name": "2020_10_15_IC-C2-1final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C2/2020.10.15/IC-C2-2/EB150098.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C2-2initial",
+   "name": "2020_10_15_IC-C2-2initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-C2/2020.10.15/IC-C2-2/EB150119.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-C2-2final",
+   "name": "2020_10_15_IC-C2-2final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z1/2020.10.15/IC-Z1-1/EB150101.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z1-1initial",
+   "name": "2020_10_15_IC-Z1-1initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z1/2020.10.15/IC-Z1-1/EB150125.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z1-1final",
+   "name": "2020_10_15_IC-Z1-1final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z1/2020.10.15/IC-Z1-2/EB150104.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z1-2initial",
+   "name": "2020_10_15_IC-Z1-2initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z1/2020.10.15/IC-Z1-2/EB150128.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z1-2final",
+   "name": "2020_10_15_IC-Z1-2final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z2/2020.10.15/IC-Z2-1/EB150105.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z2-1initial",
+   "name": "2020_10_15_IC-Z2-1initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z2/2020.10.15/IC-Z2-1/EB150132.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z2-1final",
+   "name": "2020_10_15_IC-Z2-1final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z2/2020.10.15/IC-Z2-2/EB150108.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z2-2initial",
+   "name": "2020_10_15_IC-Z2-2initial",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  },
+  {
+   "rect": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "map_px_to_mm_factor": "",
+   "width": 4000,
+   "height": 2256,
+   "annotations": [],
+   "layers": [],
+   "channels": [
+    {
+     "filename": "E:/herbivory/IC-Z2/2020.10.15/IC-Z2-2/EB150135.JPG",
+     "type": "RGB"
+    }
+   ],
+   "id": "2020_10_15_IC-Z2-2final",
+   "name": "2020_10_15_IC-Z2-2final",
+   "workspace": [],
+   "export_dataset_area": [],
+   "acquisition_date": "2020-10-15",
+   "georef_filename": "",
+   "metadata": {},
+   "grid": null
+  }
+ ],
+ "correspondences": {},
+ "genet": {},
+ "region_attributes": {
+  "name": "",
+  "description": "",
+  "data": []
+ },
+ "spatial_reference_system": null,
+ "metadata": {},
+ "image_metadata_template": {}
+}
