@@ -82,10 +82,13 @@ vpiData <- vpiData1 %>%
       mutate(Date = factor(Date), Site = factor(Site), timePoint = factor(timePoint), year = factor(year))
 
 #Making some corrections in the naming
-vpiData$class <- gsub("Crustose coralline algae natans","Crustose coralline algae",vpiData$class)
-vpiData$class <- gsub("Rubble", "Bare Substrate", vpiData$class)
-vpiData$class <- gsub("Review", NA, vpiData$class)
-vpiData$class <- gsub("None", NA, vpiData$class)
+
+vpiData <- vpiData %>%
+  mutate_all(~gsub("Crustose coralline algae natans", "Crustose coralline algae", .)) %>%
+  mutate_all(~gsub("Cordata", "Chordata", .)) %>%
+  mutate_all(~gsub("Rubble", "Bare Substrate", .)) %>%
+  mutate_all(~gsub("Other|Review|None", NA, .))
+
 
 vpiData<- na.omit(vpiData)
 vpiData$class <- as.factor(vpiData$class)
@@ -98,7 +101,11 @@ vpiData$reef = if_else(vpiData$Site %in% c("IC-C1", "IC-C2", "IC-C3"), "SiteC",
 vpiData$reef <- as.factor(vpiData$reef)
 
 vpiData <- vpiData %>% 
-      select(Date, timePoint, year, Site, treatment, reef, class, count, abundance) 
+      select(Date, timePoint, year, Site, treatment, reef, class, count, abundance) %>% 
+      mutate(Date = as.Date(Date)) %>% 
+    mutate(count = as.numeric(count), abundance = as.numeric(abundance)) %>% 
+  mutate(across(where(is.character), factor))
+  
 
 
 head(vpiData)
@@ -179,7 +186,7 @@ labs <- c(glue("PCo 1 ({RoundPercentExplained[1]}%)"),
 treatmentCentroid <- positions %>% as_tibble(rownames='samples') %>%
   inner_join(., samples_lookup, by = 'samples') %>% 
   group_by(treatment) %>% 
-  summarize(axis1 = mean(pcoa1),
+  dplyr::summarise(axis1 = mean(pcoa1),
             axis2 = mean(pcoa2))
 
 
@@ -297,7 +304,7 @@ vpiMat1 <- vpiMat %>%
  
 vpiDist <- vegdist(vpiMat1, method = 'bray')
 
-distPerm <- adonis2(vpiDist ~ treatment*year*reef*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+distPerm <- adonis2(vpiDist ~ treatment*reef*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
 
 # strata = $Site
 distPerm
@@ -418,7 +425,7 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
-myColors <- paletteer_c("PRGn", 10, direction = 1 )
+# myColors <- paletteer_c("PRGn", 10, direction = 1 )
 myColors <- brewer.pal(n = 10, name = "RdBu")
 myColors
 myColors <- paletteer_c("ggthemes::Green", 10)
