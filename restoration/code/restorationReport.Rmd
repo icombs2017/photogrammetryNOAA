@@ -76,8 +76,13 @@ apalData <- read_excel("../data/outplantData.xlsx", sheet = "ex-situ Apal outpla
 # ACER Data
 acerData <- read_excel("../data/outplantdata.xlsx", sheet = "in-situ Acer outplants", na = c("", "N/A", "NA"))
 
-# Massives Data
-msvsData <- read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Massive outplants", na = c("", "N/A", "NA"))
+
+# Ex-Situ Massives Data, theres some weird data artifacts in the beginnnig of the data set so skipping a few columns just to get to the data we need
+exMsvsDataNames <- names(read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Massive outplants", na = c("", "N/A", "NA"), col_names = TRUE))
+exMsvsData <- read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Massive outplants", na = c("", "N/A", "NA", "N/P", "#N/A", "#REF!"),skip = 28, col_names = exMsvsDataNames)
+
+# In-Situ Massives Data
+inMsvsData <- read_excel("../data/outplantdata.xlsx", sheet = "in-situ Massive outplants", na = c("", "N/A", "NA"))
 
 ```
 
@@ -133,20 +138,20 @@ apalDeliverables <- c(2800, 2800, 1400, 1400)
 apalCumulativeDeliverables <- c(2800, 5600, 7000, 8400)
 
 
-#creating templates for "weighted survival"
-# 1 month APAL frags
-outplantAPAL$oneMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`1-month Survival`
-oneMonthWeightedAverageSurvival<- (sum(outplantAPAL$oneMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
-# 1 month APAL clusters
-outplantAPAL$oneMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`1-month % Plot Survival`
-oneMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$oneMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
-
-# 12 month APAL plugs
-outplantAPAL$twelveMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`12-month Survival`
-twelveMonthWeightedAverageSurvival<- (sum(outplantAPAL$twelveMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
-# 12 month APAL clusters
-outplantAPAL$twelveMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`12-month % Plot Survival`
-twelveMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$twelveMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
+# #creating templates for "weighted survival"
+# # 1 month APAL frags
+# outplantAPAL$oneMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`1-month Survival`
+# oneMonthWeightedAverageSurvival<- (sum(outplantAPAL$oneMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
+# # 1 month APAL clusters
+# outplantAPAL$oneMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`1-month % Plot Survival`
+# oneMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$oneMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
+# 
+# # 12 month APAL plugs
+# outplantAPAL$twelveMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`12-month Survival`
+# twelveMonthWeightedAverageSurvival<- (sum(outplantAPAL$twelveMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
+# # 12 month APAL clusters
+# outplantAPAL$twelveMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`12-month % Plot Survival`
+# twelveMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$twelveMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
 
 
 
@@ -188,9 +193,10 @@ twelveMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$twelveMonthCluster
 
 outplantAPALplot1<- ggplot(outplantAPAL, aes(x = Date, y = cum_sum))+
   geom_line(aes(color = "Fragments Outplanted", linetype = 'solid'), linewidth = 3)+
-  geom_hline(aes(yintercept = apalCumulativeDeliverables[1], linetype = 'Year 1 Outplant Goal (In-situ Apal)', color = 'Year 1 Outplant Goal (In-situ Apal)'), linewidth = 3) +
-  geom_hline(aes(yintercept = apalCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal (In-situ Apal)', color = 'Year 2 Outplant Goal (In-situ Apal)'), linewidth = 3) +
-  geom_hline(aes(yintercept = apalCumulativeDeliverables[4], linetype = 'Year 3 Outplant Goal (In-situ Apal', color = 'Year 3 Outplant Goal (In-situ Apal)'), linewidth = 3) +
+  geom_hline(aes(yintercept = apalCumulativeDeliverables[1], linetype = 'Year 1 Outplant Goal', color = 'Year 1 Outplant Goal'), linewidth = 3) +
+  geom_hline(aes(yintercept = apalCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal', color = 'Year 2 Outplant Goal'), linewidth = 3)+
+geom_hline(aes(yintercept = apalCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal', color = 'Year 3 Outplant Goal'), linewidth = 3) +
+  geom_hline(aes(yintercept = apalCumulativeDeliverables[4], linetype = 'Year 4 Outplant Goal', color = 'Year 4 Outplant Goal'), linewidth = 3) +
   geom_segment(aes(x = as.Date("2023-05-20"), y = 7769,
                    xend = as.Date("2024-03-01"), yend = 7769),
                linetype = 'solid', color = 'blue', size = 3)+ # remove this with full dataset
@@ -198,8 +204,8 @@ outplantAPALplot1<- ggplot(outplantAPAL, aes(x = Date, y = cum_sum))+
   ggtitle(expression("Number of "*italic("Acropora palmata")*" Fragments Outplanted per Year"))+
   xlab(" ")+
   ylab("Number of fragments outplanted")+
-  scale_color_manual(values = c('blue', 'grey', "green3", 'gold'), name = " ") +
-  scale_linetype_manual(name = " ", values = c('solid', 'dashed', 'dashed', 'dashed'), guide = "none")+
+  scale_color_manual(values = c('blue', 'green3', "gold3", 'purple3', "red3"), name = " ") +
+  scale_linetype_manual(name = " ", values = c('solid', 'dashed', 'dashed', 'dashed', 'dashed'), guide = "none")+
   scale_x_date(date_labels = "%b-%Y", date_breaks = "1 month")
 
 
@@ -332,7 +338,7 @@ outplantACER <- acerData %>%
          `12-month % Missing`,                            
          `12-month % Plot Survival`,
          `% TLE Present...27`) %>% 
-  filter(Deliverable %in% c("NFWF-EDR Yr3", "NFWF-EDR", "NFWF-EDR Yr2")) %>% 
+  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
   mutate_at(c("Year", 
          "Site ID", 
         "Deliverable"), as.factor) %>%
@@ -415,18 +421,19 @@ ggsave("../figures/outplantACERplot.png", plot =outplantACERplot, width = 20, he
 outplantACERplot1<- ggplot(outplantACER, aes(x = Date, y = cum_sum))+
   geom_line(aes(color = "Fragments Outplanted", linetype = 'solid'), linewidth = 3)+
   # geom_point(aes(color = "black"))+
-  geom_hline(aes(yintercept = acerCumulativeDeliverables[1], linetype = 'Year 1 Outplant Goal (In-situ Acer)', color = 'Year 1 Outplant Goal (In-situ Acer)'), linewidth = 2) +
-  geom_hline(aes(yintercept = acerCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal (In-situ Acer)', color = 'Year 2 Outplant Goal (In-situ Acer)'), linewidth = 2) +
-  geom_hline(aes(yintercept = acerCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal (In-situ Acer)', color = 'Year 3 Outplant Goal (In-situ Acer)'), linewidth = 2) +
-  geom_segment(aes(x = as.Date("2023-05-30"), y = 8100,
-                   xend = as.Date("2024-02-01"), yend = 8100),
+  geom_hline(aes(yintercept = acerCumulativeDeliverables[1], linetype = 'Year 1 Outplant Goal', color = 'Year 1 Outplant Goal'), linewidth = 2) +
+  geom_hline(aes(yintercept = acerCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal', color = 'Year 2 Outplant Goal'), linewidth = 2) +
+  geom_hline(aes(yintercept = acerCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal', color = 'Year 3 Outplant Goal'), linewidth = 2) +
+  geom_hline(aes(yintercept = acerCumulativeDeliverables[4], linetype = 'Year 4 Outplant Goal', color = 'Year 4 Outplant Goal'), linewidth = 2) +
+  geom_segment(aes(x = as.Date("2023-06-04"), y = 18300,
+                   xend = as.Date("2023-12-31"), yend = 18300),
                linetype = 'solid', color = 'blue', size = 3)+ # remove this with full dataset
-  scale_y_continuous(limits = c(0, 10000), breaks = seq(0, 10000, by = 1000))+
+  scale_y_continuous(limits = c(0, 20000), breaks = seq(0, 20000, by = 1000))+
   ggtitle(expression("Number of "*italic("Acropora cervicornis")*" Fragments Outplanted per Year"))+
   xlab(" ")+
   ylab("Number of fragments outplanted")+
-  scale_color_manual(values = c('blue', 'grey', "green3", 'gold'), name = " ") +
-  scale_linetype_manual(name = " ", values = c('solid', 'dashed', 'dashed', 'dashed'), guide = "none")+
+  scale_color_manual(values = c('blue', 'green3', "gold3", 'purple3', "red3"), name = " ") +
+  scale_linetype_manual(name = " ", values = c('solid', 'dashed', 'dashed', 'dashed', 'dashed'), guide = "none")+
   scale_x_date(date_labels = "%b-%Y", date_breaks = "1 month")+theme()
 
  
@@ -506,6 +513,299 @@ outplantACERtab
 
 
 ```
+
+# Massives Monitoring summary
+
+## Time to do some data wrangling for the Massives dataset. Since we only care about the NOAA right now, we are going to filter the data set to just include those given to the grant *NOAA*. Also including a fixed string called apalDeliverables and apalCumulativeDeliverables that includes what each deliverable is each year and cumulatively by year.Since this includes both ex-situ and in-situ massives we need to comibne those to data sets so we can more easily work with the data. 
+
+
+```{r, apalDataWrangling, include = TRUE}
+
+exMsvsData1 <- exMsvsData %>%
+  mutate(numberOfGenotypes = rowSums(!is.na(select(., `Genotypes Represented`:ncol(.))))) %>%
+  select(1:48, numberOfGenotypes) %>%
+  dplyr::rename(totalNumberOfPlugs = `# plugs`) %>%
+  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>%
+  mutate(cum_sum = cumsum(totalNumberOfPlugs)) %>% 
+  pivot_longer(cols = 9:17,
+               names_to = "species",
+               values_to = "plugsPerSpecies") %>%
+  select(Date,
+         Location,
+         `Site ID`,
+         Deliverable,
+         totalNumberOfPlugs,
+         species,
+         plugsPerSpecies,
+         numberOfGenotypes,
+         `1-month Monitoring?`,
+         `1-month Survival`,
+         `1-month % Dead`,
+         `1-month % Missing`,
+        `1-month % Plot Survival`,
+        `12-month Monitoring?`,
+         `12-month Survival`,
+         `12-month % Dead`,
+         `12-month % Missing`,
+        `12-month % Plot Survival`) %>% 
+  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>%
+  mutate_at(c("Site ID",
+        "Deliverable"), as.factor) %>%
+  mutate_at(c("Date"), as.Date) %>% 
+  droplevels() %>% 
+    mutate(cum_sum = cumsum(totalNumberOfPlugs)) %>% 
+  mutate(Date = as.Date(Date, "%m %d %Y"))  # pivot_longer(cols = 17:25,
+  #              names_to = "speciesSurvival",
+  #              values_to = "1MoSurvivalBySpecies") %>% 
+  #   pivot_longer(cols = 22:30,
+  #              names_to = "12MospeciesSurvival",
+  #              values_to = "12MoSurvivalBySpecies")
+  # 
+inMsvsData1 <- inMsvsData %>% 
+  mutate(numberOfGenotypes = rowSums(!is.na(select(., `Genotypes Represented`:ncol(.))))) %>%
+  select(1:48, numberOfGenotypes) %>% 
+  dplyr::rename(totalNumberOfPlugs = `# plugs`) %>% 
+  pivot_longer(cols = 9:17, 
+               names_to = "species", 
+               values_to = "plugsPerSpecies") %>% 
+  pivot_longer(cols = 17:25,
+               names_to = "speciesSurvival",
+               values_to = "1MoSurvivalBySpecies") %>% 
+    pivot_longer(cols = 22:30,
+               names_to = "12MospeciesSurvival",
+               values_to = "12MoSurvivalBySpecies")
+
+
+
+
+
+3outplantMSVS <- msvsData %>% 
+  select(Year, 
+         Date, 
+         `Site ID`, 
+         Deliverable, 
+         `# plugs`, 
+         `1-month Monitoring?`,
+         `1-month Survival`, 
+         `1-month % Dead`, 
+         `1-month % Missing`,
+         `1-month % Plot Survival`, 
+         `% of Plots with Partial Mortality`,
+         `Avg. % Partial Mortality within Affected Plots`,
+         `12-month Monitoring?`,                           
+         `12-month Survival`,                             
+         `12-month % Dead`,                               
+         `12-month % Missing`,                            
+         `12-month % Plot Survival`) %>% 
+  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
+  mutate_at(c("Year", 
+         "Site ID", 
+        "Deliverable"), as.factor) %>% 
+  droplevels() %>% 
+  mutate(cum_sum = cumsum(`# plugs`)) %>% 
+  mutate(Date = as.Date(Date, "%m %d %Y"))
+
+
+outplantByYearAP <- outplantAPAL %>% 
+  select(Year, 
+         Date, 
+         `Site ID`, 
+         Deliverable, 
+         `# plugs`) %>% 
+  group_by(Deliverable) %>% 
+  mutate(totalOutplanted = sum(`# plugs`))
+
+apalDeliverables <- c(2800, 2800, 1400, 1400)
+
+
+
+
+apalCumulativeDeliverables <- c(2800, 5600, 7000, 8400)
+
+
+# #creating templates for "weighted survival"
+# # 1 month APAL frags
+# outplantAPAL$oneMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`1-month Survival`
+# oneMonthWeightedAverageSurvival<- (sum(outplantAPAL$oneMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
+# # 1 month APAL clusters
+# outplantAPAL$oneMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`1-month % Plot Survival`
+# oneMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$oneMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
+# 
+# # 12 month APAL plugs
+# outplantAPAL$twelveMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`12-month Survival`
+# twelveMonthWeightedAverageSurvival<- (sum(outplantAPAL$twelveMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
+# # 12 month APAL clusters
+# outplantAPAL$twelveMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`12-month % Plot Survival`
+# twelveMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$twelveMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
+
+
+
+
+
+
+
+# #creating templates for "weighted survival"
+# # 1 month ACER frags
+# outplantACER$oneMonthNumberSurvived <- outplantACER$`# frags`* outplantACER$`1-month Survival`
+# oneMonthWeightedAverageSurvival<- (sum(outplantACER$oneMonthNumberSurvived))/(sum(outplantACER$`# frags`))*100
+# # 1 month ACER clusters
+# outplantACER$oneMonthClusterSurvived <- (outplantACER$`# frags`/5)* outplantACER$`1-month % Plot Survival`
+# oneMonthWeightedAverageClusterSurvival<- (sum(outplantACER$oneMonthClusterSurvived))/(sum(outplantACER$`# frags`/5))*100
+# 
+# # 12 month ACER frags
+# outplantACER$twelveMonthNumberSurvived <- outplantACER$`# frags`* outplantACER$`12-month Survival`
+# twelveMonthWeightedAverageSurvival<- (sum(outplantACER$twelveMonthNumberSurvived))/(sum(outplantACER$`# frags`))*100
+# # 12 month ACER clusters
+# outplantACER$twelveMonthClusterSurvived <- (outplantACER$`# frags`/5)* outplantACER$`12-month % Plot Survival`
+# twelveMonthWeightedAverageClusterSurvival<- (sum(outplantACER$twelveMonthClusterSurvived))/(sum(outplantACER$`# frags`/5))*100
+# 
+# 
+# 
+# 
+
+
+
+
+
+```
+
+# Plotting APAL Outplant Numbers
+
+## Plotting outplant numbers for all APAL over the course of the three years.
+
+
+```{r, apalOutplantCumulativePlot, include = TRUE}
+
+outplantAPALplot1<- ggplot(outplantAPAL, aes(x = Date, y = cum_sum))+
+  geom_line(aes(color = "Fragments Outplanted", linetype = 'solid'), linewidth = 3)+
+  geom_hline(aes(yintercept = apalCumulativeDeliverables[1], linetype = 'Year 1 Outplant Goal', color = 'Year 1 Outplant Goal'), linewidth = 3) +
+  geom_hline(aes(yintercept = apalCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal', color = 'Year 2 Outplant Goal'), linewidth = 3)+
+geom_hline(aes(yintercept = apalCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal', color = 'Year 3 Outplant Goal'), linewidth = 3) +
+  geom_hline(aes(yintercept = apalCumulativeDeliverables[4], linetype = 'Year 4 Outplant Goal', color = 'Year 4 Outplant Goal'), linewidth = 3) +
+  geom_segment(aes(x = as.Date("2023-05-20"), y = 7769,
+                   xend = as.Date("2024-03-01"), yend = 7769),
+               linetype = 'solid', color = 'blue', size = 3)+ # remove this with full dataset
+  scale_y_continuous(limits = c(0, 10000), breaks = seq(0, 30000, by = 2000))+
+  ggtitle(expression("Number of "*italic("Acropora palmata")*" Fragments Outplanted per Year"))+
+  xlab(" ")+
+  ylab("Number of fragments outplanted")+
+  scale_color_manual(values = c('blue', 'green3', "gold3", 'purple3', "red3"), name = " ") +
+  scale_linetype_manual(name = " ", values = c('solid', 'dashed', 'dashed', 'dashed', 'dashed'), guide = "none")+
+  scale_x_date(date_labels = "%b-%Y", date_breaks = "1 month")
+
+
+
+
+outplantAPALplot <- outplantAPALplot1 + theme(
+    # Title
+    plot.title = element_text(size = 40, face = "bold"),
+    # X Axis
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    axis.title.x = element_text(size = 20, face = "bold"),
+    # Y Axis
+    axis.title.y = element_text(size = 20, face = "bold"),
+    axis.text.y = element_text(colour = "black", size = 20, face = "bold"),
+    # Axis Lines and Ticks
+    axis.line = element_line(colour = "black"),
+    axis.ticks = element_line(color="black"),
+    # Legend
+    legend.title = element_text(size = 20, face = "bold"),
+    legend.text = element_text(size = 20, face = "bold", colour = "black"),
+    legend.position = "bottom",
+    # Grid and Background
+    panel.grid.major = element_line(size = 0.3, linetype = 'solid', colour = "black"),
+    panel.background = element_rect(fill = 'white'),
+    # Text
+    text = element_text(size=20, color="black"))
+
+
+ggsave("../figures/cumulativeAPALoutplantPlot.png", plot =outplantAPALplot, width = 20, height = 15, units = 'in', dpi = 600)
+
+```
+## APAL Outplant Table
+NOAA Reports like to have all the data in one table, outplanting, 1 month survival and 12 month survival, so creating a table for all data. 
+
+
+```{r, apalOutplantTable, include = TRUE}
+
+# Wrangling for the table
+outplantAPALtab1 <- apalData %>%
+   select(Date, Location, `Site ID`, `# plugs`, Lat, Long, Deliverable,`1-month Monitoring?`, `1-month Survival`, `12-month Survival`) %>%
+   mutate(`1-month Monitoring?` = as.Date(`1-month Monitoring?`, `1-month Survival` = as.numeric(`1-month Survival`, `12-month Survival` = as.numeric(`12-month Survival`)))) %>% 
+   mutate(Date = as.Date(Date)) %>% 
+   filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
+   # select(Date, `Site ID`, `# plugs`, Lat, Long, numberOfGenotypes)
+  mutate(oneMonthNumberSurvived = `# plugs` * `1-month Survival`, twelveMonthNumberSurvived = `# plugs` * `12-month Survival`) %>% 
+  mutate_at(vars(`1-month Survival`, `12-month Survival`), ~ round(. * 100, 2)) 
+
+#creating templates for "weighted survival"
+# 1 month APAL frags
+oneMonthWeightedAverageSurvival<- (sum(outplantAPALtab1$oneMonthNumberSurvived))/(sum(outplantAPALtab1$`# plugs`))*100
+
+# 12 month APAL plugs
+twelveMonthWeightedAverageSurvival<- (sum(na.omit(outplantAPALtab1$twelveMonthNumberSurvived)))/(sum(na.omit(outplantAPALtab1$`# plugs`)))*100
+
+
+# Making the table
+outplantAPALtab <- outplantAPALtab1 %>%
+  select(Date, Location, `Site ID`, `# plugs`, Lat, Long, `1-month Survival`, `12-month Survival`) %>%
+    mutate(`12-month Survival` = ifelse(is.na(`12-month Survival`), "NA", `12-month Survival`))%>% 
+  flextable() %>%
+  set_header_labels(Data.set = "Data set") %>% 
+  flextable::compose(part = "header", j = "Date", value = as_paragraph("Outplant Date")) %>%
+  flextable::compose(part = "header", j = "# plugs", value = as_paragraph("Number of Corals")) %>%
+  flextable::compose(part = "header", j = "Lat", value = as_paragraph("Latitude")) %>% 
+  flextable::compose(part = "header", j = "Long", value = as_paragraph("Longitude")) %>%
+  flextable::compose(part = "header", j = "Location", value = as_paragraph("General Location")) %>%
+  flextable::compose(part = "header", j = "1-month Survival", value = as_paragraph("1-month % Survival")) %>% 
+  flextable::compose(part = "header", j = "12-month Survival", value = as_paragraph("12-month % Survival")) %>% 
+  autofit() %>%
+  flextable::font(fontname = "Times New Roman", part = "all") %>%
+  fontsize(size = 12, part = "all") %>%
+  bold(part = "header") %>%
+  align(align = "center", part = "all") %>% 
+  set_table_properties(width = 1, align = "center", layout = "autofit") %>%  
+  
+    add_footer_row(values = 
+    list(Date = "Totals:",
+         "", 
+         "", 
+         `# plugs` = sum(outplantAPALtab1$`# plugs`), 
+         "", 
+         Long = "Weighted Averages",
+         `1-month Survival`= round (oneMonthWeightedAverageSurvival, 2),
+         `12-month Survival` = round(twelveMonthWeightedAverageSurvival,2)
+         ),
+    colwidths = c(1, 1, 1, 1, 1, 1, 1, 1))
+ 
+   
+# totals <- c("Totals:", "", sum(outplantAPALtab1$`# plugs`), sum(outplantAPALtab1$numberOfGenotypes))
+
+outplantAPALDoc = read_docx()
+outplantAPALDoc = body_add_flextable(outplantAPALDoc, value = outplantAPALtab)
+print(outplantAPALDoc, target = "../tables/outplantAPALtable.docx")
+outplantAPALtab
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
