@@ -325,7 +325,7 @@ vpiMat1 <- vpiMat %>%
  
 vpiDist <- vegdist(vpiMat1, method = 'bray')
 
-distPerm <- adonis2(vpiDist ~ treatment*reef*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+distPerm <- adonis2(vpiDist ~ treatment*year*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
 
 # strata = $Site
 distPerm
