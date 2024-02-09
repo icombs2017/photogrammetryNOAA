@@ -100,14 +100,14 @@ outplantAPAL <- apalData %>%
          `Site ID`, 
          Deliverable, 
          `# plugs`, 
-         `1-month Monitoring?`,
+         `1-month Monitoring`,
          `1-month Survival`, 
          `1-month % Dead`, 
          `1-month % Missing`,
          `1-month % Plot Survival`, 
          `% of Plots with Partial Mortality`,
          `Avg. % Partial Mortality within Affected Plots`,
-         `12-month Monitoring?`,                           
+         `12-month Monitoring`,                           
          `12-month Survival`,                             
          `12-month % Dead`,                               
          `12-month % Missing`,                            
@@ -137,46 +137,6 @@ apalDeliverables <- c(2800, 2800, 1400, 1400)
 
 apalCumulativeDeliverables <- c(2800, 5600, 7000, 8400)
 
-
-# #creating templates for "weighted survival"
-# # 1 month APAL frags
-# outplantAPAL$oneMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`1-month Survival`
-# oneMonthWeightedAverageSurvival<- (sum(outplantAPAL$oneMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
-# # 1 month APAL clusters
-# outplantAPAL$oneMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`1-month % Plot Survival`
-# oneMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$oneMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
-# 
-# # 12 month APAL plugs
-# outplantAPAL$twelveMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`12-month Survival`
-# twelveMonthWeightedAverageSurvival<- (sum(outplantAPAL$twelveMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
-# # 12 month APAL clusters
-# outplantAPAL$twelveMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`12-month % Plot Survival`
-# twelveMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$twelveMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
-
-
-
-
-
-
-
-# #creating templates for "weighted survival"
-# # 1 month ACER frags
-# outplantACER$oneMonthNumberSurvived <- outplantACER$`# frags`* outplantACER$`1-month Survival`
-# oneMonthWeightedAverageSurvival<- (sum(outplantACER$oneMonthNumberSurvived))/(sum(outplantACER$`# frags`))*100
-# # 1 month ACER clusters
-# outplantACER$oneMonthClusterSurvived <- (outplantACER$`# frags`/5)* outplantACER$`1-month % Plot Survival`
-# oneMonthWeightedAverageClusterSurvival<- (sum(outplantACER$oneMonthClusterSurvived))/(sum(outplantACER$`# frags`/5))*100
-# 
-# # 12 month ACER frags
-# outplantACER$twelveMonthNumberSurvived <- outplantACER$`# frags`* outplantACER$`12-month Survival`
-# twelveMonthWeightedAverageSurvival<- (sum(outplantACER$twelveMonthNumberSurvived))/(sum(outplantACER$`# frags`))*100
-# # 12 month ACER clusters
-# outplantACER$twelveMonthClusterSurvived <- (outplantACER$`# frags`/5)* outplantACER$`12-month % Plot Survival`
-# twelveMonthWeightedAverageClusterSurvival<- (sum(outplantACER$twelveMonthClusterSurvived))/(sum(outplantACER$`# frags`/5))*100
-# 
-# 
-# 
-# 
 
 
 
@@ -245,8 +205,8 @@ NOAA Reports like to have all the data in one table, outplanting, 1 month surviv
 
 # Wrangling for the table
 outplantAPALtab1 <- apalData %>%
-   select(Date, Location, `Site ID`, `# plugs`, Lat, Long, Deliverable,`1-month Monitoring?`, `1-month Survival`, `12-month Survival`) %>%
-   mutate(`1-month Monitoring?` = as.Date(`1-month Monitoring?`, `1-month Survival` = as.numeric(`1-month Survival`, `12-month Survival` = as.numeric(`12-month Survival`)))) %>% 
+   select(Date, Location, `Site ID`, `# plugs`, Lat, Long, Deliverable,`1-month Monitoring`, `1-month Survival`, `12-month Survival`) %>%
+   mutate(`1-month Monitoring` = as.Date(`1-month Monitoring`, `1-month Survival` = as.numeric(`1-month Survival`, `12-month Survival` = as.numeric(`12-month Survival`)))) %>% 
    mutate(Date = as.Date(Date)) %>% 
    filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
    # select(Date, `Site ID`, `# plugs`, Lat, Long, numberOfGenotypes)
@@ -519,174 +479,89 @@ outplantACERtab
 ## Time to do some data wrangling for the Massives dataset. Since we only care about the NOAA right now, we are going to filter the data set to just include those given to the grant *NOAA*. Also including a fixed string called apalDeliverables and apalCumulativeDeliverables that includes what each deliverable is each year and cumulatively by year.Since this includes both ex-situ and in-situ massives we need to comibne those to data sets so we can more easily work with the data. 
 
 
-```{r, apalDataWrangling, include = TRUE}
+```{r, msvsDataWrangling, include = TRUE}
 
 exMsvsData1 <- exMsvsData %>%
   mutate(numberOfGenotypes = rowSums(!is.na(select(., `Genotypes Represented`:ncol(.))))) %>%
   select(1:48, numberOfGenotypes) %>%
   dplyr::rename(totalNumberOfPlugs = `# plugs`) %>%
   filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>%
+ 
+  mutate_at(c("Site ID",
+        "Deliverable"), as.factor) %>%
+  mutate_at(c("Date"), as.Date) %>% 
+  droplevels() %>% 
+  mutate(Date = as.Date(Date, "%m %d %Y")) 
+
+inMsvsData1 <- inMsvsData %>% 
+  mutate(numberOfGenotypes = rowSums(!is.na(select(., `Gentoypes Represented at the Site`:ncol(.))))) %>%
+  dplyr::rename(totalNumberOfPlugs = `# frags`) %>%
+  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4"))
+ 
+
+
+outplantMsvs <- bind_rows(
+  mutate(exMsvsData1, source = "exMsvsData1"),
+  mutate(inMsvsData1, source = "inMsvsData1")) %>% 
+    mutate_at(c("Date"), as.Date) %>% 
+  arrange(Date) %>% 
   mutate(cum_sum = cumsum(totalNumberOfPlugs)) %>% 
   pivot_longer(cols = 9:17,
                names_to = "species",
                values_to = "plugsPerSpecies") %>%
   select(Date,
-         Location,
-         `Site ID`,
-         Deliverable,
-         totalNumberOfPlugs,
-         species,
-         plugsPerSpecies,
-         numberOfGenotypes,
-         `1-month Monitoring?`,
-         `1-month Survival`,
-         `1-month % Dead`,
-         `1-month % Missing`,
-        `1-month % Plot Survival`,
-        `12-month Monitoring?`,
-         `12-month Survival`,
-         `12-month % Dead`,
-         `12-month % Missing`,
-        `12-month % Plot Survival`) %>% 
-  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>%
+       Location,
+       `Site ID`,
+       Deliverable,
+       source,
+       totalNumberOfPlugs,
+       species,
+       plugsPerSpecies,
+       cum_sum,
+       numberOfGenotypes,
+       `1-month Monitoring`,
+       `1-month Survival`,
+       `1-month % Dead`,
+       `1-month % Missing`,
+      `1-month % Plot Survival`,
+      `12-month Monitoring`,
+       `12-month Survival`,
+       `12-month % Dead`,
+       `12-month % Missing`,
+        `12-month % Plot Survival`) %>%
   mutate_at(c("Site ID",
-        "Deliverable"), as.factor) %>%
-  mutate_at(c("Date"), as.Date) %>% 
-  droplevels() %>% 
-    mutate(cum_sum = cumsum(totalNumberOfPlugs)) %>% 
-  mutate(Date = as.Date(Date, "%m %d %Y"))  # pivot_longer(cols = 17:25,
-  #              names_to = "speciesSurvival",
-  #              values_to = "1MoSurvivalBySpecies") %>% 
-  #   pivot_longer(cols = 22:30,
-  #              names_to = "12MospeciesSurvival",
-  #              values_to = "12MoSurvivalBySpecies")
-  # 
-inMsvsData1 <- inMsvsData %>% 
-  mutate(numberOfGenotypes = rowSums(!is.na(select(., `Genotypes Represented`:ncol(.))))) %>%
-  select(1:48, numberOfGenotypes) %>% 
-  dplyr::rename(totalNumberOfPlugs = `# plugs`) %>% 
-  pivot_longer(cols = 9:17, 
-               names_to = "species", 
-               values_to = "plugsPerSpecies") %>% 
-  pivot_longer(cols = 17:25,
-               names_to = "speciesSurvival",
-               values_to = "1MoSurvivalBySpecies") %>% 
-    pivot_longer(cols = 22:30,
-               names_to = "12MospeciesSurvival",
-               values_to = "12MoSurvivalBySpecies")
+              "Deliverable", 
+              "source",
+              "species"), as.factor)
+
+msvsDeliverables <- c(1200, 1200, 600, 600)
 
 
 
 
-
-3outplantMSVS <- msvsData %>% 
-  select(Year, 
-         Date, 
-         `Site ID`, 
-         Deliverable, 
-         `# plugs`, 
-         `1-month Monitoring?`,
-         `1-month Survival`, 
-         `1-month % Dead`, 
-         `1-month % Missing`,
-         `1-month % Plot Survival`, 
-         `% of Plots with Partial Mortality`,
-         `Avg. % Partial Mortality within Affected Plots`,
-         `12-month Monitoring?`,                           
-         `12-month Survival`,                             
-         `12-month % Dead`,                               
-         `12-month % Missing`,                            
-         `12-month % Plot Survival`) %>% 
-  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
-  mutate_at(c("Year", 
-         "Site ID", 
-        "Deliverable"), as.factor) %>% 
-  droplevels() %>% 
-  mutate(cum_sum = cumsum(`# plugs`)) %>% 
-  mutate(Date = as.Date(Date, "%m %d %Y"))
-
-
-outplantByYearAP <- outplantAPAL %>% 
-  select(Year, 
-         Date, 
-         `Site ID`, 
-         Deliverable, 
-         `# plugs`) %>% 
-  group_by(Deliverable) %>% 
-  mutate(totalOutplanted = sum(`# plugs`))
-
-apalDeliverables <- c(2800, 2800, 1400, 1400)
-
-
-
-
-apalCumulativeDeliverables <- c(2800, 5600, 7000, 8400)
-
-
-# #creating templates for "weighted survival"
-# # 1 month APAL frags
-# outplantAPAL$oneMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`1-month Survival`
-# oneMonthWeightedAverageSurvival<- (sum(outplantAPAL$oneMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
-# # 1 month APAL clusters
-# outplantAPAL$oneMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`1-month % Plot Survival`
-# oneMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$oneMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
-# 
-# # 12 month APAL plugs
-# outplantAPAL$twelveMonthNumberSurvived <- outplantAPAL$`# plugs`* outplantAPAL$`12-month Survival`
-# twelveMonthWeightedAverageSurvival<- (sum(outplantAPAL$twelveMonthNumberSurvived))/(sum(outplantAPAL$`# plugs`))*100
-# # 12 month APAL clusters
-# outplantAPAL$twelveMonthClusterSurvived <- (outplantAPAL$`# plugs`/5)* outplantAPAL$`12-month % Plot Survival`
-# twelveMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$twelveMonthClusterSurvived))/(sum(outplantAPAL$`# plugs`/5))*100
-
-
-
-
-
-
-
-# #creating templates for "weighted survival"
-# # 1 month ACER frags
-# outplantACER$oneMonthNumberSurvived <- outplantACER$`# frags`* outplantACER$`1-month Survival`
-# oneMonthWeightedAverageSurvival<- (sum(outplantACER$oneMonthNumberSurvived))/(sum(outplantACER$`# frags`))*100
-# # 1 month ACER clusters
-# outplantACER$oneMonthClusterSurvived <- (outplantACER$`# frags`/5)* outplantACER$`1-month % Plot Survival`
-# oneMonthWeightedAverageClusterSurvival<- (sum(outplantACER$oneMonthClusterSurvived))/(sum(outplantACER$`# frags`/5))*100
-# 
-# # 12 month ACER frags
-# outplantACER$twelveMonthNumberSurvived <- outplantACER$`# frags`* outplantACER$`12-month Survival`
-# twelveMonthWeightedAverageSurvival<- (sum(outplantACER$twelveMonthNumberSurvived))/(sum(outplantACER$`# frags`))*100
-# # 12 month ACER clusters
-# outplantACER$twelveMonthClusterSurvived <- (outplantACER$`# frags`/5)* outplantACER$`12-month % Plot Survival`
-# twelveMonthWeightedAverageClusterSurvival<- (sum(outplantACER$twelveMonthClusterSurvived))/(sum(outplantACER$`# frags`/5))*100
-# 
-# 
-# 
-# 
-
-
-
+msvsCumulativeDeliverables <- c(1200, 2400, 3000, 3600)
 
 
 ```
 
-# Plotting APAL Outplant Numbers
+# Plotting Msvs Outplant Numbers
 
-## Plotting outplant numbers for all APAL over the course of the three years.
+## Plotting outplant numbers for all Massives over the course of the three years.
 
 
-```{r, apalOutplantCumulativePlot, include = TRUE}
+```{r, msvsOutplantCumulativePlot, include = TRUE}
 
-outplantAPALplot1<- ggplot(outplantAPAL, aes(x = Date, y = cum_sum))+
+outplantMSVSplot1<- ggplot(outplantMsvs, aes(x = Date, y = cum_sum))+
   geom_line(aes(color = "Fragments Outplanted", linetype = 'solid'), linewidth = 3)+
-  geom_hline(aes(yintercept = apalCumulativeDeliverables[1], linetype = 'Year 1 Outplant Goal', color = 'Year 1 Outplant Goal'), linewidth = 3) +
-  geom_hline(aes(yintercept = apalCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal', color = 'Year 2 Outplant Goal'), linewidth = 3)+
-geom_hline(aes(yintercept = apalCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal', color = 'Year 3 Outplant Goal'), linewidth = 3) +
-  geom_hline(aes(yintercept = apalCumulativeDeliverables[4], linetype = 'Year 4 Outplant Goal', color = 'Year 4 Outplant Goal'), linewidth = 3) +
-  geom_segment(aes(x = as.Date("2023-05-20"), y = 7769,
-                   xend = as.Date("2024-03-01"), yend = 7769),
+  geom_hline(aes(yintercept = msvsCumulativeDeliverables[1], linetype = 'Year 1 Outplant Goal', color = 'Year 1 Outplant Goal'), linewidth = 3) +
+  geom_hline(aes(yintercept = msvsCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal', color = 'Year 2 Outplant Goal'), linewidth = 3)+
+geom_hline(aes(yintercept = msvsCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal', color = 'Year 3 Outplant Goal'), linewidth = 3) +
+  geom_hline(aes(yintercept = msvsCumulativeDeliverables[4], linetype = 'Year 4 Outplant Goal', color = 'Year 4 Outplant Goal'), linewidth = 3) +
+  geom_segment(aes(x = as.Date("2023-06-18"), y = 3518,
+                   xend = as.Date("2023-12-31"), yend = 3518),
                linetype = 'solid', color = 'blue', size = 3)+ # remove this with full dataset
-  scale_y_continuous(limits = c(0, 10000), breaks = seq(0, 30000, by = 2000))+
-  ggtitle(expression("Number of "*italic("Acropora palmata")*" Fragments Outplanted per Year"))+
+  scale_y_continuous(limits = c(0, 5000), breaks = seq(0, 5000, by = 500))+
+  ggtitle(expression("Number of Massive Coral Fragments Outplanted per Year"))+
   xlab(" ")+
   ylab("Number of fragments outplanted")+
   scale_color_manual(values = c('blue', 'green3', "gold3", 'purple3', "red3"), name = " ") +
@@ -696,7 +571,7 @@ geom_hline(aes(yintercept = apalCumulativeDeliverables[3], linetype = 'Year 3 Ou
 
 
 
-outplantAPALplot <- outplantAPALplot1 + theme(
+outplantMSVSplot <- outplantMSVSplot1 + theme(
     # Title
     plot.title = element_text(size = 40, face = "bold"),
     # X Axis
@@ -719,43 +594,44 @@ outplantAPALplot <- outplantAPALplot1 + theme(
     text = element_text(size=20, color="black"))
 
 
-ggsave("../figures/cumulativeAPALoutplantPlot.png", plot =outplantAPALplot, width = 20, height = 15, units = 'in', dpi = 600)
+ggsave("../figures/cumulativeMSVSoutplantPlot.png", plot =outplantMSVSplot, width = 20, height = 15, units = 'in', dpi = 600)
 
 ```
-## APAL Outplant Table
+## MSVS Outplant Table
 NOAA Reports like to have all the data in one table, outplanting, 1 month survival and 12 month survival, so creating a table for all data. 
 
 
-```{r, apalOutplantTable, include = TRUE}
+```{r, msvsOutplantTable, include = TRUE}
 
 # Wrangling for the table
-outplantAPALtab1 <- apalData %>%
-   select(Date, Location, `Site ID`, `# plugs`, Lat, Long, Deliverable,`1-month Monitoring?`, `1-month Survival`, `12-month Survival`) %>%
-   mutate(`1-month Monitoring?` = as.Date(`1-month Monitoring?`, `1-month Survival` = as.numeric(`1-month Survival`, `12-month Survival` = as.numeric(`12-month Survival`)))) %>% 
+outplantMSVStab1 <- outplantMsvs %>%
+   select(Date, Location, `Site ID`, totalNumberOfPlugs, Deliverable,`1-month Monitoring`, `1-month Survival`, `12-month Survival`) %>%
+   mutate(`1-month Monitoring` = as.Date(`1-month Monitoring`, `1-month Survival` = as.numeric(`1-month Survival`, `12-month Survival` = as.numeric(`12-month Survival`)))) %>% 
    mutate(Date = as.Date(Date)) %>% 
    filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
-   # select(Date, `Site ID`, `# plugs`, Lat, Long, numberOfGenotypes)
-  mutate(oneMonthNumberSurvived = `# plugs` * `1-month Survival`, twelveMonthNumberSurvived = `# plugs` * `12-month Survival`) %>% 
+   # select(Date, `Site ID`, totalNumberOfPlugs, Lat, Long, numberOfGenotypes)
+  mutate(oneMonthNumberSurvived = totalNumberOfPlugs * `1-month Survival`, twelveMonthNumberSurvived = totalNumberOfPlugs * `12-month Survival`) %>% 
   mutate_at(vars(`1-month Survival`, `12-month Survival`), ~ round(. * 100, 2)) 
 
 #creating templates for "weighted survival"
-# 1 month APAL frags
-oneMonthWeightedAverageSurvival<- (sum(outplantAPALtab1$oneMonthNumberSurvived))/(sum(outplantAPALtab1$`# plugs`))*100
+# 1 month MSVS frags
+oneMonthWeightedAverageSurvival<- (sum(outplantMSVStab1$oneMonthNumberSurvived))/(sum(outplantMSVStab1$totalNumberOfPlugs))*100
 
-# 12 month APAL plugs
-twelveMonthWeightedAverageSurvival<- (sum(na.omit(outplantAPALtab1$twelveMonthNumberSurvived)))/(sum(na.omit(outplantAPALtab1$`# plugs`)))*100
+# 12 month MSVS plugs
+twelveMonthWeightedAverageSurvival<- (sum(na.omit(outplantMSVStab1$twelveMonthNumberSurvived)))/(sum(na.omit(outplantMSVStab1$totalNumberOfPlugs)))*100
 
 
 # Making the table
-outplantAPALtab <- outplantAPALtab1 %>%
-  select(Date, Location, `Site ID`, `# plugs`, Lat, Long, `1-month Survival`, `12-month Survival`) %>%
+outplantMSVStab <- outplantMSVStab1 %>%
+  distinct() %>% 
+  select(Date, Location, `Site ID`, totalNumberOfPlugs, `1-month Survival`, `12-month Survival`) %>%
     mutate(`12-month Survival` = ifelse(is.na(`12-month Survival`), "NA", `12-month Survival`))%>% 
   flextable() %>%
   set_header_labels(Data.set = "Data set") %>% 
   flextable::compose(part = "header", j = "Date", value = as_paragraph("Outplant Date")) %>%
-  flextable::compose(part = "header", j = "# plugs", value = as_paragraph("Number of Corals")) %>%
-  flextable::compose(part = "header", j = "Lat", value = as_paragraph("Latitude")) %>% 
-  flextable::compose(part = "header", j = "Long", value = as_paragraph("Longitude")) %>%
+  flextable::compose(part = "header", j = "totalNumberOfPlugs", value = as_paragraph("Number of Corals")) %>%
+  # flextable::compose(part = "header", j = "Lat", value = as_paragraph("Latitude")) %>% 
+  # flextable::compose(part = "header", j = "Long", value = as_paragraph("Longitude")) %>%
   flextable::compose(part = "header", j = "Location", value = as_paragraph("General Location")) %>%
   flextable::compose(part = "header", j = "1-month Survival", value = as_paragraph("1-month % Survival")) %>% 
   flextable::compose(part = "header", j = "12-month Survival", value = as_paragraph("12-month % Survival")) %>% 
@@ -767,24 +643,22 @@ outplantAPALtab <- outplantAPALtab1 %>%
   set_table_properties(width = 1, align = "center", layout = "autofit") %>%  
   
     add_footer_row(values = 
-    list(Date = "Totals:",
+    list(Date = "Totals and Weighted Averages:",
          "", 
          "", 
-         `# plugs` = sum(outplantAPALtab1$`# plugs`), 
-         "", 
-         Long = "Weighted Averages",
+         totalNumberOfPlugs = sum(outplantMSVStab1$totalNumberOfPlugs), 
          `1-month Survival`= round (oneMonthWeightedAverageSurvival, 2),
          `12-month Survival` = round(twelveMonthWeightedAverageSurvival,2)
          ),
-    colwidths = c(1, 1, 1, 1, 1, 1, 1, 1))
+    colwidths = c(1, 1, 1, 1, 1, 1))
  
    
-# totals <- c("Totals:", "", sum(outplantAPALtab1$`# plugs`), sum(outplantAPALtab1$numberOfGenotypes))
+# totals <- c("Totals:", "", sum(outplantMSVStab1$totalNumberOfPlugs), sum(outplantMSVStab1$numberOfGenotypes))
 
-outplantAPALDoc = read_docx()
-outplantAPALDoc = body_add_flextable(outplantAPALDoc, value = outplantAPALtab)
-print(outplantAPALDoc, target = "../tables/outplantAPALtable.docx")
-outplantAPALtab
+outplantMSVSDoc = read_docx()
+outplantMSVSDoc = body_add_flextable(outplantMSVSDoc, value = outplantMSVStab)
+print(outplantMSVSDoc, target = "../tables/outplantMSVStable.docx")
+outplantMSVStab
 
 
 
@@ -895,10 +769,10 @@ oneMonthWeightedAverageClusterSurvival<- (sum(outplantAPAL$oneMonthClusterSurviv
 
 # Wrangling for the table
 oneMonthAPALtab1 <- outplantAPAL %>%
-  select(`Site ID`, `1-month Monitoring?`, `# plugs`, `1-month Survival`, `1-month % Dead`, `1-month % Missing`, `1-month % Plot Survival`, Deliverable) %>%
-  mutate(`1-month Monitoring?` = as.Date(`1-month Monitoring?`, `1-month % Plot Survival` = as.numeric(`1-month % Plot Survival`))) %>% 
+  select(`Site ID`, `1-month Monitoring`, `# plugs`, `1-month Survival`, `1-month % Dead`, `1-month % Missing`, `1-month % Plot Survival`, Deliverable) %>%
+  mutate(`1-month Monitoring` = as.Date(`1-month Monitoring`, `1-month % Plot Survival` = as.numeric(`1-month % Plot Survival`))) %>% 
   filter(Deliverable %in% c("NFWF-EDR Yr3", "NFWF-EDR", "NFWF-EDR Yr2")) %>% 
-  select(`Site ID`, `1-month Monitoring?`, `# plugs`, `1-month Survival`, `1-month % Dead`, `1-month % Missing`, `1-month % Plot Survival`) %>% 
+  select(`Site ID`, `1-month Monitoring`, `# plugs`, `1-month Survival`, `1-month % Dead`, `1-month % Missing`, `1-month % Plot Survival`) %>% 
   mutate_at(vars(`1-month Survival`, `1-month % Dead`, `1-month % Missing`, `1-month % Plot Survival`), ~ round(. * 100, 2))
 
 
@@ -908,7 +782,7 @@ oneMonthAPALtab1 <- outplantAPAL %>%
 oneMonthAPALtab <- oneMonthAPALtab1 %>% 
   flextable() %>%
   set_header_labels(Data.set = "Data set") %>% 
-  flextable::compose(part = "header", j = "1-month Monitoring?", value = as_paragraph("1-Month Monitoring Date")) %>%
+  flextable::compose(part = "header", j = "1-month Monitoring", value = as_paragraph("1-Month Monitoring Date")) %>%
   flextable::compose(part = "header", j = "# plugs", value = as_paragraph("Number of Corals Outplanted")) %>%
   flextable::compose(part = "header", j = "1-month Survival", value = as_paragraph("1-month Survival")) %>% 
   flextable::compose(part = "header", j = "1-month % Dead", value = as_paragraph("1-Month % Dead")) %>% 
@@ -1013,11 +887,11 @@ ggsave("../figures/12MonthSurvivalPlotAPAL.png", plot =apal12MoSurvivalPlot, wid
 
 # Wrangling for the table
 twelveMonthAPALtab1 <- outplantAPAL %>%
-  select(`Site ID`, `12-month Monitoring?`, `# plugs`, `12-month Survival`, `12-month % Dead`, `12-month % Missing`, `12-month % Plot Survival`, Deliverable) %>%
-  mutate(`12-month Monitoring?` = as.Date(`12-month Monitoring?`, `12-month % Plot Survival` = as.numeric(`12-month % Plot Survival`))) %>% 
+  select(`Site ID`, `12-month Monitoring`, `# plugs`, `12-month Survival`, `12-month % Dead`, `12-month % Missing`, `12-month % Plot Survival`, Deliverable) %>%
+  mutate(`12-month Monitoring` = as.Date(`12-month Monitoring`, `12-month % Plot Survival` = as.numeric(`12-month % Plot Survival`))) %>% 
     filter(!`Site ID` %in% c("T_AP_21","T_AP_22", "T_AP_23", "T_AP_24", "T_AP_25", "T_AP_26")) %>%
   filter(Deliverable %in% c("NFWF-EDR Yr3", "NFWF-EDR", "NFWF-EDR Yr2")) %>% 
-  select(`Site ID`, `12-month Monitoring?`, `# plugs`, `12-month Survival`, `12-month % Dead`, `12-month % Missing`, `12-month % Plot Survival`) %>% 
+  select(`Site ID`, `12-month Monitoring`, `# plugs`, `12-month Survival`, `12-month % Dead`, `12-month % Missing`, `12-month % Plot Survival`) %>% 
    mutate(twelveMonthNumberSurvived = `# plugs` * `12-month Survival`,
          twelveMonthClusterSurvived = (`# plugs`/4) * `12-month % Plot Survival`) %>% # these are for the weighted frag and cluster surivval below
   mutate_at(vars(`12-month Survival`, `12-month % Dead`, `12-month % Missing`, `12-month % Plot Survival`), ~ round(. * 100, 2)) %>% 
@@ -1032,10 +906,10 @@ twelveMonthWeightedAverageClusterSurvival<- (sum(twelveMonthAPALtab1$twelveMonth
 
 # Making the table
 twelveMonthAPALtab <- twelveMonthAPALtab1 %>%
-  select(`Site ID`, `12-month Monitoring?`,`# plugs`,`12-month Survival`,`12-month % Dead`, `12-month % Missing`,`12-month % Plot Survival`) %>% 
+  select(`Site ID`, `12-month Monitoring`,`# plugs`,`12-month Survival`,`12-month % Dead`, `12-month % Missing`,`12-month % Plot Survival`) %>% 
   flextable() %>%
   set_header_labels(Data.set = "Data set") %>% 
-  flextable::compose(part = "header", j = "12-month Monitoring?", value = as_paragraph("12-Month Monitoring Date")) %>%
+  flextable::compose(part = "header", j = "12-month Monitoring", value = as_paragraph("12-Month Monitoring Date")) %>%
   flextable::compose(part = "header", j = "# plugs", value = as_paragraph("Number of Corals Outplanted")) %>%
   flextable::compose(part = "header", j = "12-month Survival", value = as_paragraph("12-month Survival")) %>% 
   flextable::compose(part = "header", j = "12-month % Dead", value = as_paragraph("12-Month % Dead")) %>% 
