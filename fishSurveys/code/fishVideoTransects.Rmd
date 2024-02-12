@@ -56,19 +56,12 @@ Data generated from reviewing these videos and stills are stored in an excel spr
 fish1 <- readxl::read_xlsx("../data/fishSurveyData.xlsx", sheet = 1, col_names = TRUE, na = c("", "N/A", "NA", "NA NA", "UNK","UNK UNK", "N/A N/A","NA  NA"))
 
 #turning a bunch of the columns into factors, and renaming reviewer1FullSCiName to species
-fish1$date <- as.Date.factor(fish1$date)
-fish1$site <- as.factor(fish1$site)
-fish1$transect <- as.factor(fish1$transect)
-fish1$frame <- as.factor(fish1$frame)
-fish1$reviewer1SpeciesCm <- as.factor(fish1$reviewer1SpeciesCm)
-fish1$reviewer1SpeciesGn <- as.factor(fish1$reviewer1SpeciesGn)
-fish1$reviewer1SpeciesSc <- as.factor(fish1$reviewer1SpeciesSc)
-fish1$species <- as.factor(fish1$reviewer1FullSciName)
-fish1$phase <- as.factor(fish1$phase)
+fish1 <- fish1 %>%
+  mutate(across(c(site, transect, frame, reviewer1SpeciesCm, 
+                   reviewer1SpeciesGn, reviewer1SpeciesSc, reviewer1FullSciName,
+                   phase), as.factor), 
+         date = as.Date(date))
 
-#selecting for species and renaming one of the columns to make it easier to work with 
-# fish1 <- fish1 %>% 
-#   dplyr::filter(date < "2021-12-21") 
 
 # selecting only the columns we want to work with and calculating abundance as a proportion. If you want a percentage just multiply by 100 but that makes certain tests and transformations difficult. 
 
@@ -110,10 +103,7 @@ fish <- fish %>%
   mutate_at(c("treatment", "reef", "year", "timePoint"), as.factor)
 
 fishBase <- fish %>%
-  select(date, site, reef, treatment, year, timePoint, species, count, n, avgCount, totalObservations, abundance) %>% 
-  filter(timePoint == "T0") %>% 
-  # na.omit(species) %>% 
-  droplevels()
+  select(date, site, reef, treatment, year, timePoint, species, count, n, avgCount, totalObservations, abundance) 
 
 
 
@@ -128,102 +118,12 @@ Here we are exploring the distribution of the data, if the data is not normally 
 hist(fish$abundance)
 shapiro.test(fish$abundance)
 
-# hist(fish$count)
-# shapiro.test(fish$count)
 
-# Trying an arcsine transformation on the proportional abundance data
 
 hist(asin(sqrt(fish$abundance)))
 shapiro.test(asin(sqrt(fish$abundance)))
 
-# Trying a square root transformation on the count data
 
-# hist(sqrt(fish$count+1/2))
-# shapiro.test(sqrt(fish$count+1/2))
-
-# Trying a square transformation on the count data
-
-# hist((fish$count)^2)
-# shapiro.test((fish$count)^2)
-
-# Trying a square transformation on the count data
-
-# hist(exp(fish$count))
-# shapiro.test(exp(fish$count))
-
-# Trying a reciprocal transformation on the count data
-# 
-# hist(1/(fish$count))
-# shapiro.test(1/(fish$count))
-
-
-```
-# Split Data
-***
-Here we are going to split the data between Y1 and Y2 sites. 
-
-```{r, splitData, include = TRUE}
-# fishY1 <- fish %>% 
-#   dplyr::select(date, timePoint, year, reef, site, species, abundance) %>% 
-#   dplyr::filter(site %in% c("IC-C1", "IC-C2", "IC-U1", "IC-U2", "IC-Z1", "IC-Z2"))
-# fishY1 <- na.omit(fishY1)
-# 
-# # fishY1$treatment <- if_else(fishY1$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
-# # year1 <- "Y1"
-# # fishY1$year <- year1
-# # 
-# # 
-# # fishY1$timePoint= if_else(fishY1$date <= ("2020-10-15"), "T0",
-# #                        if_else(fishY1$date > ("2020-10-15") & fishY1$date <= ("2021-06-15"), "T6",
-# #                        if_else(fishY1$date > ("2021-06-15") & fishY1$date <= ("2022-01-28"), "T12", "T18")))
-# # fishY1$treatment <- as.factor(fishY1$treatment)
-# # fishY1$year <- as.factor(fishY1$year)
-# # fishY1$timePoint <- as.factor(fishY1$timePoint)
-# # levels(fishY1$timePoint)
-# # fishY1$timePoint = factor(fishY1$timePoint, levels(fishY1$timePoint)[c(1, 4, 2, 3)])
-# # levels(fishY1$timePoint)
-# 
-# 
-# #Doing the same for Y2 Note: the controls are the same throughout 
-# 
-# fishY2 <- fish %>% 
-#   dplyr::select(date, timePoint, year, reef, site, species, abundance) %>% 
-#   dplyr::filter(site %in% c("IC-C2", "IC-U1", "IC-Z1", "IC-C3", "IC-Z3", "IC-U3")) %>% 
-#   dplyr::filter(date > "2020-10-15")
-# fishY2 <- na.omit(fishY2)
-# 
-# # fishY2$treatment <- if_else(fishY2$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
-# # year2 <- "Y2"
-# # fishY2$year <- year2
-# # 
-# # fishY2$timePoint= if_else(fishY2$date <= ("2021-06-15"), "T0",
-# #                        if_else(fishY2$date > ("2021-06-15") & fishY2$date <= ("2022-01-28"), "T6", "T12"))
-# # 
-# # fishY2$treatment <- as.factor(fishY2$treatment)
-# # fishY2$year <- as.factor(fishY2$year)
-# # fishY2$timePoint <- as.factor(fishY2$timePoint)
-# # levels(fishY2$timePoint)
-# # fishY2$timePoint = factor(fishY2$timePoint, levels(fishY2$timePoint)[c(1, 3, 2)])
-# # 
-# 
-# 
-# 
-# fishTotal <- bind_rows(fishY1, fishY2)
-# fishTotal <- na.omit(fishTotal)
-# # fishTotal1 <- fishTotal %>% 
-# #   select(date, timePoint, year, reef, site, species, count) %>% 
-# #   group_by(date, timePoint, year, site) %>% 
-# #   add_count() %>% 
-# #   ungroup() %>% 
-# #   group_by(date, timePoint, year, site, species) %>% 
-# #   summarise(count = sum(count), n = max(sum(count)), abundance = ((count/n)))
-# 
-#   
-# # group_by(date, site) %>% 
-# #   add_count() %>% 
-# #   ungroup() %>% 
-# #   group_by(date, site, species) %>% 
-# #   summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
 
 
 ```
@@ -271,7 +171,7 @@ dist_matrix <- dist_tbl %>%
 
 
 ```
-
+running a PCOA 
 
 ```{r, PCoA, include = TRUE}
 
@@ -312,22 +212,7 @@ pcoaPlot <- ggplot() +
 pcoaPlot <- ggplot(pcoaTbl, aes(x = pcoa1, y = pcoa2, color = treatment, fill = treatment)) +
   stat_ellipse(geom = 'polygon', alpha = 0.2, level = 0.75, show.legend = FALSE) +
   geom_point(aes(x = pcoa1, y = pcoa2, shape = timePoint), alpha = 1, size = 3) +
-  # geom_point(data = treatmentCentroid, mapping = aes(x = axis1, y = axis2, color = treatment), shape = 15, size = 5) +
   labs(x = labs[1], y = labs[2])
-
-
-
-
-
-
-
-
-tibble(pe = cumsum(percentExplained),
-       axis = 1:length(percentExplained)) %>%
-  ggplot(aes(x = axis, y = pe))+
-  geom_line()+
-  coord_cartesian(xlim = c(1,10))
-
 
 
 
