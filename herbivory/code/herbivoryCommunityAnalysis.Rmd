@@ -52,23 +52,98 @@ Data generated from reviewing these videos are stored in an excel spreadsheet fo
 
 ```{r, load and subset, include = TRUE, results = "hide"}
 herb1 <-read_excel("../data/herbivoryVideoDataSheet.xlsx", sheet = 1)
-herb1$date <- as.Date.factor(herb1$date)
-herb1$site <- as.factor(herb1$site)
-herb1$assay <- as.factor(herb1$assay)
-herb1$reviewer1SpeciesCm <- as.factor(herb1$reviewer1SpeciesCm)
-herb1$reviewer1SpeciesGn <- as.factor(herb1$reviewer1SpeciesGn)
-herb1$reviewer1SpeciesSc <- as.factor(herb1$reviewer1SpeciesSc)
-herb1$reviewer1FullSciName <- as.factor(herb1$reviewer1FullSciName)
-herb1$species <- herb1$reviewer1FullSciName
+herb1 <- herb1 %>% mutate(
+    date = as.Date(date),
+    site = as.factor(site),
+    assay = as.factor(assay),
+    reviewer1SpeciesCm = as.factor(reviewer1SpeciesCm),
+    reviewer1SpeciesGn = as.factor(reviewer1SpeciesGn),
+    reviewer1SpeciesSc = as.factor(reviewer1SpeciesSc),
+    reviewer1FullSciName = as.factor(reviewer1FullSciName)) %>% 
+    dplyr::rename("species" = "reviewer1FullSciName")
 
 
 
-herb <- herb1 %>% select(date, site, species, reviewer1Count, reviewer1Blade) %>%
-group_by(date, site) %>% 
-  add_count() %>% 
-  ungroup() %>% 
-  group_by(date, site, species) %>% 
-  summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+# herb <- herb1 %>% select(date, site, species, reviewer1Count, reviewer1Blade) %>%
+# group_by(date, site) %>% 
+#   add_count() %>% 
+#   ungroup() %>% 
+#   group_by(date, site, species) %>% 
+#   summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
+
+# 
+# herb1 <- herb1 %>%
+#   mutate(across(c(site, transect, frame, reviewer1SpeciesCm, 
+#                    reviewer1SpeciesGn, reviewer1SpeciesSc, reviewer1FullSciName,
+#                    phase), as.factor), 
+#          date = as.Date(date)) %>% 
+#   dplyr::rename("species" = "reviewer1FullSciName")
+
+
+
+# Creating date strings for the two separate years (Y1 and Y2)
+Y1Dates <- herb1 %>%
+  filter(site %in% c("IC-C1", "IC-Z2", "IC-U2")) %>%
+  pull(date) %>%
+  unique()
+
+
+Y2Dates <- herb1 %>%
+  filter(site %in% c("IC-C3", "IC-Z3", "IC-U3")) %>%
+  pull(date) %>%
+  unique()
+
+
+# separating columns by Y1 and Y2 to add some additional column names, and then merging them again. 
+
+fishY1 <- fish1 %>% 
+  filter(date == Y1Dates) %>%
+  mutate(treatment = if_else(site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted")) %>% 
+  mutate(reef = if_else(site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
+                   if_else(site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))) %>% 
+  mutate(year = "Y1") %>% 
+  mutate(timePoint =if_else(date < "2021-01-19", "T0", "T12")) %>% 
+  droplevels() %>% 
+  mutate_at(vars(treatment, reef, year, timePoint), as.factor)
+
+
+fishY2 <- fish1 %>% 
+  filter(date == Y2Dates) %>% 
+  mutate(treatment = if_else(site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted")) %>% 
+  mutate(reef = if_else(site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
+                   if_else(site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))) %>% 
+  mutate(year = "Y2") %>% 
+  mutate(timePoint =if_else(date < "2021-07-24", "T0", "T12")) %>% 
+  droplevels() %>% 
+  mutate_at(vars(treatment, reef, year, timePoint), as.factor)
+
+fishCombo <- bind_rows(fishY1, fishY2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ```
