@@ -112,22 +112,22 @@ fishCombo <- bind_rows(fishY1, fishY2)
 
 # selecting only the columns we want to work with and calculating abundance as a proportion. If you want a percentage just multiply by 100 but that makes certain tests and transformations difficult. 
 
-fish2 <- fishCombo %>% select(date, site, treatment, reef, year, timePoint, transect, frame, species, count) %>%
-  group_by(date, site, treatment, reef, year, timepoint, species) %>% 
+fish2 <- fishCombo %>% select(date, site, treatment, reef, year, timePoint, species, count) %>%
+  group_by(date, site, treatment, reef, year, timePoint, species) %>% 
   mutate(count = ifelse(is.na(count), 0, count)) %>% 
   add_count() %>% 
   rename(tally = 'count') %>% 
-  mutate(count = sum(tally), n = max(n), avgCount = ((count/n)))
+  summarise(count = sum(tally), n = max(n), avgCount = ((count/n)))
 
 
 fish3 <- fish2 %>% 
-  group_by(date, site, species) %>% 
+  group_by(date, site, treatment, reef, year, timePoint, species) %>% 
   select(-c(tally, n, count)) %>% 
   add_count() %>% 
   summarise(count = sum(avgCount), n = max(n), avgCount = ((count/n))) 
 
 fish <- fish3 %>%
-  group_by(date, site, species) %>% 
+  group_by(date, site, treatment, reef, year, timePoint, species) %>% 
   group_by(date, site) %>% 
   mutate(totalObservations = sum(avgCount, na.rm = TRUE)) %>%
   group_by(date, site, species) %>% 
