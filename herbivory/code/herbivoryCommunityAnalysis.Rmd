@@ -22,7 +22,7 @@ library(magrittr)
 ### version: `r Sys.Date() %>% format(format="%B %d, %Y")`
 ###
 ***
-This is the analysis pipeline to analyze the community composition of herbivores predating upon the herbivory assays. Six experimental 10m x 10m plots were established in Year 1 and 3 additional experimental plots were estabished in Y2. Two herbivory assays were deployed at each site. Each assay consisted for 5 blades of **Thalassia testudinum** set in clothespins threaded onto galvanized wire at 6in. intervals. The assays were deployed for 2 hours and filmed using a GoPro camera. The videos were analyzed to determine which species of herbivorous fish were predating upon the herbivory assays. Only fish that actually ate seagrass were noted, the blades that were predated upon were noted to the best of the reviewers ability, and, if applicable, the phase of the herbivore was noted (terminal, initial, etc).
+This is the analysis pipeline to analyze the community composition of herbivores predating upon the herbivory assays. Six experimental 10m x 10m plots were established in Year 1 and 3 additional experimental plots were estabished in Y2. Two herbivory assays were deployed at each site. Each assay consisted for 5 blades of **Thalassia testudinum** set in clothespins threaded onto galvanized wire at 6in. intervals. The assays were deployed for 2 hours and filmed using a GoPro camera. The videos were analyzed to determine which species of herbivorous herb were predating upon the herbivory assays. Only herb that actually ate seagrass were noted, the blades that were predated upon were noted to the best of the reviewers ability, and, if applicable, the phase of the herbivore was noted (terminal, initial, etc).
 
 
 ***
@@ -37,7 +37,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "gdata", "readxl", "EnvStats", "emmeans", "MuMIn", "sjstats", "lmerTest", "gnm", "forcats")
+pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist", "glue")
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 
 
@@ -60,24 +60,8 @@ herb1 <- herb1 %>% mutate(
     reviewer1SpeciesGn = as.factor(reviewer1SpeciesGn),
     reviewer1SpeciesSc = as.factor(reviewer1SpeciesSc),
     reviewer1FullSciName = as.factor(reviewer1FullSciName)) %>% 
-    dplyr::rename("species" = "reviewer1FullSciName")
+    dplyr::rename("species" = "reviewer1FullSciName", "count" = "reviewer1Count")
 
-
-
-# herb <- herb1 %>% select(date, site, species, reviewer1Count, reviewer1Blade) %>%
-# group_by(date, site) %>% 
-#   add_count() %>% 
-#   ungroup() %>% 
-#   group_by(date, site, species) %>% 
-#   summarise(count = sum(reviewer1Count), n = max(n), abundance = ((count/n)))
-
-# 
-# herb1 <- herb1 %>%
-#   mutate(across(c(site, transect, frame, reviewer1SpeciesCm, 
-#                    reviewer1SpeciesGn, reviewer1SpeciesSc, reviewer1FullSciName,
-#                    phase), as.factor), 
-#          date = as.Date(date)) %>% 
-#   dplyr::rename("species" = "reviewer1FullSciName")
 
 
 
@@ -95,61 +79,76 @@ Y2Dates <- herb1 %>%
 
 
 # separating columns by Y1 and Y2 to add some additional column names, and then merging them again. 
+# Filter and create separate data frames for each timePoint
+herbY1_T0 <- herb1 %>%
+  filter(date %in% Y1Dates) %>%
+  filter(date < as.Date("2021-10-16")) %>%
+  mutate(timePoint = "T0")
 
-fishY1 <- fish1 %>% 
-  filter(date == Y1Dates) %>%
-  mutate(treatment = if_else(site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted")) %>% 
+herbY1_T6 <- herb1 %>%
+  filter(date %in% Y1Dates) %>%
+  filter(date >= as.Date("2021-06-10") & date <= as.Date("2021-06-17")) %>%
+  mutate(timePoint = "T6")
+
+herbY1_T12 <- herb1 %>%
+  filter(date %in% Y1Dates) %>%
+  filter(date >= as.Date("2022-01-20") & date <= as.Date("2022-01-30")) %>%
+  mutate(timePoint = "T12")
+
+herbY1_T18 <- herb1 %>%
+  filter(date %in% Y1Dates) %>%
+  mutate(timePoint = "T18")
+
+# Merge all data frames into one
+herbY1 <- bind_rows(herbY1_T0, herbY1_T6, herbY1_T12, herbY1_T18)
+
+# Convert timePoint to factor with specified levels
+herbY1$timePoint <- factor(herbY1$timePoint, levels = c("T0", "T6", "T12", "T18"))
+
+# Droplevels
+herbY1 <- droplevels(herbY1)
+
+
+herbY1 <- herbY1 %>% 
+  filter(date %in% Y1Dates) %>%
+  mutate(treatment = if_else(site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control", "Outplanted")) %>% 
   mutate(reef = if_else(site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
-                   if_else(site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))) %>% 
+                        if_else(site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))) %>% 
   mutate(year = "Y1") %>% 
-  mutate(timePoint =if_else(date < "2021-01-19", "T0", "T12")) %>% 
-  droplevels() %>% 
-  mutate_at(vars(treatment, reef, year, timePoint), as.factor)
+  mutate_at(vars(treatment, reef, year, timePoint), as.factor) %>% 
+  filter(timePoint != "T18") %>% 
+  droplevels()
 
 
-fishY2 <- fish1 %>% 
-  filter(date == Y2Dates) %>% 
+
+herbY2 <- herb1 %>% 
+  filter(date %in% Y2Dates) %>% 
+  filter(site != c("IC-C1", "IC-Z2", "IC-U2")) %>% 
   mutate(treatment = if_else(site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted")) %>% 
   mutate(reef = if_else(site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
                    if_else(site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))) %>% 
   mutate(year = "Y2") %>% 
-  mutate(timePoint =if_else(date < "2021-07-24", "T0", "T12")) %>% 
+  mutate(timePoint = if_else(date < as.Date("2021-06-16"), "T0",
+                             if_else(date >= as.Date("2022-01-26") & date <= as.Date("2022-01-29"), "T6","T12"))) %>% 
   droplevels() %>% 
   mutate_at(vars(treatment, reef, year, timePoint), as.factor)
 
-fishCombo <- bind_rows(fishY1, fishY2)
 
 
+herbCombo <- bind_rows(herbY1, herbY2)
 
 
+# selecting only the columns we want to work with and calculating abundance as a proportion. If you want a percentage just multiply by 100 but that makes certain tests and transformations difficult. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+herb2 <- herbCombo %>% select(date, site, treatment, reef, year, timePoint, assay, species, count) %>%
+  group_by(date, site, treatment, reef, year, timePoint, species) %>% 
+  mutate(count = ifelse(is.na(count), 0, count)) %>%
+  summarise(avgCount = mean(count)) %>% 
+  mutate(totalObservations = sum(avgCount, na.rm = TRUE)) %>% 
+  mutate(abundance = avgCount/totalObservations)
 
 
 ```
-
-<br><br>
-
 # Normality Tests
 ***
 Here we are exploring the distribution of the data, if the data is not normally distributed we will try to transform the data to meet a normal distribution.  
@@ -160,89 +159,352 @@ Here we are exploring the distribution of the data, if the data is not normally 
 hist(herb$abundance)
 shapiro.test(herb$abundance)
 
-hist(herb$count)
-shapiro.test(herb$count)
 
-# Trying an arcsine transformation on the proportional abundance data
 
 hist(asin(sqrt(herb$abundance)))
 shapiro.test(asin(sqrt(herb$abundance)))
 
-# Trying a square root transformation on the count data
-
-hist(sqrt(herb$count+1/2))
-shapiro.test(sqrt(herb$count+1/2))
-
-# Trying a square transformation on the count data
-
-hist((herb$count)^2)
-shapiro.test((herb$count)^2)
-
-# Trying a square transformation on the count data
-
-hist(exp(herb$count))
-shapiro.test(exp(herb$count))
-
-# Trying a reciprocal transformation on the count data
-
-hist(1/(herb$count))
-shapiro.test(1/(herb$count))
-
-
 ```
-# Split Data
+
+<br><br>
+
+
+# PERMANOVA 
 ***
-Here we are going to split the data between Y1 and Y2 sites. 
+Because the data is not normally distributed and transformations could not achieve normality, we are conducting a PERMANOVA using the package `vegan` to look for any differences in abundance between treatments. 
 
-```{r, splitData, include = TRUE}
-herbY1 <- herb %>% 
-  dplyr::select(date, site, species, count, n, abundance) %>% 
-  dplyr::filter(site %in% c("IC-C1", "IC-C2", "IC-U1", "IC-U2", "IC-Z1", "IC-Z2"))
+```{r, dissimilarityMatrix, include = TRUE}
+herbMat <- herb2 %>% 
+  select(-c(abundance, totalObservations)) %>%
+  tidyr::unite(sample, 1:6) %>% 
+  spread(species,avgCount) %>%
+  replace(is.na(.), 0) %>%
+  # mutate_at(c('sample'), as.character) %>% 
+  column_to_rownames(var = 'sample')
 
-herbY1$treatment <- if_else(herbY1$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
-year1 <- "Y1"
-herbY1$year <- year1
+dist_matrix <- as.matrix(bcdist(herbMat),byrow = TRUE)
 
+dist_tbl <- dist_matrix %>% 
+        as_tibble(rownames = 'samples')
 
-herbY1$timePoint= if_else(herbY1$date <= ("2020-10-15"), "T0",
-                       if_else(herbY1$date > ("2020-10-15") & herbY1$date <= ("2021-06-15"), "T6",
-                       if_else(herbY1$date > ("2021-06-15") & herbY1$date <= ("2022-01-28"), "T12", "T18")))
-herbY1$treatment <- as.factor(herbY1$treatment)
-herbY1$year <- as.factor(herbY1$year)
-herbY1$timePoint <- as.factor(herbY1$timePoint)
-levels(herbY1$timePoint)
-herbY1$timePoint = factor(herbY1$timePoint, levels(herbY1$timePoint)[c(1, 4, 2, 3)])
-levels(herbY1$timePoint)
+samples <- dist_tbl %>% 
+  select(samples)
 
 
-#Doing the same for Y2 Note: the controls are the same throughout 
+ samples_lookup <- dist_tbl %>% 
+   select(samples) %>% 
+   separate(col = samples, into = c("date", "site", "treatment", "reef","year", "timePoint"), sep = "_", remove = FALSE)
 
-herbY2 <- herb %>% 
-  dplyr::select(date, site, species, count, n, abundance) %>% 
-  dplyr::filter(site %in% c("IC-C2", "IC-U1", "IC-Z1", "IC-C3", "IC-Z3", "IC-U3")) %>% 
-  dplyr::filter(date > "2020-10-15")
+dist_tbl %>% 
+  pivot_longer(cols = -samples, names_to = "b", values_to = "distances") %>% 
+  pivot_wider(names_from = "b", values_from = "distances")
 
-herbY2$treatment <- if_else(herbY2$site %in% c("IC-C2", "IC-U1", "IC-Z1"), "Control", "Outplanted")
-year2 <- "Y2"
-herbY2$year <- year2
-
-herbY2$timePoint= if_else(herbY2$date <= ("2021-06-15"), "T0",
-                       if_else(herbY2$date > ("2021-06-15") & herbY2$date <= ("2022-01-28"), "T6", "T12"))
-
-herbY2$treatment <- as.factor(herbY2$treatment)
-herbY2$year <- as.factor(herbY2$year)
-herbY2$timePoint <- as.factor(herbY2$timePoint)
-levels(herbY2$timePoint)
-herbY2$timePoint = factor(herbY2$timePoint, levels(herbY2$timePoint)[c(1, 3, 2)])
-
-
-
-
-herbTotal <- bind_rows(herbY1, herbY2)
+dist_matrix <- dist_tbl %>%
+  pivot_longer(cols=-samples, names_to="b", values_to="distances") %>%
+  inner_join(., samples_lookup, by="samples") %>%
+  inner_join(., samples_lookup, by=c("b" = "samples")) %>%
+  # filter(day.x %in% days_wanted & day.y %in% days_wanted) %>%
+  select(samples, b, distances) %>%
+  pivot_wider(names_from="b", values_from="distances") %>%
+  select(-samples) %>%
+  as.dist()
 
 
 
 ```
+running a PCOA 
+
+```{r, PCoA, include = TRUE}
+
+
+pcoa <- cmdscale(dist_matrix, k = 2, eig = TRUE, add = TRUE) # add k = 3, k = 5 to add columns, default is k=2
+positions <- pcoa$points
+colnames(positions) <- c("pcoa1", 'pcoa2')
+# calculating the amount of variation explained by each dimension
+percentExplained <- 100 * (pcoa$eig / sum(pcoa$eig))
+
+#rounding and trimming to add to labels
+RoundPercentExplained <- format(round(percentExplained[1:2], digits = 1), nsmall = 1, trim = TRUE)
+
+# creating label vector
+labs <- c(glue("PCo 1 ({RoundPercentExplained[1]}%)"),
+          glue("PCo 2 ({RoundPercentExplained[2]}%)"))
+
+
+
+treatmentCentroid <- positions %>% as_tibble(rownames='samples') %>%
+  inner_join(., samples_lookup, by = 'samples') %>% 
+  group_by(treatment) %>% 
+  summarize(axis1 = mean(pcoa1),
+            axis2 = mean(pcoa2))
+
+
+
+#
+pcoaTbl <- positions %>% as_tibble(rownames='samples') %>%
+  inner_join(., samples_lookup, by = 'samples') 
+
+pcoaPlot <- ggplot() +
+  geom_point(data = pcoaTbl, mapping = aes(x = pcoa1, y = pcoa2, color = treatment, shape = timePoint), size = 3) +
+  geom_point(data = treatmentCentroid, mapping = aes(x = axis1, y = axis2, color = treatment), shape = 15, size = 5) +
+  labs(x = labs[1], y = labs[2])
+
+
+pcoaPlot <- ggplot(pcoaTbl, aes(x = pcoa1, y = pcoa2, color = treatment, fill = treatment)) +
+  stat_ellipse(geom = 'polygon', alpha = 0.2, level = 0.75, show.legend = FALSE) +
+  geom_point(aes(x = pcoa1, y = pcoa2, shape = timePoint), alpha = 1, size = 3) +
+  labs(x = labs[1], y = labs[2])
+
+
+
+```
+
+
+```{r, NMDS, include = TRUE}
+
+set.seed(3008)
+nmds <- metaMDS(dist_matrix)
+
+scores(nmds) %>% 
+  as_tibble(rownames='samples') %>% 
+  inner_join(., samples_lookup, by = 'samples') %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2, color = treatment))+
+  geom_point(size = 3)
+  
+
+
+
+
+```
+```{r, ecologicalDistances, include = TRUE}
+
+ecoMat <- as.matrix(herbMat)
+samples_lookup <- herbMat %>%
+  rownames_to_column(var = 'samples') %>% 
+   select(samples) %>% 
+   separate(col = samples, into = c("date", "site", "treatment", "reef","year", "timePoint"), sep = "_", remove = FALSE)
+
+
+set.seed(3008)
+dist <- vegdist(ecoMat, method = 'bray')
+nmds <- metaMDS(dist)
+
+scores(nmds) %>% 
+  as_tibble(rownames = 'samples') %>%
+  inner_join(., samples_lookup, by = 'samples') %>% 
+  ggplot(aes(x = NMDS1, y = NMDS2,color = treatment)) +
+  stat_ellipse(geom = 'polygon', alpha = 0.2, show.legend = FALSE) +
+  geom_point(size = 3) 
+
+
+
+
+
+
+
+
+```
+```{r, PERMANOVA, include = TRUE, message = FALSE}
+
+set.seed(9999)
+
+ samplesLookupPerm <- herbMat %>%
+   rownames_to_column(var = "samples") %>% 
+   select(samples) %>% 
+   separate(col = samples, into = c("date", "site", "treatment", "reef","year", "timePoint"), sep = "_", remove = FALSE) %>% 
+   column_to_rownames(var = "samples") %>% 
+   mutate_at(c("date", "site", "treatment", "reef","year", "timePoint"), as.factor)
+ 
+vpiDist <- vegdist(herbMat, method = 'bray')
+
+distPerm <- adonis2(herbMat ~ treatment*timePoint*reef, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+distPerm
+
+
+
+
+```
+```{r}
+distPermTab <- distPerm %>%
+  # add_column("Test",)
+  as_tibble(rownames = "Comparison") %>%
+  # mutate(Comparison, gsub(pattern = "timePoint", replacement = "Time Point", pattern = "year", replacement = "Year", pattern = "reef", replacement = "Reef")) %>% 
+  rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
+  select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
+  mutate_if(is.numeric, round, digits = 3) %>%
+    mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+  mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+  mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+  flextable() %>%
+  set_header_labels(Data.set = "Data set") %>% 
+  flextable::compose(part = "header", j = "Df", value = as_paragraph("Df")) %>% 
+  flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+  flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+  autofit() %>%
+  font(fontname = "Times New Roman", part = "all") %>%
+  fontsize(size = 12, part = "all") %>%
+  bold(part = "header") %>%
+  colformat_num(j = 'Df', digits = 2) %>% 
+  colformat_num(j = "Pseudo.F", digits = 2) %>%
+  colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+  align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+  align(align = "center", j = "p.value")
+
+distDoc = read_docx()
+distDoc = body_add_flextable(distDoc, value = distPermTab)
+print(distDoc, target = "../tables/distTableherb.docx")
+distPermTab
+
+```
+
+`````{r, plotting, include = TRUE, eval = FALSE}
+myColors <- paletteer_c("pals::ocean.balance", 18, direction = 1 )
+
+
+# Making a box plot for all Y1 data
+
+boxPlotDataY1 <- herbMat %>% 
+   rownames_to_column(var = "samples") %>% 
+    separate(col = samples, into = c("date", "site", "treatment", "reef","year", "timePoint"), sep = "_", remove = FALSE) %>% 
+  select(-c(samples)) %>% 
+  gather(class, count, 7:18, factor_key = TRUE) %>% 
+  as_tibble() %>% 
+  mutate_at(c("date", "site", "treatment", "reef","year", "timePoint"), as.factor) %>% 
+  group_by(year, reef, site, treatment, class) %>% 
+  summarise(sumCount = sum(count)) %>% 
+  arrange(desc(sumCount)) %>% 
+  group_by(year, reef, site, treatment) %>% 
+  mutate(totalObservations = sum(sumCount)) %>% 
+  group_by(year, reef, site, treatment, class) %>% 
+  mutate(abundance = (sumCount/totalObservations)*100) %>% 
+  filter(abundance > 5) %>% 
+  arrange(desc(abundance))
+
+
+herbStack1Y1 <- ggplot(boxPlotDataY1, aes(x = site, y = abundance)) +
+                      geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+                      ylim(0,100) +
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 5%")+
+                      scale_fill_manual(values = myColors)+
+                      facet_wrap(treatment ~ year, scales = 'free')
+
+
+
+
+herbStackY1 <- herbStack1Y1+theme(
+    # Title
+    plot.title = element_text(size = 30, face = "bold"), 
+    # X Axis
+    axis.text.x = element_text(size = 30, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_blank(),
+    # Y Axis
+    axis.title.y = element_text(size = 30, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    # Axis Lines and Ticks
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    # Legend
+    legend.title = element_text(size = 25, face = "bold"), 
+    legend.text = element_text(size = 15, face = "bold", colour = "black"),
+    legend.position = "right",
+    # Grid and Background
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
+    panel.background = element_rect(fill = '#F5F5F5'), 
+    # Text
+    text = element_text(size = 30, color="black")) 
+
+
+
+
+
+
+
+
+
+herbStackY1
+
+
+
+
+
+
+
+
+
+ggsave("../figures/herbStackY1.png", plot = vpiStackY1, width = 20, height = 15, units = 'in', dpi = 600)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -287,6 +549,83 @@ herbPermY2
 
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -355,7 +694,7 @@ myColors <- c("#006BFF", "#277B00", "#ff0000", "#97DE00", "#00ffff", "#6495ed" ,
 # levels(herbY1$species) <- levels(herbTotal$species)
 #subsetting for just one time point
 
-# herbivoryPlot <- subset(fish, date == c("2020-10-14", "2020-10-15"))
+# herbivoryPlot <- subset(herb, date == c("2020-10-14", "2020-10-15"))
 
 # herbY1$species<- fct_reorder(herbY1$species, herbY1$abundance, .desc = FALSE)
 # herbY2$species<- fct_reorder(herbY2$species, herbY2$abundance, .desc = FALSE)
