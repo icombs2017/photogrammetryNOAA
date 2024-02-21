@@ -37,7 +37,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r,packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist", "glue")
+pacman::p_load("ggplot2", "officer", "ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr", "reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", 'tidyverse', "ecodist", "glue", "readxl")
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 
 
@@ -51,7 +51,7 @@ pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis")
 Data generated from reviewing these videos are stored in an excel spreadsheet found in the ../data folder. And loaded in using the `read.xls()` from the package `gdata`.  
 
 ```{r, load and subset, include = TRUE, results = "hide"}
-herb1 <-read_excel("../data/herbivoryVideoDataSheet.xlsx", sheet = 1)
+herb1 <- read_excel("../data/herbivoryVideoDataSheet.xlsx", sheet = 1)
 herb1 <- herb1 %>% mutate(
     date = as.Date(date),
     site = as.factor(site),
@@ -80,72 +80,92 @@ Y2Dates <- herb1 %>%
 
 # separating columns by Y1 and Y2 to add some additional column names, and then merging them again. 
 # Filter and create separate data frames for each timePoint
+# Y1
 herbY1_T0 <- herb1 %>%
-  filter(date %in% Y1Dates) %>%
+  filter(!site %in% c("IC-C3", "IC-Z3", "IC-U3")) %>%
   filter(date < as.Date("2021-10-16")) %>%
-  mutate(timePoint = "T0")
+  mutate(timePoint = "T0", year = "Y1")
 
 herbY1_T6 <- herb1 %>%
-  filter(date %in% Y1Dates) %>%
+  filter(!site %in% c("IC-C3", "IC-Z3", "IC-U3")) %>%
   filter(date >= as.Date("2021-06-10") & date <= as.Date("2021-06-17")) %>%
-  mutate(timePoint = "T6")
+  mutate(timePoint = "T6", year = "Y1")
+
 
 herbY1_T12 <- herb1 %>%
-  filter(date %in% Y1Dates) %>%
+  filter(!site %in% c("IC-C3", "IC-Z3", "IC-U3")) %>%
   filter(date >= as.Date("2022-01-20") & date <= as.Date("2022-01-30")) %>%
-  mutate(timePoint = "T12")
+  mutate(timePoint = "T12", year = "Y1")
 
 herbY1_T18 <- herb1 %>%
-  filter(date %in% Y1Dates) %>%
-  mutate(timePoint = "T18")
+  filter(!site %in% c("IC-C3", "IC-Z3", "IC-U3")) %>%
+  filter(date >= as.Date("2022-07-10")) %>% 
+  mutate(timePoint = "T18", year = "Y1")
+
+# Y2
+
+herbY2_T0 <- herb1 %>%
+  filter(!site %in% c("IC-C1", "IC-Z2", "IC-U2")) %>%
+  filter(date >= as.Date("2020-10-16") & date <= as.Date("2021-06-16")) %>%
+  mutate(timePoint = "T0", year = "Y2")
+
+herbY2_T6 <- herb1 %>%
+  filter(!site %in% c("IC-C1", "IC-Z2", "IC-U2")) %>%
+  filter(date >= as.Date("2022-01-24") & date <= as.Date("2022-01-28")) %>%
+  mutate(timePoint = "T6", year = "Y2")
+
+herbY2_T12 <- herb1 %>%
+  filter(!site %in% c("IC-C1", "IC-Z2", "IC-U2")) %>%
+  filter(date >= as.Date("2022-07-09")) %>% 
+  mutate(timePoint = "T12", year = "Y2")
+
+
+
+
+
+
+
+
+
 
 # Merge all data frames into one
-herbY1 <- bind_rows(herbY1_T0, herbY1_T6, herbY1_T12, herbY1_T18)
+herbCombo <- bind_rows(herbY1_T0, herbY1_T6, herbY1_T12, herbY1_T18, herbY2_T0, herbY2_T6, herbY2_T12)
 
 # Convert timePoint to factor with specified levels
-herbY1$timePoint <- factor(herbY1$timePoint, levels = c("T0", "T6", "T12", "T18"))
-
-# Droplevels
-herbY1 <- droplevels(herbY1)
+herbCombo$timePoint <- factor(herbCombo$timePoint, levels = c("T0", "T6", "T12", "T18"))
 
 
-herbY1 <- herbY1 %>% 
-  filter(date %in% Y1Dates) %>%
+herbCombo <- herbCombo %>% 
   mutate(treatment = if_else(site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control", "Outplanted")) %>% 
   mutate(reef = if_else(site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
                         if_else(site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))) %>% 
-  mutate(year = "Y1") %>% 
   mutate_at(vars(treatment, reef, year, timePoint), as.factor) %>% 
-  filter(timePoint != "T18") %>% 
+  filter(!timePoint == "T18") %>% 
   droplevels()
 
 
 
-herbY2 <- herb1 %>% 
-  filter(date %in% Y2Dates) %>% 
-  filter(site != c("IC-C1", "IC-Z2", "IC-U2")) %>% 
-  mutate(treatment = if_else(site %in% c("IC-C2", "IC-Z1", "IC-U1"), "Control","Outplanted")) %>% 
-  mutate(reef = if_else(site %in% c("IC-C1", "IC-C2", "IC-C3"), "Site C",
-                   if_else(site %in% c("IC-U1", "IC-U2", "IC-U3"), "Site U", "Site Z"))) %>% 
-  mutate(year = "Y2") %>% 
-  mutate(timePoint = if_else(date < as.Date("2021-06-16"), "T0",
-                             if_else(date >= as.Date("2022-01-26") & date <= as.Date("2022-01-29"), "T6","T12"))) %>% 
-  droplevels() %>% 
-  mutate_at(vars(treatment, reef, year, timePoint), as.factor)
-
-
-
-herbCombo <- bind_rows(herbY1, herbY2)
-
-
 # selecting only the columns we want to work with and calculating abundance as a proportion. If you want a percentage just multiply by 100 but that makes certain tests and transformations difficult. 
 
-herb2 <- herbCombo %>% select(date, site, treatment, reef, year, timePoint, assay, species, count) %>%
+herb <- herbCombo %>% select(date, site, treatment, reef, year, timePoint, species, count) %>%
   group_by(date, site, treatment, reef, year, timePoint, species) %>% 
   mutate(count = ifelse(is.na(count), 0, count)) %>%
-  summarise(avgCount = mean(count)) %>% 
-  mutate(totalObservations = sum(avgCount, na.rm = TRUE)) %>% 
-  mutate(abundance = avgCount/totalObservations)
+  summarise(count = sum(count)) %>% 
+  group_by(date, treatment, reef, year, timePoint, site) %>% 
+  mutate(totalObservations = sum(count, na.rm = TRUE)) %>% 
+  mutate(abundance = count/totalObservations)
+
+
+herbAbundTreat <- herbCombo %>% 
+  group_by(treatment) %>% 
+  mutate(totalObservations = sum(count, na.rm = TRUE)) %>% 
+  summarise(mean(abundance))
+
+
+herbAbundReef <- herb %>% 
+  group_by(reef) %>% 
+  summarise(mean(abundance))
+
 
 
 ```
@@ -156,13 +176,12 @@ Here we are exploring the distribution of the data, if the data is not normally 
 ```{r, normalityTest, include = TRUE}
 
 #Testing normality of abundance and count
-hist(herb$abundance)
-shapiro.test(herb$abundance)
+hist(herb$count)
+shapiro.test(herb$count)
 
 
-
-hist(asin(sqrt(herb$abundance)))
-shapiro.test(asin(sqrt(herb$abundance)))
+hist(asin(sqrt(herb$count)))
+shapiro.test(asin(sqrt(herb$count)))
 
 ```
 
@@ -174,10 +193,10 @@ shapiro.test(asin(sqrt(herb$abundance)))
 Because the data is not normally distributed and transformations could not achieve normality, we are conducting a PERMANOVA using the package `vegan` to look for any differences in abundance between treatments. 
 
 ```{r, dissimilarityMatrix, include = TRUE}
-herbMat <- herb2 %>% 
+herbMat <- herb %>% 
   select(-c(abundance, totalObservations)) %>%
   tidyr::unite(sample, 1:6) %>% 
-  spread(species,avgCount) %>%
+  spread(species,count) %>%
   replace(is.na(.), 0) %>%
   # mutate_at(c('sample'), as.character) %>% 
   column_to_rownames(var = 'sample')
@@ -289,7 +308,7 @@ set.seed(3008)
 dist <- vegdist(ecoMat, method = 'bray')
 nmds <- metaMDS(dist)
 
-scores(nmds) %>% 
+nmds <- scores(nmds) %>% 
   as_tibble(rownames = 'samples') %>%
   inner_join(., samples_lookup, by = 'samples') %>% 
   ggplot(aes(x = NMDS1, y = NMDS2,color = treatment)) +
@@ -377,7 +396,7 @@ boxPlotDataY1 <- herbMat %>%
   mutate(totalObservations = sum(sumCount)) %>% 
   group_by(year, reef, site, treatment, class) %>% 
   mutate(abundance = (sumCount/totalObservations)*100) %>% 
-  filter(abundance > 5) %>% 
+  filter(abundance > 1) %>% 
   arrange(desc(abundance))
 
 
