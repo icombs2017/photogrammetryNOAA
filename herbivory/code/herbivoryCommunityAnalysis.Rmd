@@ -336,7 +336,7 @@ set.seed(9999)
  
 vpiDist <- vegdist(herbMat, method = 'bray')
 
-distPerm <- adonis2(herbMat ~ treatment*timePoint*reef, data = samplesLookupPerm, permutations = 9999, method = 'bray')
+distPerm <- adonis2(herbMat ~ treatment*timePoint*year, data = samplesLookupPerm, permutations = 9999, method = 'bray')
 distPerm
 
 
@@ -345,13 +345,11 @@ distPerm
 ```
 ```{r}
 distPermTab <- distPerm %>%
-  # add_column("Test",)
   as_tibble(rownames = "Comparison") %>%
-  # mutate(Comparison, gsub(pattern = "timePoint", replacement = "Time Point", pattern = "year", replacement = "Year", pattern = "reef", replacement = "Reef")) %>% 
   rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
   select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
   mutate_if(is.numeric, round, digits = 3) %>%
-    mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+  mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
   mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
   mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
   flextable() %>%
@@ -371,7 +369,7 @@ distPermTab <- distPerm %>%
 
 distDoc = read_docx()
 distDoc = body_add_flextable(distDoc, value = distPermTab)
-print(distDoc, target = "../tables/distTableherb.docx")
+print(distDoc, target = "../tables/distTableHerb.docx")
 distPermTab
 
 ```
@@ -382,30 +380,41 @@ myColors <- paletteer_c("pals::ocean.balance", 18, direction = 1 )
 
 # Making a box plot for all Y1 data
 
-boxPlotData <- herbMat %>% 
-   rownames_to_column(var = "samples") %>% 
-    separate(col = samples, into = c("date", "site", "treatment", "reef","year", "timePoint"), sep = "_", remove = FALSE) %>% 
-  select(-c(samples)) %>% 
-  gather(class, count, 7:18, factor_key = TRUE) %>% 
-  mutate(class = fct_reorder(class, count, .desc = TRUE)) %>%   as_tibble() %>% 
-  mutate_at(c("date", "site", "treatment", "reef","year", "timePoint"), as.factor) %>% 
-  group_by(reef, treatment, class) %>% 
-  summarise(sumCount = sum(count)) %>% 
-  arrange(desc(sumCount)) %>% 
-  group_by(reef, treatment) %>% 
-  mutate(totalObservations = sum(sumCount)) %>% 
-  group_by(reef, treatment, class) %>% 
-  mutate(abundance = (sumCount/totalObservations)*100) %>% 
+boxPlotData <- herbCombo %>% 
+  select(date, year, treatment, timePoint, reef, site, assay, reviewer1SpeciesGn, species, count) %>%
+  rename(genus = reviewer1SpeciesGn) %>% 
+  group_by(date, year, treatment, timePoint, reef, site, assay, species) %>% 
+  mutate(count = ifelse(is.na(count), 0, count)) %>% 
+  add_count() %>% 
+  group_by(date, year, treatment, timePoint, reef, site, assay, species) %>% 
+  summarise(avgCount = (sum(count)/n)) %>% 
+  group_by(date, year, treatment, timePoint, reef, site, species) %>%
+  add_count() %>% 
+  mutate(totalCount = sum(avgCount)) %>% 
+  summarise(avgSiteCount = (totalCount/n)) %>% 
+  distinct(avgSiteCount) %>% 
+  group_by(year, treatment, timePoint, reef, site, species) %>%
+  summarise(avgSiteCount = mean(avgSiteCount)) %>% 
+  mutate(totalObservations = sum(avgSiteCount)) %>% 
+  mutate(abundance = ((avgSiteCount/totalObservations)*100)) %>% 
   # filter(abundance > 1) %>% 
-  arrange(desc(abundance))
+  na.omit() %>%
+  ungroup() %>% 
+  droplevels()
+  
+
+view(boxPlotData)
 
 
-herbStack1 <- ggplot(boxPlotData, aes(x = reef, y = abundance)) +
-                      geom_bar(aes(fill = class), position = position_stack(reverse = TRUE), stat = 'identity', color = 'black', alpha = 0.8) +
-                      ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Species", title = "Relative Species Abundance")+
+
+
+herbStack1 <- ggplot(boxPlotData, aes(x = timePoint, y = abundance)) +
+                      geom_bar(aes(fill = species), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+                      # ylim(0,100) +
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative  Abundance of Herbivorous Fish")+
                       scale_fill_manual(values = myColors)+
-                      facet_wrap(.~ treatment, scales = 'free_x')
+                      facet_wrap(treatment*site ~ year, scales = 'free')
+
 
 
 
@@ -450,31 +459,21 @@ herbStack
 
 
 
-ggsave("../figures/herbStackY1.png", plot = herbStack, width = 20, height = 15, units = 'in', dpi = 600)
+ggsave("../figures/herbStack.png", plot = herbStack, width = 20, height = 15, units = 'in', dpi = 600)
 
 
 ```
 
-```{r, histogram, include = TRUE}
+```{r, summaryStats, include = TRUE}
 
-herbHist <- ggplot(herb, aes(x = class, y = count)) +
-                      geom_boxplot(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
-                      ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 5%")+
-                      scale_fill_manual(values = myColors)+
-                      facet_wrap(treatment ~ year, scales = 'free')
+sumStats <- boxPlotData %>% 
+    group_by(year, treatment, timePoint, species) %>% 
+    summarise(meanAbundance = mean(abundance))
 
 
-
-
-
-
-
-
-
-herbHist1 <- ggplot(herb, aes(x = species, y = count))  +
-  geom_bar(aes(fill = treatment), position = 'dodge', stat = 'identity')+
-  facet_grid(year*timePoint ~ reef, scales = "free_x")
+fishSumStats <- fishSum %>% 
+  group_by(year, treatment, timePoint, genus) %>% 
+  summarise(meanAbundance = mean(abundance))
 
 
 
@@ -483,31 +482,21 @@ herbHist1 <- ggplot(herb, aes(x = species, y = count))  +
 
 
 
+ top_genera <- herbCombo %>%
+  rename(genus = reviewer1SpeciesGn) %>%
+  # group_by(treatment,genus) %>%
+  group_by(genus) %>% 
+  mutate(count = ifelse(is.na(count), 0, count)) %>% 
+  summarise(total_abundance = sum(count)) %>%
+  top_n(10, total_abundance) %>%
+  arrange(desc(total_abundance))
 
+top_genera <- sumStats %>%
+  group_by(species) %>%
+  summarise(total_abundance = mean(meanAbundance)) %>%
+  top_n(10, total_abundance) %>%
+  arrange(desc(total_abundance))
 
-
-
-herbHist <- herbHist1+theme(
-    # Title
-    plot.title = element_text(size = 30, face = "bold"), 
-    # X Axis
-    axis.text.x = element_text(size = 30, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
-    axis.title.x = element_blank(),
-    # Y Axis
-    axis.title.y = element_text(size = 30, face = "bold"), 
-    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
-    # Axis Lines and Ticks
-    axis.line = element_line(colour = "black"), 
-    axis.ticks = element_line(color="black"), 
-    # Legend
-    legend.title = element_text(size = 25, face = "bold"), 
-    legend.text = element_text(size = 15, face = "bold", colour = "black"),
-    legend.position = "right",
-    # Grid and Background
-    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-    panel.background = element_rect(fill = '#F5F5F5'), 
-    # Text
-    text = element_text(size = 30, color="black")) 
 
 
 

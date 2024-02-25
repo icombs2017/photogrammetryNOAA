@@ -433,7 +433,7 @@ ggsave("../figures/cumulativeACERoutplantPlot.png", plot =outplantACERplot, widt
 ```{r, acerOutplantTable, include = TRUE}
 # Wrangling for the table
 outplantACERtab1 <- acerData %>%
-   select(Date, `General general General Location`, `Site ID`, `# frags`, Lat, Long, Deliverable,`1-month Monitoring`, `1-month Survival`, `12-month Survival`) %>%
+   select(Date, `General Location`, `Site ID`, `# frags`, Lat, Long, Deliverable,`1-month Monitoring`, `1-month Survival`, `12-month Survival`) %>%
    mutate(`1-month Monitoring` = as.Date(`1-month Monitoring`, `1-month Survival` = as.numeric(`1-month Survival`, `12-month Survival` = as.numeric(`12-month Survival`)))) %>% 
    mutate(Date = as.Date(Date)) %>% 
    filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
@@ -627,13 +627,12 @@ outplantMSVStab1 <- outplantMsvs %>%
    mutate(`1-month Monitoring` = as.Date(`1-month Monitoring`, `1-month Survival` = as.numeric(`1-month Survival`, `12-month Survival` = as.numeric(`12-month Survival`)))) %>% 
    mutate(Date = as.Date(Date)) %>% 
    filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
-   # select(Date, `Site ID`, totalNumberOfPlugs, Lat, Long, numberOfGenotypes)
   mutate(oneMonthNumberSurvived = totalNumberOfPlugs * `1-month Survival`, twelveMonthNumberSurvived = totalNumberOfPlugs * `12-month Survival`) %>% 
   mutate_at(vars(`1-month Survival`, `12-month Survival`), ~ round(. * 100, 2)) 
 
 #creating templates for "weighted survival"
 # 1 month MSVS frags
-oneMonthWeightedAverageSurvival<- (sum(outplantMSVStab1$oneMonthNumberSurvived))/(sum(outplantMSVStab1$totalNumberOfPlugs))*100
+oneMonthWeightedAverageSurvival<- (sum(na.omit(outplantMSVStab1$oneMonthNumberSurvived)))/(sum(na.omit(outplantMSVStab1$totalNumberOfPlugs)))*100
 
 # 12 month MSVS plugs
 twelveMonthWeightedAverageSurvival<- (sum(na.omit(outplantMSVStab1$twelveMonthNumberSurvived)))/(sum(na.omit(outplantMSVStab1$totalNumberOfPlugs)))*100
