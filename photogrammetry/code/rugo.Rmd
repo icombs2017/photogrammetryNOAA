@@ -44,7 +44,7 @@ For the following analyses we will require the use of a number of different R pa
 
 ```{r, load packages, include = TRUE, message = FALSE, warning = FALSE, results = 'hide'}
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", "plotly", "car", "lme4", 'PMCRMplus', "EnvStats", "emmeans", "MuMIn", "sjstats", "lmerTest")
+pacman::p_load("ggplot2","officer","ggpubr", "rcompanion", "RColorBrewer", "patchwork", "magrittr","reshape2", "stringr", "plyr", "dplyr", "flextable", "tidyr", "tibble", "vegan", "forcats", "readr", "metafolio", "FSA", "viridis", "paletteer", "plotly", "car", "lme4", 'PMCRMplus', "EnvStats", "emmeans", "MuMIn", "sjstats", "lmerTest", "purrr")
 pacman::p_load_gh("pmartinezarbizu/pairwiseAdonis/pairwiseAdonis", "tzerk/roughness")
 
 
@@ -60,20 +60,33 @@ Viscore produces rugosity measurement outputs as *.csv* files. We will be loadin
 
 ```{r, load, include = TRUE, results = "hide"}
 
-c1Pre <- read.csv("../data/rugosity/2020.08.18/c1r0-lines.csv", header = F)
-c2Pre <- read.csv("../data/rugosity/2020.08.18/c2r0-lines.csv", header = F)
-u1Pre <- read.csv("../data/rugosity/2020.08.18/u1r0-lines.csv", header = F)
-u2Pre <- read.csv("../data/rugosity/2020.08.18/u2r0-lines.csv", header = F)
-z1Pre <- read.csv("../data/rugosity/2020.08.18/z1r0-lines.csv", header = F)
-z2Pre <- read.csv("../data/rugosity/2020.08.18/z2r0-lines.csv", header = F)
-c1Post <- read.csv("../data/rugosity/2021.12.08/c1r2-lines.csv", header = F)
-c2Post <- read.csv("../data/rugosity/2021.12.08/c2r1-lines.csv", header = F)
-u1Post <- read.csv("../data/rugosity/2021.12.08/u1r1-lines.csv", header = F)
-u2Post <- read.csv("../data/rugosity/2021.12.08/u2r1-lines.csv", header = F)
-z1Post <- read.csv("../data/rugosity/2021.12.08/z1r1-lines.csv", header = F)
-z2Post <- read.csv("../data/rugosity/2021.12.08/z2r1-lines.csv", header = F)
-head(c1Pre)
+read_plus <- function(flnm) {
+    read.csv(flnm, header = FALSE) %>% 
+        mutate(filename = flnm)
+}
 
+rugoY1T0 <-
+    list.files(path = "../data/rugosity/Y1baseline", pattern = "*.csv", 
+               full.names = TRUE) %>% 
+    map_df(~read_plus(.))
+
+rugoY1T12 <-
+    list.files(path = "../data/rugosity/Y1oneYear", pattern = "*.csv", 
+               full.names = TRUE) %>% 
+    map_df(~read_plus(.))
+
+rugoY2T0 <-
+    list.files(path = "../data/rugosity/Y2baseline", pattern = "*.csv", 
+               full.names = TRUE) %>% 
+    map_df(~read_plus(.))
+
+rugoY2T12 <-
+    list.files(path = "../data/rugosity/Y2oneYear", pattern = "*.csv", 
+               full.names = TRUE) %>% 
+    map_df(~read_plus(.))
+
+rugoComboY1 <- bind_rows(rugoY1T0,rugoY1T12)
+rugoComboY2 <- bind_rows(rugoY2T0,rugoY2T12)
 
 
 ```
@@ -83,196 +96,26 @@ head(c1Pre)
 ***
 The data comes Viscore without headers and with some extraneous columns. We will be using the package `dplyr` to manipulate the data into a more user-friendly format. Currently, the data is given to us with a first column of some binary, we are going to remove that. The next column is the transect number, in this instance, we ran 9 transects (1m apart) so the transects should be labeled 0-8. The next column is the individual point that was placed. Here we place 1000 points (1cm apart) on each transect. The fourth column is the x coordinate, the fifth column is the y coordinate, and the sixth column is the z coordinate. The z coordinate is depth and the coordinate we want to pay particular attention to in downstream rugosity analysis. We will rename all the columns appropriately as well as give each dataframe a new column labeled "site".
 ```{r, manipulation, include = TRUE, results = 'hide'}
-sitec1 <- as.factor("c1")
-sitec2 <- as.factor("c2")
-siteu1 <- as.factor("u1")
-siteu2 <- as.factor("u2")
-sitez1 <- as.factor("z1")
-sitez2 <- as.factor("z2")
-pre <- as.factor("Baseline")
-post <- as.factor("1 Year")
 
-
-c1Pre<- c1Pre %>% 
-  add_column(sitec1) %>%
-  add_column(pre) %>%
-  select(c("sitec1","pre", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitec1) %>% 
-  rename(time = pre) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>% 
-  rename(x = V5) %>% 
-  rename(z = V6)
-
-c1Post<- c1Post %>%
-  add_column(sitec1) %>%
-  add_column(post) %>% 
-  select(c("sitec1", "post", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitec1) %>%
-  rename(time = post) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-
-
-c2Pre<- c2Pre %>% 
-  add_column(sitec2) %>%
-  add_column(pre) %>% 
-  select(c("sitec2", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitec2) %>%
-  rename(time = pre) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-c2Post<- c2Post %>%
-  add_column(sitec2) %>% 
-  add_column(post) %>% 
-  select(c("sitec2", "post", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitec2) %>%
-  rename(time = post) %>% 
-  rename(transect = V2) %>% 
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-
-
-u1Pre<- u1Pre %>%
-  add_column(siteu1) %>%
-  add_column(pre) %>% 
-  select(c("siteu1", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = siteu1) %>%
-  rename(time = pre) %>%
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-u1Post<- u1Post %>%
-  add_column(siteu1) %>%
-  add_column(post) %>% 
-  select(c("siteu1", "post", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = siteu1) %>%
-  rename(time = post) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>% 
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-
-
-u2Pre <- u2Pre %>%
-  add_column(siteu2) %>%
-  add_column(pre) %>% 
-  select(c("siteu2", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = siteu2) %>%
-  rename(time = pre) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-u2Post <- u2Post %>%
-  add_column(siteu2) %>%
-  add_column(post) %>% 
-  select(c("siteu2", "post", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = siteu2) %>%
-  rename(time = post) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>% 
-  rename(x = V5) %>%
-  rename(z = V6)
-
-
-
-z1Pre <- z1Pre %>%
-  add_column(sitez1) %>%
-  add_column(pre) %>% 
-  select(c("sitez1", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitez1) %>%
-  rename(time = pre) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-z1Post <- z1Post %>%
-  add_column(sitez1) %>%
-  add_column(post) %>% 
-  select(c("sitez1", "post", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitez1) %>%
-  rename(time = post) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-
-
-z2Pre<- z2Pre %>%
-  add_column(sitez2) %>%
-  add_column(pre) %>% 
-  select(c("sitez2", "pre", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitez2) %>%
-  rename(time = pre) %>% 
-  rename(transect = V2) %>% 
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-z2Post<- z2Post %>%
-  add_column(sitez2) %>%
-  add_column(post) %>% 
-  select(c("sitez2", "post", "V2", "V3", "V4", "V5", "V6")) %>%
-  rename(site = sitez2) %>%
-  rename(time = post) %>% 
-  rename(transect = V2) %>%
-  rename(point = V3) %>%
-  rename(y = V4) %>%
-  rename(x = V5) %>%
-  rename(z = V6)
-
-
-
-
-
-```
-<br><br>
-
-# Merging data sets
-
-Now we want to merge datasets using the `bind_rows` function in `dplyr`.
-
-```{r, merge, include = TRUE}
-
-rugo <- bind_rows(c1Pre,c2Pre,u1Pre,u2Pre,z1Pre,z2Pre,c1Post,c2Post,u1Post,u2Post,z1Post,z2Post)
-rugo <- as_tibble(rugo)
-
-rugo$treatment = if_else(rugo$site %in% c("c2", "z1", "u1"), "Control","Outplanted") 
-rugo$reef = if_else(rugo$site %in% c("c1", "c2"), "Site C",
-                   if_else(rugo$site %in% c("u1", "u2"), "Site U", "Site Z"))
-rugo$reef <- as.factor(rugo$reef)
-
-
-
-
-summary(rugo)
-
+rugoCombo1 <- rugoCombo %>% 
+      tidyr::separate(filename, into=c("Year", "timePoint"),extra = 'merge',sep = 19) %>%
+      tidyr::separate(Year, into=c("remove", "Year"),sep = 17) %>% 
+      tidyr::separate(timePoint, into=c("timePoint", "site"),sep = "/") %>%
+      tidyr::separate(site, into=c("site", "remove"),sep = 2) %>%
+      dplyr::select(-c(remove)) %>% 
+      rename(transect = V2, point = V3, y = V4, x = V5, z = V6) %>%
+      mutate(treatment = if_else(site %in% c("c2", "z1", "u1"), "Control","Outplanted"), reef = if_else(site %in% c("c1", "c2", "c3"), "Site C",
+                   if_else(site %in% c("u1", "u2", "u3"), "Site U", "Site Z"))) %>% 
+  mutate(timePoint = case_when(
+    timePoint == "baseline" ~ "T0",
+    TRUE ~ timePoint
+  ),
+  timePoint = case_when(
+    timePoint == "oneYear" ~ "T12",
+    TRUE ~ timePoint
+  )) %>% 
+  select(Year, timePoint, treatment, reef, site, transect, point, x, y, z) %>% 
+  mutate_at(vars(Year, timePoint, treatment, reef, site, transect, point), as.factor)
 
 
 ```
@@ -286,81 +129,19 @@ We have a very large dataset, however, what we are really concerned with is the 
 
 ```{r, variance, include = TRUE , message = FALSE}
 
-rugoRMS <- rugo %>% 
-  dplyr::select(site, time, treatment, reef, transect, z) %>%
-  group_by(site, time, treatment, reef, transect) %>%
+rugoRMS <- rugoCombo1 %>% 
+  dplyr::select(Year, timePoint, treatment, reef, site, transect, point, z) %>%
+  group_by(Year, timePoint, treatment, reef, site, transect) %>%
   summarise(sd(z), var(z)) %>%
-  rename(sd = `sd(z)`) %>% 
-  rename(variance = `var(z)`)
+  rename(sd = `sd(z)`, variance = `var(z)`) %>% 
+  ungroup() %>% 
+  as_tibble()
 
 
-rugo1 <- rugo %>% 
-  dplyr::select(site, time, treatment, reef, transect, z) %>%
-  group_by(site, time, treatment, reef, transect) %>% 
-  summarise(mean(z)) %>% 
-  rename(mean = `mean(z)`)
-
-by(rugoRMS$sd, rugoRMS$treatment, mean)
-by(rugoRMS$sd, rugoRMS$time, mean)
+set.seed(9999)
+rugoPerm <- adonis2(rugoRMS$sd ~ treatment*Year*timePoint, data = rugoRMS, permutations = 9999, method = 'bray')
 
 
-
-
-
-set.seed(999)
-rugoPerm <- adonis(formula = sd ~ reef*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
-
-set.seed(999)
-rugoPairTime <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$time,
-                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
-
-set.seed(999)
-rugoPairTreatment <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$treatment,
-                             sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
-
-#I WANT TO LOOK INTO THIS BELOW
-
-# testPerm <- adonis(formula = sd ~ site*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
-
-# test <- pairwise.adonis(rugoRMS[c(6)],factors=rugoRMS$site,
-#                              sim.method='euclidian',p.adjust.m='bonferroni', perm = 999)
-
-rugosdBaseline <- subset(rugoRMS, time == "Baseline")
-rugoSdOneYear <- subset(rugoRMS, time == "1 Year")
-rugoSdControl <- subset(rugoRMS, treatment == "Control")
-rugoSdOutplanted <- subset(rugoRMS, treatment == "Outplanted")
-
-mean(rugosdBaseline$sd)
-mean(rugoSdOneYear$sd)
-mean(rugoSdControl$sd)
-mean(rugoSdOutplanted$sd)
-
-
-
-
-
-```
-```{r, meanVar, include = TRUE}
-
-
-sumRugoRMS <- rugoRMS %>% 
-  group_by(site, time, treatment, reef) %>% 
-  summarise(meanVar = mean(variance))
-
-rugoPlot1 <- ggplot(sumRugoRMS, aes(x = treatment, y = meanVar))+
-  geom_bar(position = 'dodge', stat = 'identity', aes(fill = time))+
-  scale_fill_manual(values = myColors)+
-  facet_grid(.~reef, scales = 'free')+
-  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
-
-ggsave("../figures/rugoMeanVarBoxplot.png", plot = rugoPlot1, width = 15, height = 10, units = "in", dpi = 600)
-
-
-# rugoPerm <- adonis2(formula = variance ~ class*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
-
-changeLM <- lmer(meanVar ~ treatment*time + (1 | site), sumRugoRMS)
-changeLManova <- anova(changeLM)
-changeLManova
 
 
 
@@ -373,143 +154,30 @@ changeLManova
 ***
 We are taking our results from our PERMANOVA and creating a table using functions from the packages `flextable` and `officer`.
 
-```{r, linearModelTable, include = TRUE}
+```{r,permanovaTable, include = TRUE}
 
-changeLManova1 <- tibble::rownames_to_column(changeLManova, "variable")
-
-rugoAnovaTab <- changeLManova1 %>% 
-  rename(p.value = `Pr(>F)`) %>% 
-
-
-mutate_if(is.numeric, round, digits = 3) %>%     
-mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
-mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
-mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
-flextable() %>%
-# set_header_labels(Data.set = "Data set") %>% 
-flextable::compose(part = "header", j = "variable", value = as_paragraph("variable")) %>% 
-# flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
-flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
-autofit() %>%
-font(fontname = "Times New Roman", part = "all") %>%
-fontsize(size = 12, part = "all") %>%
-bold(part = "header") %>%
-# colformat_num(j = 'df', digits = 2) %>% 
-# colformat_num(j = "Pseudo.F", digits = 2) %>%
-colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
-align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
-align(align = "center", j = "p.value")
-
-rugoDoc = read_docx()
-rugoDoc = body_add_flextable(rugoDoc, value = rugoAnovaTab)
-print(rugoDoc, target = "../tables/rugoAnovaTable.docx")
-rugoAnovaTab
-
-
-
-```
-
-
-
-
-```{r, meanSD, include = TRUE}
-
-
-sumRugoRMS <- rugoRMS %>% 
-  group_by(site, time, treatment, reef) %>% 
-  summarise(meanSD = mean(sd))
-
-rugoPlot1 <- ggplot(sumRugoRMS, aes(x = treatment, y = meanSD))+
-  geom_bar(position = 'dodge', stat = 'identity', aes(fill = time))+
-  scale_fill_manual(values = myColors)+
-  facet_grid(.~reef, scales = 'free')+
-  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
-
-ggsave("../figures/rugoMeanSDboxplot.png", plot = rugoPlot1, width = 15, height = 10, units = "in", dpi = 600)
-
-
-# rugoPerm <- adonis2(formula = variance ~ class*time*treatment, data = rugoRMS, method = "euclidian", permutations = 999)
-
-changeLM <- lmer(meanSD ~ treatment*time + (1 | site), sumRugoRMS)
-changeLManova <- anova(changeLM)
-changeLManova
-
-
-
-```
-
-
-<br><br>
-
-# Making a Table
-***
-We are taking our results from our PERMANOVA and creating a table using functions from the packages `flextable` and `officer`.
-
-```{r, linearModelTable, include = TRUE}
-
-changeLManova1 <- tibble::rownames_to_column(changeLManova, "variable")
-
-rugoAnovaTabSD <- changeLManova1 %>% 
-  rename(p.value = `Pr(>F)`) %>% 
-
-
-mutate_if(is.numeric, round, digits = 4) %>%     
-mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
-mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
-mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
-flextable() %>%
-# set_header_labels(Data.set = "Data set") %>% 
-flextable::compose(part = "header", j = "variable", value = as_paragraph("variable")) %>% 
-# flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
-flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
-autofit() %>%
-font(fontname = "Times New Roman", part = "all") %>%
-fontsize(size = 12, part = "all") %>%
-bold(part = "header") %>%
-# colformat_num(j = 'df', digits = 2) %>% 
-# colformat_num(j = "Pseudo.F", digits = 2) %>%
-colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
-align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
-align(align = "center", j = "p.value")
-
-rugoDoc = read_docx()
-rugoDoc = body_add_flextable(rugoDoc, value = rugoAnovaTabSD)
-print(rugoDoc, target = "../tables/rugoAnovaTableSD.docx")
-rugoAnovaTabSD
-
-
-```
-
-
-```{r, PERMANOVAtable, include = TRUE}
-
-rugoPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Reef", "df" = rugoPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Time", "df" = rugoPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Reef:Time", "df" = rugoPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Reef:Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
-  add_row("Test" = " ", "Comparison" = "Reef:Time:Treatment", "df" = rugoPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = rugoPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = rugoPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
-
-
-mutate_if(is.numeric, round, digits = 3) %>%     
-mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
-mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
-mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
-flextable() %>%
-set_header_labels(Data.set = "Data set") %>% 
-flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
-flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
-flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
-autofit() %>%
-font(fontname = "Times New Roman", part = "all") %>%
-fontsize(size = 12, part = "all") %>%
-bold(part = "header") %>%
-colformat_num(j = 'df', digits = 2) %>% 
-colformat_num(j = "Pseudo.F", digits = 2) %>%
-colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
-align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
-align(align = "center", j = "p.value")
+rugoPermTab <- rugoPerm %>%
+  as_tibble(rownames = "Comparison") %>%
+  rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
+  select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
+  mutate_if(is.numeric, round, digits = 3) %>%
+    mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+  mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+  mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+  flextable() %>%
+  set_header_labels(Data.set = "Data set") %>% 
+  flextable::compose(part = "header", j = "Df", value = as_paragraph("Df")) %>% 
+  flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+  flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+  autofit() %>%
+  font(fontname = "Times New Roman", part = "all") %>%
+  fontsize(size = 12, part = "all") %>%
+  bold(part = "header") %>%
+  colformat_num(j = 'Df', digits = 2) %>% 
+  colformat_num(j = "Pseudo.F", digits = 2) %>%
+  colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+  align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+  align(align = "center", j = "p.value")
 
 rugoDoc = read_docx()
 rugoDoc = body_add_flextable(rugoDoc, value = rugoPermTab)
@@ -517,18 +185,7 @@ print(rugoDoc, target = "../tables/rugoTable.docx")
 rugoPermTab
 
 
-
-
-
-
-
-
-
-
-
 ```
-
-
 
 
 <br><br>
@@ -542,36 +199,38 @@ We are visualizing the standard deviation of elevation (what we tested above) us
 myColors <- c("#4a83c4", "#badef5")
 
 rugoPlot1 <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
-  geom_boxplot(aes(fill = time))+
+  geom_boxplot(aes(fill = timePoint))+
   scale_fill_manual(values = myColors)+
-  facet_grid(.~reef, scales = 'free')+
-  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
+  facet_wrap(Year~reef, scales = 'free')+
+  labs(y = "Standard Deviation of Elevation", fill = "Time Point", title = "Changes in Complexity Through Time and Treatment")
 
-rugoPlot <- rugoPlot1+theme(
+rugoPlot <- rugoPlot1 + theme(
+    # Title
+    plot.title = element_text(size = 30, face = "bold"), 
+    # X Axis
     axis.text.x = element_text(size = 20, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
     axis.title.x = element_blank(),
+    # Y Axis
     axis.title.y = element_text(size = 30, face = "bold"), 
-    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
-    legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
-    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-    panel.background = element_rect(fill = '#F5F5F5'), 
-    plot.title = element_text(size = 30, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 20, face = "bold"),
+    # Axis Lines and Ticks
     axis.line = element_line(colour = "black"), 
     axis.ticks = element_line(color="black"), 
-    text = element_text(size=40, color="black"), 
-    legend.position = "right")
+    # Legend
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    legend.position = "right",
+    # Grid and Background
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "black"),
+    panel.background = element_rect(fill = '#ebebeb'), 
+    # Text
+    strip.text = element_text(size = 20),
+    text = element_text(size=40, color="black"))
+
 
 rugoPlot
-ggsave("../figures/rugoSDboxplot.jpeg", plot = rugoPlot, width = 15, height = 10, units = "in", dpi = 600)
+
 ggsave("../figures/rugoSDboxplot.png", plot = rugoPlot, width = 15, height = 10, units = "in", dpi = 600)
-
-
-rugoPlot1 <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
-  geom_boxplot(aes(fill = time))+
-  scale_fill_manual(values = myColors)+
-  facet_grid(scales = 'free')+
-  labs(y = "Standard Deviation of Elevation", fill = "Time", title = "Changes in Complexity Through Time and Treatment")
 
 
 ```
@@ -579,191 +238,6 @@ rugoPlot1 <- ggplot(rugoRMS, aes(x = treatment, y = sd))+
 ![Figure](../figures/rugoSDboxplot.png)
 
 
-```{r, plotting, include = FALSE, eval = FALSE}
-
-
-
-c1ggplot <- ggplot(data = c1, aes(x = point, y = z, color = transect))+
-  geom_line()+
-  ylim(-8, -6)+
-  facet_wrap(vars(transect))+
-  labs(x = "Point", y = "Depth (m)", title = "Rugosity of Plot Pre-Restoration")+
-  theme(
-  panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-  panel.background = element_rect(fill = '#F5F5F5'), 
-  plot.title = element_text(size = 15, face = "bold"), 
-  axis.line = element_line(colour = "black"), 
-  axis.ticks = element_line(color="black"), 
-  text = element_text(size=20, color="black"), 
-  axis.text.x=element_text(size=14, color="black"), 
-  axis.text.y=element_text(size=12, color="black"),
-  axis.title.y = element_text(size = 12),
-  axis.title.x = element_blank()
-)+rremove("legend")
-c1ggplot
-ggsave("../figures/rugoC1Pre.jpeg", plot = c1ggplot, width = 15, height = 10, units = "in", dpi = 600)
-
-
-
-c2ggplot <- ggplot(data = c2, aes(x = point, y = z, color = transect))+
-  geom_line()+
-  facet_wrap(vars(transect))
-c2ggplot
-
-u1ggplot <- ggplot(data = u1, aes(x = point, y = z, color = transect))+
-  geom_line()+
-  facet_wrap(vars(transect))
-u1ggplot
-
-
-u2ggplot <- ggplot(data = u2, aes(x = point, y = z, color = transect))+
-  geom_line()+
-  facet_wrap(vars(transect))
-u2ggplot
-
-
-z1ggplot <- ggplot(data = z1, aes(x = point, y = z, color = transect))+
-  geom_line()+
-  facet_wrap(vars(transect))
-z1ggplot
-
-z2ggplot <- ggplot(data = z2, aes(x = point, y = z, color = transect))+
-  geom_line()+
-  facet_wrap(vars(transect))
-z2ggplot
-
-siteProfile <- ggplot(data = rugoMean, aes(x = point, y = `mean(z)`, color = site))+
-  geom_line()+
-  facet_wrap(vars(site))
-siteProfile
-```
-
-
-
-
-
-
-
-<br><br>
-
-# Calculating Root Mean Square Height
-***
-Now we are going to calculate the Root Mean Square Height as described in [Davidson et al. 2003](https://ieeexplore.ieee.org/document/1221829)
-
-
-```{r, Root Mean Square Height, include = FALSE, eval = FALSE}
-
-# find and remove outliers
-rugo_cleaned <- find_Outliers(data = rugo$z,
-                              prefilter = TRUE,
-                              method = c("iqr", "sd", "mad"),
-                              remove = "mad",
-                              window = FALSE,
-                              width = 20,
-                              step = 10, 
-                              hist = TRUE,
-                              plot = TRUE)
-                              
-# de-trend the data set
-rugo_detrend <- detrend_Data(rugo_cleaned, plot = TRUE)
-
-# calculate RMS
-RMS <- calc_RMS(rugo_detrend)
-print(RMS)
-
-# note that the function returns a data frame
-str(RMS)
-
-
-```
-<br><br>
-# Root Mean Square
-***
-We are calculating the root mean square
-```{r, rmsh, include = FALSE, eval = FALSE}
-
-
-RMSHc1 <- sqrt(mean((c1$z)^2))
-RMSHc1 <- as.data.frame(RMSHc1)
-RMSHc1$site <- "c1" 
-RMSHc1 <- RMSHc1 %>% rename(RMS = RMSHc1) %>% dplyr::select(site, RMS)
-RMSHc1
-
-RMSHc2 <- sqrt(mean((c2$z)^2))
-RMSHc2 <- as.data.frame(RMSHc2)
-RMSHc2$site <- "c2" 
-RMSHc2 <- RMSHc2 %>% rename(RMS = RMSHc2) %>% dplyr::select(site, RMS)
-RMSHc2
-
-
-RMSHu1 <- sqrt(mean((u1$z)^2))
-RMSHu1 <- as.data.frame(RMSHu1)
-RMSHu1$site <- "u1" 
-RMSHu1 <- RMSHu1 %>% rename(RMS = RMSHu1) %>% dplyr::select(site, RMS)
-RMSHu1
-
-RMSHu2 <- sqrt(mean((u2$z)^2))
-RMSHu2 <- as.data.frame(RMSHu2)
-RMSHu2$site <- "u2" 
-RMSHu2 <-RMSHu2 %>% rename(RMS = RMSHu2) %>% dplyr::select(site, RMS)
-RMSHu2 
-
-
-
-
-
-RMSHz1 <- sqrt(mean((z1$z)^2))
-RMSHz1 <- as.data.frame(RMSHz1)
-RMSHz1$site <- "z1" 
-RMSHz1 <-RMSHz1 %>% rename(RMS = RMSHz1) %>% dplyr::select(site, RMS)
-RMSHz1 
-
-
-
-
-RMSHz2 <- sqrt(mean((z2$z)^2))
-RMSHz2 <- as.data.frame(RMSHz2)
-RMSHz2$site <- "z2" 
-RMSHz2 <-RMSHz2 %>% rename(RMS = RMSHz2) %>% dplyr::select(site, RMS)
-RMSHz2 
-
-
-rootMean <- bind_rows(RMSHc1,RMSHc2,RMSHu1,RMSHu2,RMSHz1,RMSHz2) 
-
-rootMean
-
-
-
-
-
-```
-
-```{r, include = FALSE}
-
-xk <- fft(rugo$z, inverse = FALSE)
-
-
-plot.frequency.spectrum <- function(X.k, xlimits=c(0,length(X.k))) {
-  plot.data  <- cbind(0:(length(X.k)-1), Mod(X.k))
-
-  # TODO: why this scaling is necessary?
-  plot.data[2:length(X.k),2] <- 2*plot.data[2:length(X.k),2] 
-  
-  plot(plot.data, t="h", lwd=2, main="", 
-       xlab="Frequency (Hz)", ylab="Strength", 
-       xlim=xlimits, ylim=c(0,max(Mod(plot.data[,2]))))
-}
-
-plot.frequency.spectrum(xk)
-
-
-
-
-
-
-
-
-```
 
 
 

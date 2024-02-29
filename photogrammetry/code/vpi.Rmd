@@ -327,17 +327,16 @@ vpiDist <- vegdist(vpiMat1, method = 'bray')
 
 distPerm <- adonis2(vpiDist ~ treatment*year*timePoint, data = samplesLookupPerm, permutations = 9999, method = 'bray')
 
-# strata = $Site
 distPerm
 
-# vpiPerm <- adonis2(count ~ treatment*reef*timePoint, data = vpiData, method = "bray", permutations = 9999)
-# 
-# set.seed(999)
-# vpiPairwise1 <- pairwise.adonis(vpi[c(3)], factors = vpi$class, sim.method = 'euclidian', p.adjust.m = 'bonferroni', perm = 999)
-# 
-# vpiPairwise <- vpiPairwise1 %>% filter(p.adjusted < 0.05)
+
+
 
 ```
+
+
+
+
 <br><br>
 # Output Table
 ***
@@ -353,9 +352,7 @@ Creating a publication-ready table from the output of our PERMANOVA above. This 
 
 
 distPermTab <- distPerm %>%
-  # add_column("Test",)
   as_tibble(rownames = "Comparison") %>%
-  # mutate(Comparison, gsub(pattern = "timePoint", replacement = "Time Point", pattern = "year", replacement = "Year", pattern = "reef", replacement = "Reef")) %>% 
   rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
   select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
   mutate_if(is.numeric, round, digits = 3) %>%
@@ -386,52 +383,6 @@ distPermTab
 
 ```
 
-```{r, PERMANOVAtable, include = TRUE}
-
-# vpiPermTab = data.frame("Test" = "PERMANOVA", "Comparison" = "Class", "df" = vpiPerm[["aov.tab"]][["Df"]][[1]],"Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[1]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[1]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[2]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[2]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[2]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[3]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[3]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[3]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Class:Time", "df" = vpiPerm[["aov.tab"]][["Df"]][[4]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[4]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[4]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Class:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[5]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[5]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[5]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[6]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[6]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[6]]) %>% 
-#   add_row("Test" = " ", "Comparison" = "Class:Time:Treatment", "df" = vpiPerm[["aov.tab"]][["Df"]][[7]], "Pseudo.F" = vpiPerm[["aov.tab"]][["F.Model"]][[7]], "p.value" = vpiPerm[["aov.tab"]][["Pr(>F)"]][[7]]) %>% 
-#   
-# mutate_if(is.numeric, round, digits = 3) %>%     
-# mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
-# mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
-# mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
-# flextable() %>%
-# set_header_labels(Data.set = "Data set") %>% 
-# flextable::compose(part = "header", j = "df", value = as_paragraph("df")) %>% 
-# flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
-# flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
-# autofit() %>%
-# font(fontname = "Times New Roman", part = "all") %>%
-# fontsize(size = 12, part = "all") %>%
-# bold(part = "header") %>%
-# colformat_num(j = 'df', digits = 2) %>% 
-# colformat_num(j = "Pseudo.F", digits = 2) %>%
-# colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
-# align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
-# align(align = "center", j = "p.value")
-# 
-# vpiDoc = read_docx()
-# vpiDoc = body_add_flextable(vpiDoc, value = vpiPermTab)
-# print(vpiDoc, target = "../tables/vpiTable.docx")
-# vpiPermTab
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-
-
-
-
-
-```
 
 
 <br><br>
@@ -446,36 +397,16 @@ To visualize the data and what our species composition looks like at our sites, 
 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
-# myColors <- paletteer_c("PRGn", 10, direction = 1 )
+
 myColors <- brewer.pal(n = 10, name = "RdBu")
-# myColors
-# myColors <- paletteer_c("ggthemes::Green", 10)
-# 
 
-#myColors <- paletteer_c("pals::ocean.balance", 6, direction = 1)
-#Color Palette using a selection of Mote's preferred colors
-# myColors <- c("#d2232a", "#ca581f", "#f26522", "#85b034", "#00ae9d", "#78779e")
-
-# Using this just to plot the top 2% of species
-# vpi1 <- vpi %>%
-#   filter(abundance > 2) %>%
-#   droplevels()
-# vpi1$class = factor(vpi1$class, levels(vpi1$class)[c(2,6,3,4,5,1)])
-
-# 
-# vpiMat1 <- vpiMat %>% 
-#   select(-c(Other))
-
-# Making a box plot for all Y1 data
-
-boxPlotDataY1 <- vpiMat1 %>% 
+boxPlotData <- vpiMat1 %>% 
    rownames_to_column(var = "samples") %>% 
     separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
   select(-c(samples)) %>% 
   gather(class, count, 7:32, factor_key = TRUE) %>% 
   as_tibble() %>% 
   mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
-  filter(count > 0, year == "Y1") %>% 
   group_by(timePoint, reef, site, treatment, class) %>% 
   summarise(sumCount = sum(count)) %>% 
   arrange(desc(sumCount)) %>% 
@@ -490,167 +421,339 @@ boxPlotDataY1 <- vpiMat1 %>%
 
 
 
-vpiStack1Y1 <- ggplot(boxPlotDataY1, aes(x = timePoint, y = abundance)) +
+vpiStack1 <- ggplot(boxPlotData, aes(x = timePoint, y = abundance)) +
                       geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
                       ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 1% for Year 1 NOAA Sites")+
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 1%")+
                       scale_fill_manual(values = myColors)+
                       facet_wrap(treatment ~ site, scales = 'free')
 
 
 
 
-vpiStackY1 <- vpiStack1Y1+theme(
-    axis.text.x = element_text(size = 40, colour = "white", vjust = 0.5, hjust = 0.5, face= "bold"), 
-    axis.title.x = element_blank(),
-    axis.title.y = element_text(size = 40, face = "bold"), 
-    axis.text.y = element_text(colour = "white", size = 40, face = "bold"),
-    legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "white"), 
-    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-    panel.background = element_rect(fill = '#D3D3D3'), 
+vpiStack <- vpiStack1+theme(
+    # Title
     plot.title = element_text(size = 40, face = "bold"), 
-    axis.line = element_line(colour = "white"), 
-    axis.ticks = element_line(color="white"), 
-    text = element_text(size=40, color="white"), 
+    # X Axis
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_blank(),
+    # Y Axis
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    # Axis Lines and Ticks
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    # Legend
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
     legend.position = "right",
+    # Grid and Background
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "black"),
+    panel.background = element_rect(fill = '#D3D3D3'), 
+    # Text
+    text = element_text(size=40, color="black"), 
+    #rectangle
     rect = element_rect(fill = "transparent"))
 
-vpiStackY1
 
 
-# Making a boxplot for all Y2 data
 
-boxPlotDataY2 <- vpiMat1 %>% 
+
+
+vpiStack
+
+
+
+
+
+ggsave("../figures/vpiStack.png", plot = vpiStack, width = 40, height = 20, units = 'in', dpi = 600)
+
+
+```
+
+# Coral Evenness, Richness, and coral cover
+
+```{r, richnessAndEvenness, include = TRUE}
+# Aggregate abundance by treatment and timePoint using dplyr
+treatment_time_abundance <- vpiData %>%
+  select(1:8) %>%
+  filter(!class %in% c("Bare Substrate"))
+ 
+# Calculate species richness
+richness <- treatment_time_abundance %>%
+  group_by(treatment, year, timePoint, reef, Site) %>%
+  summarise(richness = specnumber(count))
+
+richnessMat <- richness %>%
+  tidyr::unite(sample, 1:4) %>% 
+  spread(Site, richness, fill = 0) %>%
+  column_to_rownames(var = 'sample')
+
+samplesLookupPerm <- richnessMat %>% 
    rownames_to_column(var = "samples") %>% 
-    separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
-  select(-c(samples)) %>% 
-  gather(class, count, 7:32, factor_key = TRUE) %>% 
-  as_tibble() %>% 
-  mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
-  filter(count > 0, year == "Y2") %>% 
-  group_by(timePoint, reef, site, treatment, class) %>% 
-  summarise(sumCount = sum(count)) %>% 
-  arrange(desc(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment) %>% 
-  mutate(totalObservations = sum(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>% 
-  mutate(abundance = (sumCount/totalObservations)*100) %>% 
-  filter(abundance > 1) %>% 
-  arrange(desc(abundance)) %>% 
-  droplevels() %>% 
-  mutate(class = factor(class, unique(class)))
+   select(samples) %>% 
+   separate(col = samples, into = c("treatment", "year", "timePoint", "Reef"), sep = "_", remove = FALSE) %>% 
+   column_to_rownames(var = "samples")
+
+
+richnessDist <- vegdist(richnessMat, method = 'jaccard')
+
+# Perform PERMANOVA
+richnessPerm <- adonis2(richnessDist ~ treatment*timePoint*year, data = samplesLookupPerm, permutations = 9999)
 
 
 
-vpiStack1Y2 <- ggplot(boxPlotDataY2, aes(x = timePoint, y = abundance)) +
+
+
+# Calculate species evenness
+evenness <- treatment_time_abundance %>%
+  group_by(treatment, year, timePoint, reef, Site) %>%
+  summarise(evenness = diversity(count, index = "simpson"))
+
+evennessPerm <- adonis2(evenness$evenness ~ treatment * year * timePoint, data = evenness, permutations = 9999)
+
+
+
+
+
+```
+```{r, evenAndRichTables, include = TRUE}
+
+richPermTab <- richnessPerm %>%
+  as_tibble(rownames = "Comparison") %>%
+  rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
+  select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
+  mutate_if(is.numeric, round, digits = 3) %>%
+    mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+  mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+  mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+  flextable() %>%
+  set_header_labels(Data.set = "Data set") %>% 
+  flextable::compose(part = "header", j = "Df", value = as_paragraph("Df")) %>% 
+  flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+  flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+  autofit() %>%
+  font(fontname = "Times New Roman", part = "all") %>%
+  fontsize(size = 12, part = "all") %>%
+  bold(part = "header") %>%
+  colformat_num(j = 'Df', digits = 2) %>% 
+  colformat_num(j = "Pseudo.F", digits = 2) %>%
+  colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+  align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+  align(align = "center", j = "p.value")
+
+richDoc = read_docx()
+richDoc = body_add_flextable(richDoc, value = richPermTab)
+print(richDoc, target = "../tables/richnessTableVpi.docx")
+richPermTab
+
+
+
+evenPermTab <- evennessPerm %>%
+  as_tibble(rownames = "Comparison") %>%
+  rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
+  select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
+  mutate_if(is.numeric, round, digits = 3) %>%
+    mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+  mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+  mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+  flextable() %>%
+  set_header_labels(Data.set = "Data set") %>% 
+  flextable::compose(part = "header", j = "Df", value = as_paragraph("Df")) %>% 
+  flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+  flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+  autofit() %>%
+  font(fontname = "Times New Roman", part = "all") %>%
+  fontsize(size = 12, part = "all") %>%
+  bold(part = "header") %>%
+  colformat_num(j = 'Df', digits = 2) %>% 
+  colformat_num(j = "Pseudo.F", digits = 2) %>%
+  colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+  align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+  align(align = "center", j = "p.value")
+
+evenDoc = read_docx()
+evenDoc = body_add_flextable(evenDoc, value = evenPermTab)
+print(evenDoc, target = "../tables/evennessTableVpi.docx")
+evenPermTab
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+```{r, evenAndRichBoxPlots, include = TRUE}
+
+
+
+richnessBox <- ggplot(richness, aes(x = timePoint, y = richness, fill = treatment)) +
+  geom_bar(stat='identity', position = "dodge") +
+  ylim(0, 10)+
+  labs(title = "Species Richness by Treatment and Timepoint",
+       x = "Timepoint",
+       y = "Richness") +
+  facet_wrap(treatment~site, scales = 'free_x')+
+  theme_minimal()
+
+evennessBox <- ggplot(evenness, aes(x = timePoint, y = evenness, fill = treatment)) +
+  geom_boxplot() +
+  labs(title = "Species Evenness by Treatment and Timepoint",
+       x = "Timepoint",
+       y = "Evenness") +
+  theme_minimal()
+
+
+
+
+
+```
+
+
+```{r, coralCover, include = TRUE}
+coralData <- vpiData %>% 
+  filter(!class %in% c("Bare Substrate", "Chordata", "Crustose coralline algae" ,"Octocorallia", "Palythoa","Porifera", "Thalassia testudinum", "Turf algae","Xestospongia muta","Gorgonia ventalina", "Millepora spp.")) %>% 
+  droplevels() 
+
+coralMat <- coralData %>%
+  select(-abundance) %>%
+  tidyr::unite(sample, 1:6) %>% 
+  spread(class, count, fill = 0) %>%
+  column_to_rownames(var = 'sample')
+
+samplesLookupPerm <- coralMat %>% 
+   rownames_to_column(var = "samples") %>% 
+   select(samples) %>% 
+   separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>% 
+   column_to_rownames(var = "samples")
+
+
+
+coralDist <- vegdist(coralMat, method = 'bray')
+
+# Perform PERMANOVA
+coralPerm <- adonis2(coralDist ~ treatment*timePoint*year, data = samplesLookupPerm, permutations = 9999)
+
+
+
+```
+
+
+
+
+```{r, coverGraph, include = TRUE}
+coralStack1 <- ggplot(coralData, aes(x = timePoint, y = abundance)) +
                       geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
-                      ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 1% for Year 2 NOAA Sites")+
-                      scale_fill_manual(values = myColors)+
-                      facet_wrap(treatment ~ site, scales = "free")
+                      ylim(0,5) +
+                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Coral Abundance")+
+                      # scale_fill_manual(values = myColors)+
+                      facet_wrap(treatment ~ year*Site, scales = 'free_x')
 
-
-
-
-vpiStackY2 <- vpiStack1Y2+theme(
-    axis.text.x = element_text(size = 40, colour = "white", vjust = 0.5, hjust = 0.5, face= "bold"), 
-    axis.title.x = element_blank(),
-    axis.title.y = element_text(size = 40, face = "bold"), 
-    axis.text.y = element_text(colour = "white", size = 40, face = "bold"),
-    legend.title = element_text(size = 40, face = "bold"), 
-    legend.text = element_text(size = 36, face = "bold", colour = "white"), 
-    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "white"),
-    panel.background = element_rect(fill = '#D3D3D3'), 
+coralStack <- coralStack1+theme(
+    # Title
     plot.title = element_text(size = 40, face = "bold"), 
-    axis.line = element_line(colour = "white"), 
-    axis.ticks = element_line(color="white"), 
-    text = element_text(size=40, color="white"), 
-    legend.position = "right",
+    # X Axis
+    axis.text.x = element_text(size = 40, colour = "black", vjust = 0.5, hjust = 0.5, face= "bold"), 
+    axis.title.x = element_blank(),
+    # Y Axis
+    axis.title.y = element_text(size = 40, face = "bold"), 
+    axis.text.y = element_text(colour = "black", size = 40, face = "bold"),
+    # Axis Lines and Ticks
+    axis.line = element_line(colour = "black"), 
+    axis.ticks = element_line(color="black"), 
+    # Legend
+    legend.title = element_text(size = 40, face = "bold"), 
+    legend.text = element_text(size = 36, face = "bold", colour = "black"), 
+    legend.position = "bottom",
+    # Grid and Background
+    panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "black"),
+    panel.background = element_rect(fill = '#D3D3D3'), 
+    # Text
+    text = element_text(size=40, color="black"), 
+    #rectangle
     rect = element_rect(fill = "transparent"))
-vpiStackY2
-
-vpiTotal <- vpiStackY1 / vpiStackY2
-
-
-
-ggsave("../figures/vpiStackY1.png", plot = vpiStackY1, width = 40, height = 20, units = 'in', dpi = 600)
-ggsave("../figures/vpiStackY2.png", plot = vpiStackY2, width = 40, height = 20, units = "in", dpi = 600)
-
-
-ggsave("../figures/vpiStackTotal.png", plot = vpiTotal, width = 20, height = 15, units = 'in', dpi = 600)
-
+coralStack
+ggsave("../figures/coverStack.png", plot = coralStack, width = 40, height = 20, units = 'in', dpi = 600)
 
 ```
-
-![Figure](../figures/vpiStackBar.png)
-
-
-```{r}
-vpiStack1Y1 <- ggplot(boxPlotDataY1, aes(x = timePoint, y = abundance)) +
-                      geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
-                      ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2% for Year 1 NOAA Sites")+
-                      # scale_fill_manual(values = myColors)+
-                      facet_wrap(treatment ~ site, scales = 'free')
+```{r, coverPermTab, include = TRUE}
 
 
 
 
+coralPermTab <- coralPerm %>%
+  as_tibble(rownames = "Comparison") %>%
+  rename(`Pseudo.F` = `F`, `p.value` = `Pr(>F)`) %>% 
+  select(Comparison, Df, `Pseudo.F`, `p.value`) %>% 
+  mutate_if(is.numeric, round, digits = 3) %>%
+    mutate(p.value = replace(p.value, p.value >= 0.05, "ns")) %>%
+  mutate(p.value = replace(p.value, p.value < 0.001, "< 0.001")) %>% 
+  mutate_if(is.character, str_replace_all, pattern = "-", replacement = "–") %>%
+  flextable() %>%
+  set_header_labels(Data.set = "Data set") %>% 
+  flextable::compose(part = "header", j = "Df", value = as_paragraph("Df")) %>% 
+  flextable::compose(part = "header", j = "Pseudo.F", value = as_paragraph("Pseudo-F")) %>%
+  flextable::compose(part = "header", j = "p.value", value = as_paragraph(as_i("p"), "-value")) %>% 
+  autofit() %>%
+  font(fontname = "Times New Roman", part = "all") %>%
+  fontsize(size = 12, part = "all") %>%
+  bold(part = "header") %>%
+  colformat_num(j = 'Df', digits = 2) %>% 
+  colformat_num(j = "Pseudo.F", digits = 2) %>%
+  colformat_num(j = "p.value", digits = 4, na_str = "ns") %>% 
+  align_nottext_col(align = "center", header = TRUE, footer = TRUE) %>% 
+  align(align = "center", j = "p.value")
 
-vpiStack1Y2 <- ggplot(boxPlotDataY2, aes(x = timePoint, y = abundance)) +
-                      geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
-                      ylim(0,100) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 2% for Year 2 NOAA Sites")+
-                      # scale_fill_manual(values = myColors)+
-                      facet_wrap(treatment ~ site, scales = "free")
-
-
-```
-
-
-
-
-
-
-```{r, subsetDate, include = FALSE }
-
-
-post <- vpi %>% filter(time == '1 Year')
-coolStuff <- vpi %>% filter(class != "Bare Substrate") %>% filter(class != "Turf algae")
-
-
-adonis(count ~ time*treatment*class, data = coolStuff, method = 'euclidian', permutation = 9999)
-
-
+coralDoc = read_docx()
+coralDoc = body_add_flextable(coralDoc, value = coralPermTab)
+print(coralDoc, target = "../tables/coralCoverTableVpi.docx")
+coralPermTab
 
 
 
 ```
 
 
-```{r, ACERmean, include = TRUE}
 
 
-ACER<- vpiMat %>% 
-   rownames_to_column(var = "samples") %>% 
-    separate(col = samples, into = c("date", "timePoint", "year", "site", "treatment", "reef"), sep = "_", remove = FALSE) %>%
-  select(-c(samples)) %>% 
-  gather(class, count, 7:32, factor_key = TRUE) %>% 
-  as_tibble() %>% 
-  mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
-  filter(count > 0) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>%
-  summarise(sumCount = sum(count)) %>% 
-  arrange(desc(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment) %>% 
-  mutate(totalObservations = sum(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>%
-  mutate(abundance = (sumCount/totalObservations)*100) %>% 
-  filter(class == "Acropora cervicornis")
 
-mean(ACER$abundance)
+
+
+
+
+
+
+```{r, spongeAndAlgae, include = TRUE}
+
+#Subsetting to assess changes in Macroalgae and Sponge cover
+
+
+algae <- vpiData %>% 
+  filter(class %in% c("Turf algae", "Xestospongia muta", "Porifera"), timePoint == c("T12")) %>% 
+  droplevels()
+
+kruskal.test(count ~ treatment, data = algae)
+
+
+
+
+
+
+
+
+
 
 
 ```
+
+
 

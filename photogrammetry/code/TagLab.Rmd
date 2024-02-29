@@ -77,7 +77,7 @@ tagData <- tagData1 %>%
       dplyr::select(-c(remove, `delete`, no)) %>%
     mutate_if(is.character, str_replace_all, pattern = "_", replacement = "-") %>%
   rename(Species = `TagLab.Class.name`, Date = `TagLab.Date`, Area = `TagLab.Area`) %>%
-      mutate_at(c("Date", "Site", "Species"), as.factor) %>%
+      mutate_at(c("Site", "Species"), as.factor) %>%
       mutate_at(c("Area"), as.numeric) %>%
       select(Date, timePoint, Site, Species, Area) %>%
   group_by(Date, Site) %>%
