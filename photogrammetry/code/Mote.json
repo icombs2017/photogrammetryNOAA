@@ -1,6 +1,6 @@
 {
-  "Name": "Mote",
-  "Description": "These are the color codes used for the segmentation of orthoprojections/mosaics from Mote Marine Laboratory",
+  "Name": "scripps",
+  "Description": "These color codes are the ones typically used by the Scripps Institution of Oceanography (UCSD)",
   "Labels": [
     {
       "id": "Siderastrea siderea",
@@ -10,22 +10,6 @@
         170,
         0,
         0
-      ],
-      "border": [
-        200,
-        200,
-        200
-      ],
-      "visible": true
-    },
-    {
-      "id": "Empty",
-      "name": "Empty",
-      "description": null,
-      "fill": [
-        127,
-        127,
-        127
       ],
       "border": [
         200,
@@ -250,6 +234,22 @@
         170,
         0,
         255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
+    },
+    {
+      "id": "Orbicella annularis",
+      "name": "Orbicella annularis",
+      "description": null,
+      "fill": [
+        255,
+        0,
+        127
       ],
       "border": [
         200,
