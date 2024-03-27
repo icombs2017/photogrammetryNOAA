@@ -257,6 +257,22 @@
         200
       ],
       "visible": true
+    },
+    {
+      "id": "Madracis decactis",
+      "name": "Madracis decactis",
+      "description": null,
+      "fill": [
+        0,
+        170,
+        255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
     }
   ]
 }
