@@ -62,19 +62,25 @@ Example: docs.google.com/spreadsheets/d/FILE_ID_GOES_HERE/other_information/. Be
 # Here we are importing data for our plug counts from google drive
 
 ```{r, plugLoadingData, include = TRUE}
-# 
-#  data <- drive_download(
-#  as_id("1b4IWK7tfSt3n8o8NlgJKSDoqj_QkHvKcaJBNz85RBv4"),
-#    path = "../data/outplantData.xlsx",
-#    overwrite = TRUE)
+
+ data <- drive_download(
+ as_id("1b4IWK7tfSt3n8o8NlgJKSDoqj_QkHvKcaJBNz85RBv4"),
+   path = "../data/outplantData.xlsx",
+   overwrite = TRUE)
 
 
 
 # APAL Data
 apalData <- read_excel("../data/outplantData.xlsx", sheet = "ex-situ Apal outplants", na = c("", "N/A", "NA"))
 
-# ACER Data
-acerData <- read_excel("../data/outplantdata.xlsx", sheet = "in-situ Acer outplants", na = c("", "N/A", "NA"))
+# ACER Data in situ
+acerDataIn <- read_excel("../data/outplantdata.xlsx", sheet = "in-situ Acer outplants", na = c("", "N/A", "NA"))
+
+# ACER Data ex situ
+acerDataEx <- read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Acer outplants", na = c("", "N/A", "NA"))
+
+
+
 
 
 # Ex-Situ Massives Data, theres some weird data artifacts in the beginnnig of the data set so skipping a few columns just to get to the data we need
@@ -278,8 +284,7 @@ Including the same data wrangling as above but also including a fixed string cal
 
 ```{r, acerDataWrangling, include = TRUE}
 
-
-outplantACER <- acerData %>% 
+outplantACERin <- acerDataIn %>% 
   select(Year, 
          Date, 
          `Site ID`, 
@@ -290,81 +295,82 @@ outplantACER <- acerData %>%
          `1-month % Dead`, 
          `1-month % Missing`,
          `1-month % Plot Survival`, 
-         `% of Plots with Partial Mortality`,
-         `Avg. % Partial Mortality within Affected Plots`,
+         # `% of Plots with Partial Mortality`,
+         # `Avg. % Partial Mortality within Affected Plots`,
          `12-month Monitoring`,                           
          `12-month Survival`,                             
          `12-month % Dead`,                               
          `12-month % Missing`,                            
-         `12-month % Plot Survival`,
-         `% TLE Present...27`) %>% 
+         `12-month % Plot Survival`) %>% 
   filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
   mutate_at(c("Year", 
          "Site ID", 
         "Deliverable"), as.factor) %>%
   mutate_at(c("Date"), as.Date) %>% 
-  droplevels() %>% 
+  droplevels()
+
+
+
+%>% 
   # group_by(Deliverable) %>%
   mutate(cum_sum = cumsum(`# frags`)) %>% 
   mutate(Date = as.Date(Date, "%m %d %Y"))
 # outplantACER$Date <- as.Date(outplantACER$Date, "%m %d %Y")
 
-outplantByYearAC <- outplantACER %>% 
+
+outplantACERex <- acerDataEx %>% 
   select(Year, 
          Date, 
          `Site ID`, 
          Deliverable, 
-         `# frags`) %>% 
-  group_by(Deliverable) %>% 
-  mutate(totalOutplanted = sum(`# frags`))
+         `# frags`, 
+         `1-month Monitoring`,
+         `1-month Survival`, 
+         `1-month % Dead`, 
+         `1-month % Missing`,
+         `1-month % Plot Survival`, 
+         # `% of Plots with Partial Mortality`,
+         # `Avg. % Partial Mortality within Affected Plots`,
+         `12-month Monitoring`,                           
+         `12-month Survival`,                             
+         `12-month % Dead`,                               
+         `12-month % Missing`,                            
+         `12-month % Plot Survival`) %>% 
+  filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>% 
+  mutate_at(c("Year", 
+         "Site ID", 
+        "Deliverable"), as.factor) %>%
+  mutate_at(c("Date"), as.Date) %>% 
+  droplevels()
+
+
+
+%>% 
+  # group_by(Deliverable) %>%
+  mutate(cum_sum = cumsum(`# frags`)) %>% 
+  mutate(Date = as.Date(Date, "%m %d %Y"))
+# outplantACER$Date <- as.Date(outplantACER$Date, "%m %d %Y")
+
+outplantACER1 <- rbind(outplantACERex, outplantACERin)
+
+outplantACER <- outplantACER1 %>%
+  arrange(Date) %>% 
+  mutate(cum_sum = cumsum(`# frags`)) %>% 
+  mutate(Date = as.Date(Date, "%m %d %Y"))
+  
+# outplantByYearAC <- outplantACER %>% 
+#   select(Year, 
+#          Date, 
+#          `Site ID`, 
+#          Deliverable, 
+#          `# frags`) %>% 
+#   group_by(Deliverable) %>% 
+#   mutate(totalOutplanted = sum(`# frags`))
 
 acerDeliverables <- c(6000, 6000, 3000, 3000)
 
 
 acerCumulativeDeliverables <- c(6000, 12000, 15000, 18000)
-
-
-```
-
-
-## Plotting total number of frags per year with the red dashed line indicating each year's deliverable (every year it is 3285)
-```{r, acerOutplantByYearPlot, include = TRUE}
-
-# number of frags per year
-outplantACERplot1<- ggplot(outplantByYearAC, aes(x = Deliverable, y = totalOutplanted, fill = Deliverable, color = I('black')))+
-  geom_bar(position = "dodge", stat = 'identity', width = 1)+
-  geom_hline(yintercept = c(3285,3285,3285), linetype = 'dashed', color =c('red', 'red', 'red'))+
- scale_y_continuous(limits = c(0, 4000), breaks = seq(0, 4000, by = 500))+
-  ggtitle("Number of Acropora cervicornis Fragments Outplanted per Year")+
-  xlab("Year")+
-  ylab("Number of fragments outplanted")
-
-outplantACERplot <- outplantACERplot1 + theme(
-    # Title
-    plot.title = element_text(size = 40, face = "bold"),
-    # X Axis
-    axis.text.x = element_text(angle = 45, hjust = 1),  
-    axis.title.x = element_text(size = 20, face = "bold"),
-    # Y Axis
-    axis.title.y = element_text(size = 20, face = "bold"),
-    axis.text.y = element_text(colour = "black", size = 20, face = "bold"),
-    # Axis Lines and Ticks
-    axis.line = element_line(colour = "black"),
-    axis.ticks = element_line(color="black"),
-    # Legend
-    legend.title = element_text(size = 20, face = "bold"),
-    legend.text = element_text(size = 20, face = "bold", colour = "black"),
-    legend.position = "bottom",
-    # Grid and Background
-    panel.grid.major = element_line(size = 0.3, linetype = 'solid', colour = "black"),
-    panel.background = element_rect(fill = 'white'),
-    # Text
-    text = element_text(size=20, color="black"))
-
-
-
-
-ggsave("../figures/outplantACERplot.png", plot =outplantACERplot, width = 20, height = 15, units = 'in', dpi = 600)
 
 
 ```
@@ -385,8 +391,8 @@ outplantACERplot1<- ggplot(outplantACER, aes(x = Date, y = cum_sum))+
   geom_hline(aes(yintercept = acerCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal', color = 'Year 2 Outplant Goal'), linewidth = 2) +
   geom_hline(aes(yintercept = acerCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal', color = 'Year 3 Outplant Goal'), linewidth = 2) +
   geom_hline(aes(yintercept = acerCumulativeDeliverables[4], linetype = 'Year 4 Outplant Goal', color = 'Year 4 Outplant Goal'), linewidth = 2) +
-  geom_segment(aes(x = as.Date("2023-06-04"), y = 18300,
-                   xend = as.Date("2023-12-31"), yend = 18300),
+  geom_segment(aes(x = as.Date("2023-06-10"), y = 19654,
+                   xend = as.Date("2023-12-31"), yend = 19654),
                linetype = 'solid', color = 'blue', size = 3)+ # remove this with full dataset
   scale_y_continuous(limits = c(0, 20000), breaks = seq(0, 20000, by = 1000))+
   ggtitle(expression("Number of "*italic("Acropora cervicornis")*" Fragments Outplanted per Year"))+
