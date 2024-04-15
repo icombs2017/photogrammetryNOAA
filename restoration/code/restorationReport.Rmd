@@ -59,9 +59,9 @@ pacman::p_load("ggplot2", "googlesheets4", "dplyr", "officer","reshape2", "strin
 ## We are downloading this dataset from our GoogleDrive folder. We will be using the package `googledrive`. Each GoogleDrive file has a unique ID that does not change throughout the lifespan of the document, even if the file name is changed. This ID is housed in the file's URL. 
 Example: docs.google.com/spreadsheets/d/FILE_ID_GOES_HERE/other_information/. Below you will copy and paste that into the function `drive_download` within `as_id`. This will save the file locally in the specified path (in this case our data folder) and you will import the folder as you normally would. Downloading it this way decreases the potential human error when downloading, moving folders, renaming, saving etc and ensures that the most up to date file is being utilized. 
 
-# Here we are importing data for our plug counts from google drive
+# Here we are importing data for our outplantnig database from google drive. We are pulling data from different tabs within the google drive and eventually combining them into exhaustive outplant dataframes per species before finally filtering out just the data we need for this specific report.
 
-```{r, plugLoadingData, include = TRUE}
+```{r, outplantLoadingData, include = TRUE}
 
  data <- drive_download(
  as_id("1b4IWK7tfSt3n8o8NlgJKSDoqj_QkHvKcaJBNz85RBv4"),
@@ -84,11 +84,20 @@ acerDataEx <- read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Acer outp
 
 
 # Ex-Situ Massives Data, theres some weird data artifacts in the beginnnig of the data set so skipping a few columns just to get to the data we need
-exMsvsDataNames <- names(read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Massive outplants", na = c("", "N/A", "NA"), col_names = TRUE))
-exMsvsData <- read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Massive outplants", na = c("", "N/A", "NA", "N/P", "#N/A", "#REF!"),skip = 28, col_names = exMsvsDataNames)
+exMsvsDataNames <- names(read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Massive outplants",na = c("", "N/A", "NA"), col_names = TRUE))
+
+
+# If using UK data, need to change this to exMsvsData1 and uncomment the section below. 
+exMsvsData1 <- read_excel("../data/outplantdata.xlsx", sheet = "ex-situ Massive outplants", na = c("", "N/A", "NA", "N/P", "#N/A", "#REF!"), col_names = exMsvsDataNames, skip = 28)
+
+
+
+UKmsvsData <- read_excel("../data/outplantdata.xlsx", sheet = "Upper Keys Outplants", na = c("", "N/A", "NA", "N/P", "#N/A", "#REF!"), range = "A1:AX1", col_names = exMsvsDataNames)
+
+exMsvsData <- rbind(exMsvsData1, UKmsvsData)
 
 # In-Situ Massives Data
-inMsvsData <- read_excel("../data/outplantdata.xlsx", sheet = "in-situ Massive outplants", na = c("", "N/A", "NA"))
+inMsvsData <- read_excel("../data/outplantdata.xlsx", sheet = "in-situ Massive outplants", na = c("", "N/A", "NA"), range = "A1:AA100")
 
 ```
 
@@ -500,7 +509,7 @@ outplantACERtab
 
 # Massives Monitoring summary
 
-## Time to do some data wrangling for the Massives dataset. Since we only care about the NOAA right now, we are going to filter the data set to just include those given to the grant *NOAA*. Also including a fixed string called apalDeliverables and apalCumulativeDeliverables that includes what each deliverable is each year and cumulatively by year.Since this includes both ex-situ and in-situ massives we need to comibne those to data sets so we can more easily work with the data. 
+## Time to do some data wrangling for the Massives dataset. Since we only care about the NOAA right now, we are going to filter the data set to just include those given to the grant *NOAA*. Also including a fixed string called msvsDeliverables and msvsCumulativeDeliverables that includes what each deliverable is each year and cumulatively by year. Since this includes both **ex situ** and **in situ** massives we need to comibne those to data sets so we can more easily work with the data. 
 
 
 ```{r, msvsDataWrangling, include = TRUE}
@@ -510,12 +519,12 @@ exMsvsData1 <- exMsvsData %>%
   select(1:48, numberOfGenotypes) %>%
   dplyr::rename(totalNumberOfPlugs = `# plugs`) %>%
   filter(Deliverable %in% c("NOAA Yr1", "NOAA Yr2", "NOAA Yr3", "NOAA Yr4")) %>%
- 
   mutate_at(c("Site ID",
         "Deliverable"), as.factor) %>%
   mutate_at(c("Date"), as.Date) %>% 
   droplevels() %>% 
-  mutate(Date = as.Date(Date, "%m %d %Y")) 
+  mutate(Date = as.Date(Date, "%m %d %Y"), 
+         Year = as.double(Year)) 
 
 inMsvsData1 <- inMsvsData %>% 
   mutate(numberOfGenotypes = rowSums(!is.na(select(., `Gentoypes Represented at the Site`:ncol(.))))) %>%
@@ -581,8 +590,8 @@ outplantMSVSplot1<- ggplot(outplantMsvs, aes(x = Date, y = cum_sum))+
   geom_hline(aes(yintercept = msvsCumulativeDeliverables[2], linetype = 'Year 2 Outplant Goal', color = 'Year 2 Outplant Goal'), linewidth = 3)+
 geom_hline(aes(yintercept = msvsCumulativeDeliverables[3], linetype = 'Year 3 Outplant Goal', color = 'Year 3 Outplant Goal'), linewidth = 3) +
   geom_hline(aes(yintercept = msvsCumulativeDeliverables[4], linetype = 'Year 4 Outplant Goal', color = 'Year 4 Outplant Goal'), linewidth = 3) +
-  geom_segment(aes(x = as.Date("2023-06-18"), y = 3518,
-                   xend = as.Date("2023-12-31"), yend = 3518),
+  geom_segment(aes(x = as.Date("2023-06-18"), y = 4018,
+                   xend = as.Date("2023-12-31"), yend = 4018),
                linetype = 'solid', color = 'blue', size = 3)+ # remove this with full dataset
   scale_y_continuous(limits = c(0, 5000), breaks = seq(0, 5000, by = 500))+
   ggtitle(expression("Number of Massive Coral Fragments Outplanted per Year"))+
