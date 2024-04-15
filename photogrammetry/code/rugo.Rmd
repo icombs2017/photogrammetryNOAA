@@ -87,7 +87,7 @@ rugoY2T12 <-
 
 rugoComboY1 <- bind_rows(rugoY1T0,rugoY1T12)
 rugoComboY2 <- bind_rows(rugoY2T0,rugoY2T12)
-
+rugoCombo <- bind_rows(rugoComboY1,rugoComboY2)
 
 ```
 <br><br>
