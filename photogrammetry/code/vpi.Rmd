@@ -398,7 +398,7 @@ To visualize the data and what our species composition looks like at our sites, 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
 
-myColors <- brewer.pal(n = 10, name = "RdBu")
+myColors <- brewer.pal(n = 26, name = "RdBu")
 
 boxPlotData <- vpiMat1 %>% 
    rownames_to_column(var = "samples") %>% 
@@ -407,26 +407,26 @@ boxPlotData <- vpiMat1 %>%
   gather(class, count, 7:32, factor_key = TRUE) %>% 
   as_tibble() %>% 
   mutate_at(c("date", "timePoint", "year", "site", "treatment", "reef", "class"), as.factor) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>% 
+  group_by(timePoint, reef, year, treatment, class) %>% 
   summarise(sumCount = sum(count)) %>% 
   arrange(desc(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment) %>% 
+  group_by(timePoint, year, treatment) %>% 
   mutate(totalObservations = sum(sumCount)) %>% 
-  group_by(timePoint, reef, site, treatment, class) %>% 
+  group_by(timePoint, year, treatment, class) %>% 
   mutate(abundance = (sumCount/totalObservations)*100) %>% 
-  filter(abundance > 1) %>% 
+  # filter(abundance > 1) %>% 
   arrange(desc(abundance)) %>% 
   droplevels() %>% 
   mutate(class = factor(class, unique(class)))
 
 
 
-vpiStack1 <- ggplot(boxPlotData, aes(x = timePoint, y = abundance)) +
+vpiStack1 <- ggplot(boxPlotData, aes(x = treatment, y = abundance)) +
                       geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
                       ylim(0,100) +
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 1%")+
-                      scale_fill_manual(values = myColors)+
-                      facet_wrap(treatment ~ site, scales = 'free')
+                      # scale_fill_manual(values = myColors)+
+                      facet_wrap(timePoint ~ year, scales = 'free')
 
 
 
