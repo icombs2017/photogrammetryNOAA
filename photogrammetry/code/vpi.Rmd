@@ -398,7 +398,7 @@ To visualize the data and what our species composition looks like at our sites, 
 
 ```{r, plotting, include = TRUE, eval = FALSE}
 
-myColors <- brewer.pal(n = 26, name = "RdBu")
+myColors <- brewer.pal(n = 10, name = "RdBu")
 
 boxPlotData <- vpiMat1 %>% 
    rownames_to_column(var = "samples") %>% 
@@ -414,7 +414,7 @@ boxPlotData <- vpiMat1 %>%
   mutate(totalObservations = sum(sumCount)) %>% 
   group_by(timePoint, year, treatment, class) %>% 
   mutate(abundance = (sumCount/totalObservations)*100) %>% 
-  # filter(abundance > 1) %>% 
+  filter(abundance > 0.25) %>%
   arrange(desc(abundance)) %>% 
   droplevels() %>% 
   mutate(class = factor(class, unique(class)))
@@ -425,7 +425,7 @@ vpiStack1 <- ggplot(boxPlotData, aes(x = treatment, y = abundance)) +
                       geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
                       ylim(0,100) +
                       labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Species Abundance > 1%")+
-                      # scale_fill_manual(values = myColors)+
+                      scale_fill_manual(values = myColors)+
                       facet_wrap(timePoint ~ year, scales = 'free')
 
 
@@ -651,14 +651,30 @@ coralPerm <- adonis2(coralDist ~ treatment*timePoint*year, data = samplesLookupP
 
 
 ```{r, coverGraph, include = TRUE}
-coralStack1 <- ggplot(coralData, aes(x = timePoint, y = abundance)) +
-                      geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
-                      ylim(0,5) +
-                      labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Coral Abundance")+
-                      # scale_fill_manual(values = myColors)+
-                      facet_wrap(treatment ~ year*Site, scales = 'free_x')
 
-coralStack <- coralStack1+theme(
+coralData <- vpiData %>% 
+  group_by(timePoint, year, treatment, class) %>% 
+  summarise(sumCount = sum(count)) %>% 
+  arrange(desc(sumCount)) %>% 
+  group_by(timePoint, year, treatment) %>% 
+  mutate(totalObservations = sum(sumCount)) %>% 
+  group_by(timePoint, year, treatment, class) %>% 
+  mutate(abundance = (sumCount/totalObservations)*100) %>% 
+  # filter(abundance > 1) %>% 
+  arrange(desc(abundance)) %>% 
+  droplevels() %>% 
+  mutate(class = factor(class, unique(class))) %>% 
+  filter(!class %in% c("Bare Substrate", "Chordata", "Crustose coralline algae" ,"Octocorallia", "Palythoa","Porifera", "Thalassia testudinum", "Turf algae","Xestospongia muta","Gorgonia ventalina", "Millepora spp.")) %>% 
+  droplevels() 
+
+
+Y1Control <- coralData %>% filter(year %in% "Y1", treatment == "Control")
+Y1Outplant <- coralData %>% filter(year %in% "Y1", treatment == "Outplanted")
+Y2Control <- coralData %>% filter(year %in% "Y2", treatment == "Control")
+Y2Outplant <- coralData %>% filter(year %in% "Y2", treatment == "Outplanted")
+
+#Theme Statement
+theme <- theme(
     # Title
     plot.title = element_text(size = 40, face = "bold"), 
     # X Axis
@@ -673,7 +689,7 @@ coralStack <- coralStack1+theme(
     # Legend
     legend.title = element_text(size = 40, face = "bold"), 
     legend.text = element_text(size = 36, face = "bold", colour = "black"), 
-    legend.position = "bottom",
+    legend.position = "right",
     # Grid and Background
     panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "black"),
     panel.background = element_rect(fill = '#D3D3D3'), 
@@ -681,10 +697,68 @@ coralStack <- coralStack1+theme(
     text = element_text(size=40, color="black"), 
     #rectangle
     rect = element_rect(fill = "transparent"))
-coralStack
-ggsave("../figures/coverStack.png", plot = coralStack, width = 40, height = 20, units = 'in', dpi = 600)
+
+
+# Define a vector of colors
+my_colors <- c(
+  "#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", 
+  "#FFFF33", "#A65628", "#F781BF", "#999999", "#66C2A5",
+  "#FC8D62", "#8DA0CB"  # Adding two more colors
+)
+
+# Y1 Control
+coralStackY1Control <- ggplot(Y1Control, aes(x = timePoint, y = abundance)) +
+  geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+  scale_fill_manual(values = my_colors) +  # Set fill colors
+  ylim(0, 5) +
+  labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Coral Abundance") +
+  theme
+
+# Y1 Outplant
+coralStackY1Outplant <- ggplot(Y1Outplant, aes(x = timePoint, y = abundance)) +
+  geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+  scale_fill_manual(values = my_colors) +  # Set fill colors
+  ylim(0, 5) +
+  labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Coral Abundance") +
+  theme
+
+# Y2 Control
+coralStackY2Control <- ggplot(Y2Control, aes(x = timePoint, y = abundance)) +
+  geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+  scale_fill_manual(values = my_colors) +  # Set fill colors
+  ylim(0, 5) +
+  labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Coral Abundance") +
+  theme
+
+# Y2 Outplant
+coralStackY2Outplant <- ggplot(Y2Outplant, aes(x = timePoint, y = abundance)) +
+  geom_bar(aes(fill = class), position = position_stack(), stat = 'identity', color = 'black', alpha = 0.8) +
+  scale_fill_manual(values = my_colors) +  # Set fill colors
+  ylim(0, 5) +
+  labs(y = "Relative Abundance (%)", fill = "Class", title = "Relative Coral Abundance") +
+  theme
+
+# Arrange plots
+coralStack <- coralStackY1Control / coralStackY1Outplant / coralStackY2Control / coralStackY2Outplant
+
+ggsave("../figures/coverStack.png", plot = coralStack, width = 20, height = 40, units = 'in', dpi = 600)
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```{r, coverPermTab, include = TRUE}
 
 

@@ -63,22 +63,23 @@ read_plus <- function(flnm) {
 }
 
 tagData1 <-
-    list.files(path = "../data/TagLab", pattern = "*.csv",
+    list.files(path = "../data/TagLab/report", pattern = "*.csv",
                full.names = T) %>%
     map_df(~read_plus(.)) %>%
   as.tibble()
 
 
 tagData <- tagData1 %>%
-      tidyr::separate(filename, into=c("remove", "Date"),extra = 'merge',sep = 15) %>%
-      tidyr::separate(Date, into=c("timePoint", "Site"),sep = 10) %>%
-  tidyr::separate(Site, into = c("delete", "Site"), sep = 1) %>% 
+      tidyr::separate(filename, into=c("remove", "Date"),extra = 'merge',sep = 22) %>%
+      tidyr::separate(Date, into=c("Date", "Site"),sep = 11) %>%
+  tidyr::separate(Date, into = c("Date", "delete"), sep = 10) %>% 
   tidyr::separate(Site, into = c("Site", "no"), sep = ".csv") %>% 
       dplyr::select(-c(remove, `delete`, no)) %>%
     mutate_if(is.character, str_replace_all, pattern = "_", replacement = "-") %>%
-  rename(Species = `TagLab.Class.name`, Date = `TagLab.Date`, Area = `TagLab.Area`) %>%
+  rename(Species = `TagLab.Class.name`, Area = `TagLab.Area`) %>%
       mutate_at(c("Site", "Species"), as.factor) %>%
       mutate_at(c("Area"), as.numeric) %>%
+      mutate_at(c("Date"), as.Date) %>% 
       select(Date, timePoint, Site, Species, Area) %>%
   group_by(Date, Site) %>%
   droplevels()
