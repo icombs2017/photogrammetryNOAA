@@ -273,6 +273,22 @@
         200
       ],
       "visible": true
+    },
+    {
+      "id": "Pseudodiploria clivosa",
+      "name": "Pseudodiploria clivosa",
+      "description": null,
+      "fill": [
+        170,
+        85,
+        255
+      ],
+      "border": [
+        200,
+        200,
+        200
+      ],
+      "visible": true
     }
   ]
 }
