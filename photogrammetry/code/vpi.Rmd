@@ -229,7 +229,7 @@ pcoaPlot <- pcoaPlot2 + theme(
     # Text
     text = element_text(size=20, color="black"))
 
-ggsave("../figures/pcoa.png", plot = pcoaPlot, width = 20, height = 15, units = 'in', dpi = 600)
+# #ggsave("../figures/pcoa.png", plot = pcoaPlot, width = 20, height = 15, units = 'in', dpi = 600)
 
 
 
@@ -376,7 +376,7 @@ distPermTab <- distPerm %>%
 
 distDoc = read_docx()
 distDoc = body_add_flextable(distDoc, value = distPermTab)
-print(distDoc, target = "../tables/distTableVpi.docx")
+# #print(distDoc, target = "../tables/distTableVpi.docx")
 distPermTab
 
 
@@ -466,7 +466,7 @@ vpiStack
 
 
 
-ggsave("../figures/vpiStack.png", plot = vpiStack, width = 40, height = 20, units = 'in', dpi = 600)
+#ggsave("../figures/vpiStack.png", plot = vpiStack, width = 40, height = 20, units = 'in', dpi = 600)
 
 
 ```
@@ -544,7 +544,7 @@ richPermTab <- richnessPerm %>%
 
 richDoc = read_docx()
 richDoc = body_add_flextable(richDoc, value = richPermTab)
-print(richDoc, target = "../tables/richnessTableVpi.docx")
+#print(richDoc, target = "../tables/richnessTableVpi.docx")
 richPermTab
 
 
@@ -574,7 +574,7 @@ evenPermTab <- evennessPerm %>%
 
 evenDoc = read_docx()
 evenDoc = body_add_flextable(evenDoc, value = evenPermTab)
-print(evenDoc, target = "../tables/evennessTableVpi.docx")
+#print(evenDoc, target = "../tables/evennessTableVpi.docx")
 evenPermTab
 
 
@@ -741,7 +741,7 @@ coralStackY2Outplant <- ggplot(Y2Outplant, aes(x = timePoint, y = abundance)) +
 # Arrange plots
 coralStack <- coralStackY1Control / coralStackY1Outplant / coralStackY2Control / coralStackY2Outplant
 
-ggsave("../figures/coverStack.png", plot = coralStack, width = 20, height = 40, units = 'in', dpi = 600)
+#ggsave("../figures/coverStack.png", plot = coralStack, width = 20, height = 40, units = 'in', dpi = 600)
 
 ```
 
@@ -789,7 +789,7 @@ coralPermTab <- coralPerm %>%
 
 coralDoc = read_docx()
 coralDoc = body_add_flextable(coralDoc, value = coralPermTab)
-print(coralDoc, target = "../tables/coralCoverTableVpi.docx")
+#print(coralDoc, target = "../tables/coralCoverTableVpi.docx")
 coralPermTab
 
 
